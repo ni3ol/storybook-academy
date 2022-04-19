@@ -29,6 +29,8 @@
     "react-select": "^5.2.2",
     "reactstrap": "^9.0.1",
     "recoil": "^0.7.0",
+    "semantic-ui-css": "^2.4.1",
+    "semantic-ui-react": "^2.1.2",
     "zod": "^3.14.4"
   },
   "devDependencies": {
