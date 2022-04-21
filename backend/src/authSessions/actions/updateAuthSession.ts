@@ -1,8 +1,7 @@
 import {z} from 'zod'
-import {EntityType} from '../..'
-import {persistFacts} from '../../factStore'
+import {db} from '../../db/db'
 import {createUpdateAction} from '../../shared/actionUtils'
-import {AuthSession, authSessionSchema} from '../model'
+import {authSessionSchema} from '../model'
 
 export const updateAuthSessionDataSchema = z.object({
   token: authSessionSchema.shape.token.optional(),
@@ -19,13 +18,12 @@ export const [updateAuthSession, updateAuthSessionAction] = createUpdateAction(
     outputSchema: authSessionSchema,
   },
   async (id, data, {trx, asOf}) => {
-    const {
-      entities: [authSession],
-    } = await persistFacts<AuthSession>(
-      [{entityType: EntityType.AuthSession, entityId: id, data}],
-      {trx, asOf},
-    )
-
+    const query = db('authSessions')
+      .update({...data, updatedAt: asOf})
+      .where('id', '=', id)
+      .returning('*')
+      .transacting(trx)
+    const [authSession] = (await query) as Record<string, any>[]
     return authSession
   },
 )

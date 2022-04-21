@@ -1,6 +1,5 @@
 import {z} from 'zod'
-import {EntityType} from '../..'
-import {persistFacts} from '../../factStore'
+import {db} from '../../db/db'
 import {createCreateAction} from '../../shared/actionUtils'
 import {getUuid} from '../../shared/utils'
 import {AuthSession, authSessionSchema} from '../model'
@@ -23,24 +22,15 @@ export const [createAuthSession, createAuthSessionAction] = createCreateAction(
   },
   async (data, {trx, asOf}) => {
     const id = data.id || getUuid()
-    const {
-      entities: [authSession],
-    } = await persistFacts<AuthSession>(
-      [
-        {
-          entityType: EntityType.AuthSession,
-          entityId: id,
-          data: {
-            ...data,
-            id,
-            createdAt: asOf,
-            updatedAt: asOf,
-            token: data.token || getUuid(),
-          },
-        },
-      ],
-      {trx, asOf},
-    )
+    const token = data.token || getUuid()
+    const authSession: AuthSession = {
+      ...data,
+      id,
+      createdAt: asOf,
+      updatedAt: asOf,
+      token,
+    }
+    await db('authSessions').insert(authSession).returning('*').transacting(trx)
 
     return authSession
   },

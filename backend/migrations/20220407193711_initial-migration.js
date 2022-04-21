@@ -1,27 +1,29 @@
 exports.up = async (knex) => {
   await knex.raw(`
-    CREATE TABLE "facts" (
+    CREATE TABLE "users" (
       "id" UUID PRIMARY KEY,
-      "createdAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-      "entityType" TEXT NOT NULL,
-      "entityId" UUID NOT NULL,
-      "data" JSONB NOT NULL
-    );
-
-    CREATE TABLE "entities" (
-      "id" UUID PRIMARY KEY,
-      "type" TEXT NOT NULL,
       "createdAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
       "updatedAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-      "data" JSONB NOT NULL
+      "emailAddress" TEXT UNIQUE NOT NULL,
+      "firstName" TEXT NOT NULL,
+      "lastName" TEXT NOT NULL,
+      "passwordHash" TEXT NOT NULL,
+      "role" TEXT NOT NULL
     );
-    CREATE UNIQUE INDEX user_email_address ON entities((data->>'emailAddress'));
+
+    CREATE TABLE "authSessions" (
+      "id" UUID PRIMARY KEY,
+      "createdAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+      "updatedAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+      "userId" UUID NOT NULL,
+      "token" TEXT UNIQUE NOT NULL
+    );
   `)
 }
 
 exports.down = async (knex) => {
   await knex.raw(`
-    DROP TABLE "facts";
-    DROP TABLE "entities";
+    DROP TABLE "users";
+    DROP TABLE "authSessions";
 `)
 }

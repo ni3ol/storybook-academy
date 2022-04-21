@@ -1,7 +1,6 @@
 import {z} from 'zod'
-import {EntityType} from '../..'
 import {hashPassword} from '../../auth/utils'
-import {persistFacts} from '../../factStore'
+import {db} from '../../db/db'
 import {createCreateAction} from '../../shared/actionUtils'
 import {getUuid} from '../../shared/utils'
 import {User, UserRole, userSchema} from '../model'
@@ -28,25 +27,15 @@ export const [createUser, createUserAction] = createCreateAction(
   async ({password, ...data}, {trx, asOf}) => {
     const passwordHash = await hashPassword(password)
     const id = data.id || getUuid()
-    const {
-      entities: [user],
-    } = await persistFacts<User>(
-      [
-        {
-          entityType: EntityType.User,
-          entityId: id,
-          data: {
-            ...data,
-            id,
-            createdAt: asOf,
-            updatedAt: asOf,
-            passwordHash,
-            role: data.role || UserRole.User,
-          },
-        },
-      ],
-      {trx, asOf},
-    )
+    const user: User = {
+      ...data,
+      id,
+      createdAt: asOf,
+      updatedAt: asOf,
+      passwordHash,
+      role: data.role || UserRole.User,
+    }
+    await db('users').insert(user).returning('*').transacting(trx)
     return user
   },
 )

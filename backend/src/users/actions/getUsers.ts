@@ -1,13 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import {z} from 'zod'
-import {EntityType} from '../..'
-import {queryEntities} from '../../factStore'
+import {db} from '../../db/db'
 import {
   applyFilters,
   createGetAction,
   FilterMapping,
 } from '../../shared/actionUtils'
-import {User, userSchema} from '../model'
+import {userSchema} from '../model'
 
 export const userFiltersSchema = z
   .object({
@@ -22,7 +20,7 @@ export type UserFilters = z.infer<typeof userFiltersSchema>
 const filterMapping: FilterMapping<UserFilters> = {
   id: (query, filters) => query.where('id', '=', filters.id!),
   emailAddress: (query, filters) =>
-    query.whereRaw(`data->>? = ?`, ['emailAddress', filters.emailAddress!]),
+    query.where('emailAddress', '=', filters.emailAddress!),
 }
 
 export const [getUsers, getUsersAction] = createGetAction(
@@ -34,14 +32,9 @@ export const [getUsers, getUsersAction] = createGetAction(
     },
   },
   async ({trx, filters}) => {
-    const entities = await queryEntities<User>({
-      entityType: EntityType.User,
-      hook: (query) => {
-        return applyFilters(query, filterMapping, filters)
-      },
-      trx,
-    })
-
+    const query = db.select('*').from('users').transacting(trx)
+    const filteredQuery = applyFilters(query, filterMapping, filters)
+    const entities: Record<string, any>[] = await filteredQuery
     return entities
   },
 )

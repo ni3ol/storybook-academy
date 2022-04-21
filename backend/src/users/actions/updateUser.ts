@@ -1,8 +1,7 @@
 import {z} from 'zod'
-import {EntityType} from '../..'
-import {persistFacts} from '../../factStore'
+import {db} from '../../db/db'
 import {createUpdateAction} from '../../shared/actionUtils'
-import {User, UserRole, userSchema} from '../model'
+import {UserRole, userSchema} from '../model'
 
 export const updateUserDataSchema = z.object({
   emailAddress: userSchema.shape.emailAddress.optional(),
@@ -22,12 +21,12 @@ export const [updateUser, updateUserAction] = createUpdateAction(
     },
   },
   async (id, data, {trx, asOf}) => {
-    const {
-      entities: [user],
-    } = await persistFacts<User>(
-      [{entityType: EntityType.User, entityId: id, data}],
-      {trx, asOf},
-    )
+    const query = db('users')
+      .update({...data, updatedAt: asOf})
+      .where('id', '=', id)
+      .returning('*')
+      .transacting(trx)
+    const [user] = (await query) as Record<string, any>[]
     return user
   },
 )
