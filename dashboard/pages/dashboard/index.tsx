@@ -1,8 +1,8 @@
 import { Container } from "reactstrap";
 import { Button, Segment } from "semantic-ui-react";
 import { RequireAuth } from "../../src/auth/components/requireAuth";
-import { DashboardNavigation } from "../../src/components/dashboardNavigation/dashboardNavigation";
-import { DataTable } from "../../src/components/dataTable/dataTable";
+import { DashboardNavigation } from "../../src/shared/components/dashboardNavigation/dashboardNavigation";
+import { DataTable } from "../../src/shared/components/dataTable/dataTable";
 
 export default function Dashboard() {
   return (

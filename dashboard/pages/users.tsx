@@ -2,12 +2,12 @@ import { useState } from "react";
 import { Container } from "reactstrap";
 import { Header, Menu, Button, Modal, Icon } from "semantic-ui-react";
 import { RequireAuth } from "../src/auth/components/requireAuth";
-import { DashboardNavigation } from "../src/components/dashboardNavigation/dashboardNavigation";
-import { CreateUserModal } from "../src/users/components/createUserModal/createUserModal";
-import { DeleteUserModal } from "../src/users/components/deleteUserModal/deleteUserModal";
-import { UpdateUserModal } from "../src/users/components/updateUserModal/updateUserModal";
-import { UsersTable } from "../src/users/components/usersTable/usersTable";
-import { StaffTable } from "../src/users/staff/staffTable/staffTable";
+import { DashboardNavigation } from "../src/shared/components/dashboardNavigation/dashboardNavigation";
+import { CreateUserModal } from "../src/users/components/createUserModal";
+import { DeleteUserModal } from "../src/users/components/deleteUserModal";
+import { UpdateUserModal } from "../src/users/components/updateUserModal";
+import { UsersTable } from "../src/users/components/usersTable";
+import { StaffTable } from "../src/users/components/staffTable";
 
 export default function Users() {
   const [activeItem, setActiveItem] = useState("student");
@@ -47,8 +47,8 @@ export default function Users() {
 
               {activeItem === "student" && (
                 <UsersTable
-                  setIsUpdateUserModalOpen={setIsUpdateUserModalOpen}
-                  setIsDeleteUserModalOpen={setIsDeleteUserModalOpen}
+                  onEditClick={setIsUpdateUserModalOpen}
+                  onDeleteClick={setIsDeleteUserModalOpen}
                   rows={[
                     {
                       firstName: "Nicol",
@@ -99,8 +99,8 @@ export default function Users() {
 
               {activeItem === "staff member" && (
                 <StaffTable
-                  setIsUpdateUserModalOpen={setIsUpdateUserModalOpen}
-                  setIsDeleteUserModalOpen={setIsDeleteUserModalOpen}
+                  onEditClick={setIsUpdateUserModalOpen}
+                  onDeleteClick={setIsDeleteUserModalOpen}
                   rows={[
                     {
                       firstName: "Nicol",

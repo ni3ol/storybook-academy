@@ -8,8 +8,8 @@ import {
   Form,
   PasswordField,
   TextField,
-} from "../src/components/form";
-import { Navigation } from "../src/components/navigation";
+} from "../src/shared/components/form";
+import { Navigation } from "../src/shared/components/navigation";
 import { usePromiseLazy } from "../src/shared/hooks";
 
 type Data = {

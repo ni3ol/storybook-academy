@@ -2,12 +2,12 @@ import { useState } from "react";
 import { Container } from "reactstrap";
 import { Header, Menu, Button, Modal, Icon } from "semantic-ui-react";
 import { RequireAuth } from "../src/auth/components/requireAuth";
-import { DashboardNavigation } from "../src/components/dashboardNavigation/dashboardNavigation";
+import { DashboardNavigation } from "../src/shared/components/dashboardNavigation/dashboardNavigation";
 import { LibraryTable } from "../src/library/components/libraryTable/libraryTable";
-import { CreateUserModal } from "../src/users/components/createUserModal/createUserModal";
-import { DeleteUserModal } from "../src/users/components/deleteUserModal/deleteUserModal";
-import { UpdateUserModal } from "../src/users/components/updateUserModal/updateUserModal";
-import { UsersTable } from "../src/users/components/usersTable/usersTable";
+import { CreateUserModal } from "../src/users/components/createUserModal";
+import { DeleteUserModal } from "../src/users/components/deleteUserModal";
+import { UpdateUserModal } from "../src/users/components/updateUserModal";
+import { UsersTable } from "../src/users/components/usersTable";
 
 export default function Library() {
   const [isCreateMaterialModalOpen, setIsCreateMaterialModalOpen] =

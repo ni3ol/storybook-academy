@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Container, Nav, Navbar, Button } from "reactstrap";
-import { Navigation } from "../src/components/navigation";
+import { Navigation } from "../src/shared/components/navigation";
 
 export default function Home() {
   return (

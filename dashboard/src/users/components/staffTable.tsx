@@ -1,14 +1,14 @@
 import { Button } from "semantic-ui-react";
-import { DataTable } from "../../../components/dataTable/dataTable";
+import { DataTable } from "../../shared/components/dataTable/dataTable";
 
 export const StaffTable = ({
   rows,
-  setIsUpdateUserModalOpen,
-  setIsDeleteUserModalOpen,
+  onEditClick: onEditClick,
+  onDeleteClick: onDeleteClick,
 }: {
   rows: any;
-  setIsUpdateUserModalOpen: any;
-  setIsDeleteUserModalOpen: any;
+  onEditClick: any;
+  onDeleteClick: any;
 }) => (
   <DataTable
     rows={rows}
@@ -53,12 +53,10 @@ export const StaffTable = ({
         title: "Actions",
         resolve: (row: any) => (
           <>
-            <Button onClick={() => setIsUpdateUserModalOpen(true)} primary>
+            <Button onClick={() => onEditClick(true)} primary>
               Edit
             </Button>
-            <Button onClick={() => setIsDeleteUserModalOpen(true)}>
-              Delete
-            </Button>
+            <Button onClick={() => onDeleteClick(true)}>Delete</Button>
           </>
         ),
       },

@@ -2,11 +2,11 @@ import { useState } from "react";
 import { Container } from "reactstrap";
 import { Header, Menu, Button, Modal, Icon } from "semantic-ui-react";
 import { RequireAuth } from "../src/auth/components/requireAuth";
-import { DashboardNavigation } from "../src/components/dashboardNavigation/dashboardNavigation";
-import { CreateUserModal } from "../src/users/components/createUserModal/createUserModal";
-import { DeleteUserModal } from "../src/users/components/deleteUserModal/deleteUserModal";
-import { UpdateUserModal } from "../src/users/components/updateUserModal/updateUserModal";
-import { UsersTable } from "../src/users/components/usersTable/usersTable";
+import { DashboardNavigation } from "../src/shared/components/dashboardNavigation/dashboardNavigation";
+import { CreateUserModal } from "../src/users/components/createUserModal";
+import { DeleteUserModal } from "../src/users/components/deleteUserModal";
+import { UpdateUserModal } from "../src/users/components/updateUserModal";
+import { UsersTable } from "../src/users/components/usersTable";
 
 export default function Users() {
   const [isCreateUserModalOpen, setIsCreateUserModalOpen] = useState(false);
@@ -27,8 +27,8 @@ export default function Users() {
               </Button>
 
               <UsersTable
-                setIsUpdateUserModalOpen={setIsUpdateUserModalOpen}
-                setIsDeleteUserModalOpen={setIsDeleteUserModalOpen}
+                onEditClick={setIsUpdateUserModalOpen}
+                onDeleteClick={setIsDeleteUserModalOpen}
                 rows={[
                   {
                     firstName: "Nicol",

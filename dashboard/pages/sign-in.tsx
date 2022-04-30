@@ -3,8 +3,8 @@ import { useForm } from "react-hook-form";
 import { Button, Col, Container, Row } from "reactstrap";
 import { signIn } from "../src/auth/actions";
 import { useAuth } from "../src/auth/hooks";
-import { Form, PasswordField, TextField } from "../src/components/form";
-import { Navigation } from "../src/components/navigation";
+import { Form, PasswordField, TextField } from "../src/shared/components/form";
+import { Navigation } from "../src/shared/components/navigation";
 import { usePromiseLazy } from "../src/shared/hooks";
 
 type Data = {

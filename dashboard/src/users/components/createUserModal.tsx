@@ -8,7 +8,7 @@ import {
   Image,
   Modal,
 } from "semantic-ui-react";
-import { usePromiseLazy } from "../../../shared/hooks";
+import { usePromiseLazy } from "../../shared/hooks";
 
 type Data = {
   firstName: string;

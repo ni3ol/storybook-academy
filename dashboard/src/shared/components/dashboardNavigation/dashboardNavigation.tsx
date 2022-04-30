@@ -1,8 +1,8 @@
 import { useRouter } from "next/router";
-import { useAuth } from "../../auth/hooks";
+import { useAuth } from "../../../auth/hooks";
 import styles from "./dashboardNavigation.module.css";
 import { Button, Menu } from "semantic-ui-react";
-import { UserRole } from "../../users/model";
+import { UserRole } from "../../../users/model";
 import { useState } from "react";
 
 export const DashboardNavigation = ({ role }: { role: UserRole }) => {
