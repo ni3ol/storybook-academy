@@ -16,7 +16,7 @@ export const createUserInputSchema = z.object({
 
 export type CreateUserInputData = z.infer<typeof createUserInputSchema>
 
-export const [createUser, createUserAction] = createCreateAction(
+export const [createUser] = createCreateAction(
   {
     inputSchema: createUserInputSchema,
     outputSchema: userSchema,

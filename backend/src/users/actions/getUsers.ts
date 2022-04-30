@@ -5,7 +5,7 @@ import {
   createGetAction,
   FilterMapping,
 } from '../../shared/actionUtils'
-import {User, userSchema} from '../model'
+import {userSchema} from '../model'
 
 export const userFiltersSchema = z
   .object({
@@ -23,7 +23,7 @@ const filterMapping: FilterMapping<UserFilters> = {
     query.where('emailAddress', '=', filters.emailAddress!),
 }
 
-export const [getUsers, getUsersAction] = createGetAction(
+export const [getUsers] = createGetAction(
   {
     filterSchema: userFiltersSchema,
     outputSchema: userSchema,

@@ -16,7 +16,7 @@ type As = {
   user?: User
 }
 
-type Params = {
+export type ActionParams = {
   trx?: Knex.Transaction
   as?: As
   asOf?: Date
@@ -30,13 +30,15 @@ type Yo = {
   skipAuth?: true
 }
 
-export type Action = {
+export type ActionDefinition = {
   authorization: any
 }
 
-export type CreateAction<E, D = undefined> = Action & {
+export type CreateAction<E, D> = (data: D, params?: ActionParams) => Promise<E>
+
+export type CreateActionDefinition<E, D = undefined> = ActionDefinition & {
   inputSchema?: ZodSchema<D>
-  handler: (data: D, params?: Params) => Promise<E>
+  handler: CreateAction<E, D>
 }
 
 export const createCreateAction = <OutputData, InputData>(
@@ -53,7 +55,7 @@ export const createCreateAction = <OutputData, InputData>(
   },
   f: (data: InputData, params: Yo) => Promise<OutputData>,
 ) => {
-  const action: CreateAction<OutputData, InputData> = {
+  const action: CreateActionDefinition<OutputData, InputData> = {
     authorization,
     inputSchema,
     handler: async (data, params) => {
@@ -87,8 +89,14 @@ export const createCreateAction = <OutputData, InputData>(
   return [action.handler, action] as const
 }
 
-export type UpdateAction<E, D> = Action & {
-  handler: (id: string, data: D, params?: Params) => Promise<E>
+export type UpdateAction<E, D> = (
+  id: string,
+  data: D,
+  params?: ActionParams,
+) => Promise<E>
+
+export type UpdateActionDefinition<E, D> = ActionDefinition & {
+  handler: UpdateAction<E, D>
 }
 
 export const createUpdateAction = <E, D>(
@@ -103,7 +111,7 @@ export const createUpdateAction = <E, D>(
   },
   f: (id: string, data: D, params: Yo) => Promise<E>,
 ) => {
-  const action: UpdateAction<E, D> = {
+  const action: UpdateActionDefinition<E, D> = {
     authorization,
     handler: async (id, data, params) => {
       const asOf = params?.asOf || utcNow()
@@ -137,21 +145,21 @@ export const createUpdateAction = <E, D>(
   return [action.handler, action] as const
 }
 
-export type GetActionHandler<E, F> = (
+export type GetAction<E, F> = (
   params?: {
     filters?: F
-  } & Params,
+  } & ActionParams,
 ) => Promise<E[]>
 
 export type CountActionHandler<F> = (
   params: {
     filters?: F
-  } & Params,
+  } & ActionParams,
 ) => Promise<number>
 
-export type GetAction<E, F> = Action & {
+export type GetActionDefinition<E, F> = ActionDefinition & {
   filterSchema: ZodSchema<F>
-  handler: GetActionHandler<E, F>
+  handler: GetAction<E, F>
 }
 
 export const createGetAction = <E, F = null>(
@@ -166,7 +174,7 @@ export const createGetAction = <E, F = null>(
   },
   f: (params: {filters?: F} & Yo) => Promise<E[]>,
 ) => {
-  const action: GetAction<E, F> = {
+  const action: GetActionDefinition<E, F> = {
     filterSchema,
     authorization,
     handler: async (params) => {

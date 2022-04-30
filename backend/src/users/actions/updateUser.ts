@@ -12,7 +12,7 @@ export const updateUserInputSchema = z.object({
 
 export type UpdateUserInputData = z.infer<typeof updateUserInputSchema>
 
-export const [updateUser, updateUserAction] = createUpdateAction(
+export const [updateUser] = createUpdateAction(
   {
     inputSchema: updateUserInputSchema,
     outputSchema: userSchema,

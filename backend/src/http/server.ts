@@ -9,7 +9,6 @@ import express, {ErrorRequestHandler} from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import {ZodError} from 'zod'
-import {Endpoint} from './endpoint'
 import {
   AuthenticationError,
   AuthorizationError,
@@ -19,21 +18,13 @@ import {
 } from '../errors'
 import {getAuthSessions} from '../authSessions/actions/getAuthSessions'
 import {getUsers} from '../users/actions/getUsers'
-import {getUsersEndpoint} from '../users/endpoints/getUsersEndpoint'
-import {signInEndpoint} from '../auth/endpoints/signInEndpoint'
-import {getAuthSessionsEndpoint} from '../authSessions/endpoints/getAuthSessionsEndpoint'
+import {endpoints} from './endpoints'
 
 const app = express()
 
 app.use(cors())
 app.use(bodyParser.json())
 app.use(morgan('dev'))
-
-const endpoints: Endpoint<any, any, any>[] = [
-  getUsersEndpoint,
-  signInEndpoint,
-  getAuthSessionsEndpoint,
-]
 
 endpoints.forEach((endpoint) => {
   app[endpoint.method](endpoint.path, async (req, res, next) => {

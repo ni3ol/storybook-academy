@@ -4,9 +4,9 @@ import {serializeUser} from '../actions/serializeUser'
 
 export const getUsersEndpoint = createListEndpoint({
   path: '/users',
-  requireAuth: false,
+  requireAuth: true,
+  queryParamsSchema: userFiltersSchema,
   getEntities: getUsers,
   getEntitiesCount: () => Promise.resolve(4),
-  queryParamsSchema: userFiltersSchema,
   serializer: serializeUser,
 })
