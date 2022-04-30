@@ -16,7 +16,7 @@ export class ValidationError extends Error {
   }
 }
 
-const baseUrl = process.env.BASE_URL || "http://localhost:8080";
+const baseUrl = process.env.BASE_URL || "http://localhost:5000";
 
 export const makeRequest = async ({
   method,

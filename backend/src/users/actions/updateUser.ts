@@ -3,18 +3,18 @@ import {db} from '../../db/db'
 import {createUpdateAction} from '../../shared/actionUtils'
 import {UserRole, userSchema} from '../model'
 
-export const updateUserDataSchema = z.object({
+export const updateUserInputSchema = z.object({
   emailAddress: userSchema.shape.emailAddress.optional(),
   firstName: userSchema.shape.firstName.optional(),
   lastName: userSchema.shape.lastName.optional(),
   role: userSchema.shape.role.optional(),
 })
 
-export type UpdateUserData = z.infer<typeof updateUserDataSchema>
+export type UpdateUserInputData = z.infer<typeof updateUserInputSchema>
 
 export const [updateUser, updateUserAction] = createUpdateAction(
   {
-    inputSchema: updateUserDataSchema,
+    inputSchema: updateUserInputSchema,
     outputSchema: userSchema,
     authorization: ({as}) => {
       return as?.user?.role === UserRole.Admin

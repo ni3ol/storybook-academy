@@ -5,7 +5,7 @@ import {
   createGetAction,
   FilterMapping,
 } from '../../shared/actionUtils'
-import {userSchema} from '../model'
+import {User, userSchema} from '../model'
 
 export const userFiltersSchema = z
   .object({
@@ -34,7 +34,8 @@ export const [getUsers, getUsersAction] = createGetAction(
   async ({trx, filters}) => {
     const query = db.select('*').from('users').transacting(trx)
     const filteredQuery = applyFilters(query, filterMapping, filters)
-    const entities: Record<string, any>[] = await filteredQuery
-    return entities
+    const rows: any[] = await filteredQuery
+    const users = rows.map((row) => userSchema.parse(row))
+    return users
   },
 )

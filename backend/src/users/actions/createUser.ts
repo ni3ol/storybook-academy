@@ -5,7 +5,7 @@ import {createCreateAction} from '../../shared/actionUtils'
 import {getUuid} from '../../shared/utils'
 import {User, UserRole, userSchema} from '../model'
 
-export const createUserDataSchema = z.object({
+export const createUserInputSchema = z.object({
   id: userSchema.shape.id.optional(),
   emailAddress: userSchema.shape.emailAddress,
   firstName: userSchema.shape.firstName,
@@ -14,11 +14,11 @@ export const createUserDataSchema = z.object({
   role: userSchema.shape.role.optional(),
 })
 
-export type CreateUserData = z.infer<typeof createUserDataSchema>
+export type CreateUserInputData = z.infer<typeof createUserInputSchema>
 
 export const [createUser, createUserAction] = createCreateAction(
   {
-    inputSchema: createUserDataSchema,
+    inputSchema: createUserInputSchema,
     outputSchema: userSchema,
     authorization: ({as}) => {
       return as?.user?.role === UserRole.Admin
