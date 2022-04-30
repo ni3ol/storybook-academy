@@ -1,22 +1,17 @@
 import { Container } from "reactstrap";
 import { Button, Segment } from "semantic-ui-react";
 import { RequireAuth } from "../../src/auth/components/requireAuth";
-import { DashboardNavigation } from "../../src/components/dashboardNavigation";
+import { DashboardNavigation } from "../../src/components/dashboardNavigation/dashboardNavigation";
+import { DataTable } from "../../src/components/dataTable/dataTable";
 
-export default function DailySummary() {
+export default function Dashboard() {
   return (
     <RequireAuth
       render={({ auth }) => {
         return (
           <>
-            <DashboardNavigation />
-            <Container>
-              {JSON.stringify(auth)}
-              <Segment>
-                Semantic UI here
-                <Button>Click me</Button>
-              </Segment>
-            </Container>
+            <DashboardNavigation role={auth?.user?.role} />
+            <Container>{JSON.stringify(auth)}</Container>
           </>
         );
       }}

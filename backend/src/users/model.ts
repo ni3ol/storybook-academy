@@ -4,6 +4,9 @@ import {entitySchema} from '../shared/utils'
 export enum UserRole {
   User = 'user',
   Admin = 'admin',
+  Teacher = 'teacher',
+  Principal = 'principal',
+  Child = 'child',
 }
 
 export const userSchema = entitySchema
