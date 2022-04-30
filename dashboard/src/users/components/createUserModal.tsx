@@ -1,28 +1,17 @@
-import {
-  Button,
-  Checkbox,
-  Dropdown,
-  Form,
-  Header,
-  Icon,
-  Image,
-  Modal,
-} from "semantic-ui-react";
-import { usePromiseLazy } from "../../shared/hooks";
+import {Button, Dropdown, Form, Header, Modal} from 'semantic-ui-react'
+import {useForm} from 'react-hook-form'
 
 type Data = {
-  firstName: string;
-  lastName: string;
-};
-
-import { useForm } from "react-hook-form";
+  firstName: string
+  lastName: string
+}
 
 export const CreateUserModal = ({
   open,
   setOpen,
 }: {
-  open: boolean;
-  setOpen: any;
+  open: boolean
+  setOpen: any
 }) => {
   // const action = usePromiseLazy((data: Data) => {
   //   // return signIn({ emailAddress: data.emailAddress, password: data.password });
@@ -36,11 +25,11 @@ export const CreateUserModal = ({
   //     console.log("ssss", result);
   //   }
   // };
-  const form = useForm<Partial<Data>, Data>();
+  const form = useForm<Partial<Data>, Data>()
   return (
     <Modal
-      style={{ height: "auto", margin: "auto", position: "relative" }}
-      closeIcon={true}
+      style={{height: 'auto', margin: 'auto', position: 'relative'}}
+      closeIcon
       dimmer="blurring"
       open={open}
       onClose={() => setOpen(false)}
@@ -50,7 +39,7 @@ export const CreateUserModal = ({
       <Modal.Content>
         <Form
           // onSubmit={form.handleSubmit((data) => handleSubmit(data as Data))}
-          onSubmit={form.handleSubmit((data) => console.log("data", data))}
+          onSubmit={form.handleSubmit((data) => console.log('data', data))}
         >
           <Form.Field>
             <label>Child ID</label>
@@ -77,27 +66,27 @@ export const CreateUserModal = ({
               options={[
                 {
                   key: 1,
-                  text: "Level 1",
+                  text: 'Level 1',
                   value: 1,
                 },
                 {
                   key: 2,
-                  text: "Level 2",
+                  text: 'Level 2',
                   value: 2,
                 },
                 {
                   key: 3,
-                  text: "Level 3",
+                  text: 'Level 3',
                   value: 3,
                 },
                 {
                   key: 4,
-                  text: "Level 4",
+                  text: 'Level 4',
                   value: 4,
                 },
                 {
                   key: 5,
-                  text: "Level 5",
+                  text: 'Level 5',
                   value: 5,
                 },
               ]}
@@ -111,14 +100,14 @@ export const CreateUserModal = ({
               selection
               options={[
                 {
-                  key: "school-1",
-                  text: "Jamaica Primary School",
-                  value: "school-1",
+                  key: 'school-1',
+                  text: 'Jamaica Primary School',
+                  value: 'school-1',
                 },
                 {
-                  key: "school-2",
-                  text: "Canada Primary School",
-                  value: "school-2",
+                  key: 'school-2',
+                  text: 'Canada Primary School',
+                  value: 'school-2',
                 },
               ]}
             />
@@ -131,14 +120,14 @@ export const CreateUserModal = ({
               selection
               options={[
                 {
-                  key: "nicol-vojacek",
-                  text: "Nicol Vojacek",
-                  value: "nicol-vojacek",
+                  key: 'nicol-vojacek',
+                  text: 'Nicol Vojacek',
+                  value: 'nicol-vojacek',
                 },
                 {
-                  key: "michele-lemonius",
-                  text: "Michele Lemonius",
-                  value: "michele-lemonius",
+                  key: 'michele-lemonius',
+                  text: 'Michele Lemonius',
+                  value: 'michele-lemonius',
                 },
               ]}
             />
@@ -147,5 +136,5 @@ export const CreateUserModal = ({
         </Form>
       </Modal.Content>
     </Modal>
-  );
-};
+  )
+}

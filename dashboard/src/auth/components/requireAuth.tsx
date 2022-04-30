@@ -1,15 +1,16 @@
-import { useRouter } from "next/router";
-import { Auth, useAuth } from "../hooks";
+import {useRouter} from 'next/router'
+import {UserRole} from '../../users/model'
+import {Auth, useAuth} from '../hooks'
 
 export const RequireAuth = ({
   render,
   adminOnly,
 }: {
-  render: ({ auth }: { auth: Auth }) => any;
-  adminOnly?: boolean;
+  render: ({auth}: {auth: Auth}) => any
+  adminOnly?: boolean
 }) => {
-  const auth = useAuth();
-  const router = useRouter();
+  const auth = useAuth()
+  const router = useRouter()
 
   const authData =
     auth.isAuthenticated() &&
@@ -18,23 +19,23 @@ export const RequireAuth = ({
     auth.auth.user &&
     auth.auth.authSession
       ? (auth.auth as Auth)
-      : undefined;
+      : undefined
 
-  if (auth.auth?.status === "unauthenticated") {
-    router.push("/sign-in");
-    return null;
+  if (auth.auth?.status === 'unauthenticated') {
+    router.push('/sign-in')
+    return null
   }
 
   const result =
     auth.isAuthenticated() && authData ? (
-      !adminOnly || (adminOnly && authData.user.isAdmin) ? (
-        render({ auth: authData })
+      !adminOnly || (adminOnly && authData.user.role === UserRole.Admin) ? (
+        render({auth: authData})
       ) : (
         <div
           style={{
-            display: "flex",
-            justifyContent: "center",
-            marginTop: "20%",
+            display: 'flex',
+            justifyContent: 'center',
+            marginTop: '20%',
           }}
         >
           Not authorized
@@ -43,14 +44,14 @@ export const RequireAuth = ({
     ) : (
       <div
         style={{
-          display: "flex",
-          justifyContent: "center",
-          marginTop: "20%",
+          display: 'flex',
+          justifyContent: 'center',
+          marginTop: '20%',
         }}
       >
         <div>Loading...</div>
       </div>
-    );
+    )
 
-  return result;
-};
+  return result
+}

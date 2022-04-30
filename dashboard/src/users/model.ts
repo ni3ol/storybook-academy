@@ -1,11 +1,11 @@
-import { z } from "zod";
+import {z} from 'zod'
 
 export enum UserRole {
-  User = "user",
-  Admin = "admin",
-  Teacher = "teacher",
-  Principal = "principal",
-  Child = "child",
+  User = 'user',
+  Admin = 'admin',
+  Teacher = 'teacher',
+  Principal = 'principal',
+  Child = 'child',
 }
 
 export const userSchema = z.object({
@@ -15,6 +15,6 @@ export const userSchema = z.object({
   lastName: z.string(),
   emailAddress: z.string().email(),
   role: z.nativeEnum(UserRole),
-});
+})
 
-export type User = z.infer<typeof userSchema>;
+export type User = z.infer<typeof userSchema>

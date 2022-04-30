@@ -11,6 +11,8 @@ import {
   Alert,
 } from "reactstrap";
 
+import "react-datepicker/dist/react-datepicker.css";
+
 export const Form = ({
   children,
   onSubmit,
@@ -221,8 +223,6 @@ export const NumberField = ({
     </Field>
   );
 };
-
-import "react-datepicker/dist/react-datepicker.css";
 export const DatetimeField = ({
   required,
   label,

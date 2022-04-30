@@ -1,23 +1,23 @@
-import { Button, Form, Header, Icon, Image, Modal } from "semantic-ui-react";
+import {Button, Header, Modal} from 'semantic-ui-react'
 
 export const DeleteUserModal = ({
   open,
   setOpen,
 }: {
-  open: boolean;
-  setOpen: any;
+  open: boolean
+  setOpen: any
 }) => (
   <Modal
     size="small"
-    style={{ height: 250, margin: "auto", position: "relative" }}
-    closeIcon={true}
+    style={{height: 250, margin: 'auto', position: 'relative'}}
+    closeIcon
     open={open}
     onClose={() => setOpen(false)}
     onOpen={() => setOpen(true)}
   >
     <Header icon="user" content="Delete student" />
     <Modal.Content>Are you sure you would like to delete X?</Modal.Content>
-    <Modal.Actions style={{ display: "flex", justifyContent: "space-between" }}>
+    <Modal.Actions style={{display: 'flex', justifyContent: 'space-between'}}>
       <Button color="red" onClick={() => setOpen(false)}>
         No
       </Button>
@@ -26,4 +26,4 @@ export const DeleteUserModal = ({
       </Button>
     </Modal.Actions>
   </Modal>
-);
+)

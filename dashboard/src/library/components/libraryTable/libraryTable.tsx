@@ -1,47 +1,47 @@
-import { Button } from "semantic-ui-react";
-import { DataTable } from "../../../shared/components/dataTable/dataTable";
+import {Button} from 'semantic-ui-react'
+import {DataTable} from '../../../shared/components/dataTable/dataTable'
 
 export const LibraryTable = ({
   rows,
   setIsUpdateMaterialModalOpen,
   setIsDeleteMaterialModalOpen,
 }: {
-  rows: any;
-  setIsUpdateMaterialModalOpen: any;
-  setIsDeleteMaterialModalOpen: any;
+  rows: any
+  setIsUpdateMaterialModalOpen: any
+  setIsDeleteMaterialModalOpen: any
 }) => (
   <DataTable
     rows={rows}
     headers={[
       {
-        key: "title",
-        title: "Title",
-        resolve: (row: any) => row.title,
+        key: 'title',
+        title: 'Title',
+        resolve: (row) => row.title,
       },
       {
-        key: "course",
-        title: "Course",
-        resolve: (row: any) => row.course,
+        key: 'course',
+        title: 'Course',
+        resolve: (row) => row.course,
       },
       {
-        key: "area",
-        title: "Area",
-        resolve: (row: any) => row.area,
+        key: 'area',
+        title: 'Area',
+        resolve: (row) => row.area,
       },
       {
-        key: "readingDate",
-        title: "Reading date",
-        resolve: (row: any) => row.readingDate,
+        key: 'readingDate',
+        title: 'Reading date',
+        resolve: (row) => row.readingDate,
       },
       {
-        key: "levels",
-        title: "Levels",
-        resolve: (row: any) => row.levels,
+        key: 'levels',
+        title: 'Levels',
+        resolve: (row) => row.levels,
       },
       {
-        key: "actions",
-        title: "Actions",
-        resolve: (row: any) => (
+        key: 'actions',
+        title: 'Actions',
+        resolve: (row) => (
           <>
             <Button onClick={() => setIsUpdateMaterialModalOpen(true)} primary>
               Edit
@@ -54,4 +54,4 @@ export const LibraryTable = ({
       },
     ]}
   />
-);
+)

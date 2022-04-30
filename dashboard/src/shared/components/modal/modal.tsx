@@ -1,10 +1,4 @@
-import {
-  Button,
-  Header,
-  Icon,
-  Image,
-  Modal as SemanticModal,
-} from "semantic-ui-react";
+import {Button, Header, Modal as SemanticModal} from 'semantic-ui-react'
 
 export const Modal = ({
   isOpen,
@@ -15,18 +9,18 @@ export const Modal = ({
   action,
   buttonText,
 }: {
-  isOpen: boolean;
-  setOpen: any;
-  header: string;
-  icon: string;
-  body: string;
-  action: any;
-  buttonText: string;
+  isOpen: boolean
+  setOpen: any
+  header: string
+  icon: string
+  body: string
+  action: any
+  buttonText: string
 }) => (
   <SemanticModal
     size="small"
-    style={{ height: 250, margin: "auto", position: "relative" }}
-    closeIcon={true}
+    style={{height: 250, margin: 'auto', position: 'relative'}}
+    closeIcon
     open={isOpen}
     onClose={() => setOpen(false)}
     onOpen={() => setOpen(true)}
@@ -37,12 +31,12 @@ export const Modal = ({
       <Button
         primary
         onClick={() => {
-          action();
-          setOpen(false);
+          action()
+          setOpen(false)
         }}
       >
         {buttonText}
       </Button>
     </SemanticModal.Actions>
   </SemanticModal>
-);
+)

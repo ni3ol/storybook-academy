@@ -1,16 +1,16 @@
-import { Button, Header, Icon, Image, Modal } from "semantic-ui-react";
+import {Button, Header, Modal} from 'semantic-ui-react'
 
 export const UpdateUserModal = ({
   open,
   setOpen,
 }: {
-  open: boolean;
-  setOpen: any;
+  open: boolean
+  setOpen: any
 }) => (
   <Modal
     size="small"
-    style={{ height: 250, margin: "auto", position: "relative" }}
-    closeIcon={true}
+    style={{height: 250, margin: 'auto', position: 'relative'}}
+    closeIcon
     open={open}
     onClose={() => setOpen(false)}
     onOpen={() => setOpen(true)}
@@ -23,4 +23,4 @@ export const UpdateUserModal = ({
       </Button>
     </Modal.Actions>
   </Modal>
-);
+)

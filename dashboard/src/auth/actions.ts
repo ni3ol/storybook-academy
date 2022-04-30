@@ -1,23 +1,23 @@
-import { AuthSession } from "../authSessions/model";
-import { makeRequest } from "../shared/utils";
-import { User } from "../users/model";
+import {AuthSession} from '../authSessions/model'
+import {makeRequest} from '../shared/utils'
+import {User} from '../users/model'
 
 export const signIn = async ({
-  emailAddress: emailAddress,
+  emailAddress,
   password,
 }: {
-  emailAddress: string;
-  password: string;
+  emailAddress: string
+  password: string
 }) => {
   const {
-    data: { user, authSession },
-  }: { data: { user: User; authSession: AuthSession } } = await makeRequest({
-    method: "post",
-    path: "/signIn",
-    data: { emailAddress: emailAddress, password },
-  });
-  return { user, authSession };
-};
+    data: {user, authSession},
+  }: {data: {user: User; authSession: AuthSession}} = await makeRequest({
+    method: 'post',
+    path: '/signIn',
+    data: {emailAddress, password},
+  })
+  return {user, authSession}
+}
 
 export const signUp = async ({
   firstName,
@@ -25,17 +25,17 @@ export const signUp = async ({
   email,
   password,
 }: {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
+  firstName: string
+  lastName: string
+  email: string
+  password: string
 }) => {
   const {
-    data: { user, authSession },
-  }: { data: { user: any; authSession: any } } = await makeRequest({
-    method: "post",
-    path: "/signUp",
-    data: { firstName, lastName, email, password },
-  });
-  return { user, authSession };
-};
+    data: {user, authSession},
+  }: {data: {user: any; authSession: any}} = await makeRequest({
+    method: 'post',
+    path: '/signUp',
+    data: {firstName, lastName, email, password},
+  })
+  return {user, authSession}
+}

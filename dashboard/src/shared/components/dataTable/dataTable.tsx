@@ -1,12 +1,12 @@
-import React from "react";
-import { Table } from "semantic-ui-react";
+import React from 'react'
+import {Table} from 'semantic-ui-react'
 
 export const DataTable = <R,>({
   headers,
   rows,
 }: {
-  headers: { key: string; resolve: (row: R) => any; title: string }[];
-  rows: R[];
+  headers: {key: string; resolve: (row: R) => any; title: string}[]
+  rows: R[]
 }) => {
   return (
     <Table celled>
@@ -17,7 +17,7 @@ export const DataTable = <R,>({
               <Table.HeaderCell key={header.key}>
                 {header.title}
               </Table.HeaderCell>
-            );
+            )
           })}
         </Table.Row>
       </Table.Header>
@@ -31,12 +31,12 @@ export const DataTable = <R,>({
                   <Table.Cell key={header.key}>
                     {header.resolve(row)}
                   </Table.Cell>
-                );
+                )
               })}
             </Table.Row>
-          );
+          )
         })}
       </Table.Body>
     </Table>
-  );
-};
+  )
+}
