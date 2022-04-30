@@ -1,5 +1,5 @@
 import {Button} from 'semantic-ui-react'
-import {DataTable} from '../../../shared/components/dataTable/dataTable'
+import {DataTable} from '../../../shared/components/dataTable'
 
 export const LibraryTable = ({
   rows,

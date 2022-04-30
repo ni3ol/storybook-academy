@@ -1,6 +1,6 @@
 import {Button, Header, Modal as SemanticModal} from 'semantic-ui-react'
 
-export const Modal = ({
+export const OldModal = ({
   isOpen,
   setOpen,
   header,

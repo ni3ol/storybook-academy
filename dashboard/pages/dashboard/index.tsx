@@ -1,20 +1,20 @@
-import { Container } from "reactstrap";
-import { Button, Segment } from "semantic-ui-react";
-import { RequireAuth } from "../../src/auth/components/requireAuth";
-import { DashboardNavigation } from "../../src/shared/components/dashboardNavigation/dashboardNavigation";
-import { DataTable } from "../../src/shared/components/dataTable/dataTable";
+import {Container} from 'reactstrap'
+import {Button, Segment} from 'semantic-ui-react'
+import {RequireAuth} from '../../src/auth/components/requireAuth'
+import {DashboardNavigation} from '../../src/shared/components/dashboardNavigation/dashboardNavigation'
+import {DataTable} from '../../src/shared/components/dataTable'
 
 export default function Dashboard() {
   return (
     <RequireAuth
-      render={({ auth }) => {
+      render={({auth}) => {
         return (
           <>
             <DashboardNavigation role={auth?.user?.role} />
             <Container>{JSON.stringify(auth)}</Container>
           </>
-        );
+        )
       }}
     />
-  );
+  )
 }

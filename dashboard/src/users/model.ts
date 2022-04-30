@@ -1,4 +1,5 @@
 import {z} from 'zod'
+import {entitySchema} from '../shared/entity'
 
 export enum UserRole {
   User = 'user',
@@ -8,9 +9,7 @@ export enum UserRole {
   Child = 'child',
 }
 
-export const userSchema = z.object({
-  id: z.string().uuid(),
-  createdAt: z.date(),
+export const userSchema = entitySchema.extend({
   firstName: z.string(),
   lastName: z.string(),
   emailAddress: z.string().email(),
