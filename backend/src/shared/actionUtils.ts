@@ -71,11 +71,15 @@ export const createCreateAction = <OutputData, InputData>(
 
       try {
         return await useOrCreateTransaction(params?.trx, async (trx) => {
-          const rawEntity = (await f({...data, id: getUuid()} as InputData, {
-            trx,
-            as: params?.as,
-            asOf,
-          })) as any
+          const parsedData = inputSchema.parse(data)
+          const rawEntity = (await f(
+            {...parsedData, id: getUuid()} as InputData,
+            {
+              trx,
+              as: params?.as,
+              asOf,
+            },
+          )) as any
           const entity = outputSchema.parse(rawEntity)
           return entity
         })

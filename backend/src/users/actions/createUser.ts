@@ -1,8 +1,9 @@
+import {Knex} from 'knex'
 import {z} from 'zod'
 import {hashPassword} from '../../auth/utils'
-import {db} from '../../db/db'
-import {createCreateAction} from '../../shared/actionUtils'
-import {getUuid} from '../../shared/utils'
+import {db, useOrCreateTransaction} from '../../db/db'
+import {AuthorizationError} from '../../errors'
+import {getUuid, utcNow} from '../../shared/utils'
 import {User, UserRole, userSchema} from '../model'
 
 export const createUserInputSchema = z.object({
@@ -16,26 +17,32 @@ export const createUserInputSchema = z.object({
 
 export type CreateUserInputData = z.infer<typeof createUserInputSchema>
 
-export const [createUser] = createCreateAction(
-  {
-    inputSchema: createUserInputSchema,
-    outputSchema: userSchema,
-    authorization: ({as}) => {
-      return as?.user?.role === UserRole.Admin
-    },
-  },
-  async ({password, ...data}, {trx, asOf}) => {
-    const passwordHash = await hashPassword(password)
-    const id = data.id || getUuid()
-    const user: User = {
-      ...data,
-      id,
-      createdAt: asOf,
-      updatedAt: asOf,
-      passwordHash,
-      role: data.role || UserRole.User,
-    }
+export const createUser = async (
+  data: CreateUserInputData,
+  params?: {trx?: Knex.Transaction; as?: {user?: User}; skipAuth?: boolean},
+) => {
+  const asOf = utcNow()
+
+  if (params?.skipAuth !== true && params?.as?.user?.role !== UserRole.Admin) {
+    throw new AuthorizationError()
+  }
+
+  const {password, ...other} = createUserInputSchema.parse(data)
+  const passwordHash = await hashPassword(password)
+  const id = other.id || getUuid()
+  const user: User = {
+    ...other,
+    id,
+    createdAt: asOf,
+    updatedAt: asOf,
+    passwordHash,
+    role: data.role || UserRole.User,
+  }
+
+  await useOrCreateTransaction(params?.trx, async (trx) => {
     await db('users').insert(user).returning('*').transacting(trx)
-    return user
-  },
-)
+  })
+
+  const parsedUser = userSchema.parse(user)
+  return parsedUser
+}

@@ -14,16 +14,16 @@ export const signInInputSchema = z.object({
 
 export type SignInInputData = z.infer<typeof signInInputSchema>
 
-export const signInSchema = z.object({
+export const signInOutputSchema = z.object({
   user: userSchema,
   authSession: authSessionSchema,
 })
 
-export const [signIn, signInAction] = createCreateAction(
+export const [signIn] = createCreateAction(
   {
     authorization: false,
     inputSchema: signInInputSchema,
-    outputSchema: signInSchema,
+    outputSchema: signInOutputSchema,
   },
   async ({emailAddress, password}) => {
     const [user] = await getUsers({filters: {emailAddress}, skipAuth: true})
