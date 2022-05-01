@@ -18,6 +18,15 @@ exports.up = async (knex) => {
       "userId" UUID NOT NULL,
       "token" TEXT UNIQUE NOT NULL
     );
+
+    CREATE TABLE "books" (
+      "id" UUID PRIMARY KEY,
+      "createdAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+      "updatedAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+      "createdByUserId" UUID NOT NULL,
+      "title" TEXT NOT NULL,
+      "level" INTEGER NOT NULL
+    );
   `)
 }
 
@@ -25,5 +34,6 @@ exports.down = async (knex) => {
   await knex.raw(`
     DROP TABLE "users";
     DROP TABLE "authSessions";
+    DROP TABLE "books";
 `)
 }
