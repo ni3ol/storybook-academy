@@ -1,6 +1,6 @@
 import {z} from 'zod'
-import {makeRequest} from '../shared/utils'
-import {User, userSchema} from './model'
+import {makeRequest} from '../../shared/utils'
+import {User, userSchema} from '../model'
 
 type Filters = {
   id?: string

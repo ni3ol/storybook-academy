@@ -2,9 +2,10 @@ import {Knex} from 'knex'
 import {z} from 'zod'
 import {hashPassword} from '../../auth/utils'
 import {db, useOrCreateTransaction} from '../../db/db'
-import {AuthorizationError} from '../../errors'
+import {AuthorizationError, ConflictError} from '../../errors'
 import {getUuid, utcNow} from '../../shared/utils'
 import {User, UserRole, userSchema} from '../model'
+import {getUsers} from './getUsers'
 
 export const createUserInputSchema = z.object({
   id: userSchema.shape.id.optional(),
@@ -21,6 +22,14 @@ export const createUser = async (
   data: CreateUserInputData,
   params?: {trx?: Knex.Transaction; as?: {user?: User}; skipAuth?: boolean},
 ) => {
+  const [existingUser] = await getUsers({
+    filters: {emailAddress: data.emailAddress},
+    skipAuth: true,
+  })
+  if (existingUser) {
+    throw new ConflictError(`User with that email address already exists`)
+  }
+
   const asOf = utcNow()
 
   if (params?.skipAuth !== true && params?.as?.user?.role !== UserRole.Admin) {

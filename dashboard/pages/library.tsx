@@ -1,25 +1,25 @@
-import { useState } from "react";
-import { Container } from "reactstrap";
-import { Header, Menu, Button, Modal, Icon } from "semantic-ui-react";
-import { RequireAuth } from "../src/auth/components/requireAuth";
-import { DashboardNavigation } from "../src/shared/components/dashboardNavigation/dashboardNavigation";
-import { LibraryTable } from "../src/library/components/libraryTable/libraryTable";
-import { CreateUserModal } from "../src/users/components/createUserModal";
-import { DeleteUserModal } from "../src/users/components/deleteUserModal";
-import { UpdateUserModal } from "../src/users/components/updateUserModal";
-import { UsersTable } from "../src/users/components/usersTable";
+import {useState} from 'react'
+import {Container} from 'reactstrap'
+import {Header, Menu, Button, Modal, Icon} from 'semantic-ui-react'
+import {RequireAuth} from '../src/auth/components/requireAuth'
+import {DashboardNavigation} from '../src/shared/components/dashboardNavigation/dashboardNavigation'
+import {LibraryTable} from '../src/library/components/libraryTable/libraryTable'
+import {CreateUserModal} from '../src/users/components/oldCreateUserModal'
+import {DeleteUserModal} from '../src/users/components/deleteUserModal'
+import {UpdateUserModal} from '../src/users/components/updateUserModal'
+import {UsersTable} from '../src/users/components/usersTable'
 
 export default function Library() {
   const [isCreateMaterialModalOpen, setIsCreateMaterialModalOpen] =
-    useState(false);
+    useState(false)
   const [isUpdateMaterialModalOpen, setIsUpdateMaterialModalOpen] =
-    useState(false);
+    useState(false)
   const [isDeleteMaterialModalOpen, setIsDeleteMaterialModalOpen] =
-    useState(false);
+    useState(false)
 
   return (
     <RequireAuth
-      render={({ auth }) => {
+      render={({auth}) => {
         return (
           <>
             <DashboardNavigation role={auth?.user?.role} />
@@ -38,18 +38,18 @@ export default function Library() {
                 setIsDeleteMaterialModalOpen={setIsDeleteMaterialModalOpen}
                 rows={[
                   {
-                    title: "The lion king",
-                    course: "Conservation",
-                    area: "Science",
-                    readingDate: "",
-                    levels: "1, 2, 3",
+                    title: 'The lion king',
+                    course: 'Conservation',
+                    area: 'Science',
+                    readingDate: '',
+                    levels: '1, 2, 3',
                   },
                   {
-                    title: "Water in Kenya",
-                    course: "Conservation",
-                    area: "Science",
-                    readingDate: "22 April 2022",
-                    levels: "1, 2",
+                    title: 'Water in Kenya',
+                    course: 'Conservation',
+                    area: 'Science',
+                    readingDate: '22 April 2022',
+                    levels: '1, 2',
                   },
                 ]}
               />
@@ -76,8 +76,8 @@ export default function Library() {
               )} */}
             </Container>
           </>
-        );
+        )
       }}
     />
-  );
+  )
 }

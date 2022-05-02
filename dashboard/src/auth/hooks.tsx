@@ -3,9 +3,9 @@ import {atom, useRecoilState} from 'recoil'
 import {useEffect} from 'react'
 import {AuthSession} from '../authSessions/model'
 import {User} from '../users/model'
-import {getUsers} from '../users/actions'
 import {getAuthSessions} from '../authSessions/actions'
 import {usePromiseLazy} from '../shared/hooks'
+import {getUsers} from '../users/actions/getUsers'
 
 export type Auth = {
   user: User
