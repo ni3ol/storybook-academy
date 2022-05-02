@@ -4,6 +4,7 @@ import {createBookEndpoint} from '../books/endpoints/createBookEndpoint'
 import {createUserEndpoint} from '../users/endpoints/createUserEndpoint'
 import {getUserEndpoint} from '../users/endpoints/getUserEndpoint'
 import {getUsersEndpoint} from '../users/endpoints/getUsersEndpoint'
+import {updateUserEndpoint} from '../users/endpoints/updateUserEndpoint'
 import {Endpoint} from './endpoint'
 
 export const endpoints: Endpoint<any, any, any>[] = [
@@ -11,6 +12,7 @@ export const endpoints: Endpoint<any, any, any>[] = [
   getUsersEndpoint,
   getUserEndpoint,
   createUserEndpoint,
+  updateUserEndpoint,
   // Auth sessions
   getAuthSessionsEndpoint,
   // Auth
