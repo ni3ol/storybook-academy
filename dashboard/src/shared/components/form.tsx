@@ -1,16 +1,8 @@
 /* eslint-disable react/display-name */
 import DatePicker from 'react-datepicker'
 import Select from 'react-select'
+import {Form as SemanticForm, Input, Message} from 'semantic-ui-react'
 import {Controller} from 'react-hook-form'
-import {
-  Form as BootstrapForm,
-  FormGroup,
-  Label,
-  Input,
-  FormText,
-  Alert,
-} from 'reactstrap'
-
 import 'react-datepicker/dist/react-datepicker.css'
 
 export const Form = ({
@@ -24,8 +16,12 @@ export const Form = ({
 }) => {
   return (
     <>
-      {error && <Alert color="danger">{error.message}</Alert>}
-      <BootstrapForm onSubmit={onSubmit}>{children}</BootstrapForm>
+      {error && (
+        <Message error>
+          {error.message} {JSON.stringify(error)}{' '}
+        </Message>
+      )}
+      <SemanticForm onSubmit={onSubmit}>{children}</SemanticForm>
     </>
   )
 }
@@ -53,14 +49,13 @@ const Field = ({
   helperText?: string
 }) => {
   return (
-    <FormGroup className="mb-3">
-      <Label>
+    <SemanticForm.Field>
+      <label>
         {label}
-        {required && '*'}
-      </Label>
+        {required ? ' *' : ''}
+      </label>
       {children}
-      {helperText && <FormText className="text-muted">{helperText}</FormText>}
-    </FormGroup>
+    </SemanticForm.Field>
   )
 }
 
