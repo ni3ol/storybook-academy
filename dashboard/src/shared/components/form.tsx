@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable react/display-name */
 import DatePicker from 'react-datepicker'
 import Select from 'react-select'
@@ -26,7 +27,7 @@ export const Form = ({
   )
 }
 
-type fieldProps = {
+type FieldProps = {
   required?: boolean
   label: string
   placeholder?: string
@@ -55,6 +56,7 @@ const Field = ({
         {required ? ' *' : ''}
       </label>
       {children}
+      {helperText && <span>{helperText}</span>}
     </SemanticForm.Field>
   )
 }
@@ -64,12 +66,10 @@ export const TextField = ({
   label,
   placeholder,
   helperText,
-  type,
   form,
   name,
   value,
-}: fieldProps) => {
-  console.log('va', value)
+}: FieldProps) => {
   return (
     <Field label={label} required={required} helperText={helperText}>
       <Controller
@@ -100,7 +100,7 @@ export const EmailField = ({
   form,
   name,
   value,
-}: fieldProps) => {
+}: FieldProps) => {
   return (
     <Field label={label} required={required} helperText={helperText}>
       <Controller
@@ -131,7 +131,7 @@ export const PasswordField = ({
   form,
   value,
   name,
-}: fieldProps) => {
+}: FieldProps) => {
   return (
     <Field label={label} required={required} helperText={helperText}>
       <Controller
@@ -162,7 +162,7 @@ export const CurrencyField = ({
   form,
   name,
   min,
-}: fieldProps) => {
+}: FieldProps) => {
   return (
     <Field label={label} required={required} helperText={helperText}>
       <Controller
@@ -199,7 +199,7 @@ export const NumberField = ({
   form,
   name,
   min,
-}: fieldProps) => {
+}: FieldProps) => {
   return (
     <Field label={label} required={required} helperText={helperText}>
       <Controller
@@ -215,7 +215,7 @@ export const NumberField = ({
               placeholder={placeholder}
               {...field}
               onChange={(event) => {
-                const value = parseInt(event.target.value)
+                const value = parseInt(event.target.value, 10)
                 field.onChange(value)
               }}
             />
@@ -232,7 +232,7 @@ export const DatetimeField = ({
   form,
   name,
   maxDate,
-}: fieldProps) => {
+}: FieldProps) => {
   return (
     <Field label={label} required={required} helperText={helperText}>
       <Controller
@@ -264,7 +264,7 @@ export const SelectField = <O,>({
   form,
   name,
   options,
-}: fieldProps & {options: {label: string; value: O}[]}) => {
+}: FieldProps & {options: {label: string; value: O}[]}) => {
   return (
     <Field label={label} required={required} helperText={helperText}>
       <Controller

@@ -1,7 +1,8 @@
+import {Knex} from 'knex'
 import {z} from 'zod'
-import {db} from '../../db/db'
-import {createUpdateAction} from '../../shared/actionUtils'
-import {User, UserRole, userSchema} from '../model'
+import {db, useOrCreateTransaction} from '../../db/db'
+import {utcNow} from '../../shared/utils'
+import {User, userSchema} from '../model'
 
 export const updateUserInputSchema = z.object({
   emailAddress: userSchema.shape.emailAddress.optional(),
@@ -12,21 +13,19 @@ export const updateUserInputSchema = z.object({
 
 export type UpdateUserInputData = z.infer<typeof updateUserInputSchema>
 
-export const [updateUser] = createUpdateAction(
-  {
-    inputSchema: updateUserInputSchema,
-    outputSchema: userSchema,
-    authorization: ({as}) => {
-      return as?.user?.role === UserRole.Admin
-    },
-  },
-  async (id, data, {trx, asOf}) => {
+export const updateUser = (
+  id: string,
+  data: UpdateUserInputData,
+  params?: {trx?: Knex.Transaction; as?: {user?: User}},
+) => {
+  return useOrCreateTransaction(params?.trx, async (trx) => {
+    const now = utcNow()
     const query = db('users')
-      .update({...data, updatedAt: asOf})
+      .update({...data, updatedAt: now})
       .where('id', '=', id)
       .returning('*')
       .transacting(trx)
     const [user] = (await query) as User[]
     return user
-  },
-)
+  })
+}

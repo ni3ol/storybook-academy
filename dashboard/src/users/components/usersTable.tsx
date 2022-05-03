@@ -4,7 +4,7 @@ import {User} from '../model'
 
 export const UsersTable = ({
   rows,
-  onUpdateClick: onUpdateClick,
+  onUpdateClick,
   onDeleteClick,
 }: {
   rows: User[]
@@ -24,51 +24,23 @@ export const UsersTable = ({
         title: 'Last name',
         resolve: (row) => row.lastName,
       },
-      // {
-      //   key: 'childId',
-      //   title: 'Child ID',
-      //   resolve: (row) => row.childId,
-      // },
-      // {
-      //   key: 'age',
-      //   title: 'Age',
-      //   resolve: (row) => row.age,
-      // },
-      // {
-      //   key: 'school',
-      //   title: 'School',
-      //   resolve: (row) => row.school,
-      // },
-      // {
-      //   key: 'teacher',
-      //   title: 'Teacher',
-      //   resolve: (row) => row.teacher,
-      // },
-      // {
-      //   key: 'readingLevel',
-      //   title: 'Reading level',
-      //   resolve: (row) => row.readingLevel,
-      // },
-      // {
-      //   key: 'aveReadingTime',
-      //   title: 'Ave. reading (minutes)',
-      //   resolve: (row) => row.aveReadingTime,
-      // },
-      // {
-      //   key: 'lastLoggedIn',
-      //   title: 'Last logged in',
-      //   resolve: (row) => row.lastLoggedIn,
-      // },
+      {
+        key: 'email',
+        title: 'Email',
+        resolve: (row) => row.emailAddress,
+      },
       {
         key: 'actions',
         title: 'Actions',
         resolve: (row) => (
-          <>
-            <Button onClick={() => onUpdateClick(row)} primary>
-              Edit
-            </Button>
-            <Button onClick={() => onDeleteClick()}>Delete</Button>
-          </>
+          <div style={{display: 'flex', justifyContent: 'flex-end'}}>
+            <div>
+              <Button onClick={() => onUpdateClick(row)} primary>
+                Edit
+              </Button>
+              <Button onClick={() => onDeleteClick()}>Delete</Button>
+            </div>
+          </div>
         ),
       },
     ]}

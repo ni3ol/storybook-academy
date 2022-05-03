@@ -3,12 +3,12 @@ import {DataTable} from '../../../shared/components/dataTable'
 
 export const LibraryTable = ({
   rows,
-  setIsUpdateMaterialModalOpen,
-  setIsDeleteMaterialModalOpen,
+  onUpdateClick,
+  onDeleteClick,
 }: {
   rows: any
-  setIsUpdateMaterialModalOpen: any
-  setIsDeleteMaterialModalOpen: any
+  onUpdateClick: () => any
+  onDeleteClick: () => any
 }) => (
   <DataTable
     rows={rows}
@@ -43,12 +43,10 @@ export const LibraryTable = ({
         title: 'Actions',
         resolve: (row) => (
           <>
-            <Button onClick={() => setIsUpdateMaterialModalOpen(true)} primary>
+            <Button onClick={() => onUpdateClick()} primary>
               Edit
             </Button>
-            <Button onClick={() => setIsDeleteMaterialModalOpen(true)}>
-              Delete
-            </Button>
+            <Button onClick={() => onDeleteClick()}>Delete</Button>
           </>
         ),
       },

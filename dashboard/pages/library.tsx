@@ -1,22 +1,11 @@
-import {useState} from 'react'
-import {Container} from 'reactstrap'
-import {Header, Menu, Button, Modal, Icon} from 'semantic-ui-react'
 import {RequireAuth} from '../src/auth/components/requireAuth'
 import {DashboardNavigation} from '../src/shared/components/dashboardNavigation/dashboardNavigation'
 import {LibraryTable} from '../src/library/components/libraryTable/libraryTable'
-import {CreateUserModal} from '../src/users/components/oldCreateUserModal'
-import {DeleteUserModal} from '../src/users/components/deleteUserModal'
-import {UpdateUserModal} from '../src/users/components/updateUserModal'
-import {UsersTable} from '../src/users/components/usersTable'
+import {Header} from '../src/shared/components/header'
+import {Button} from '../src/shared/components/button'
+import {Container} from '../src/shared/components/container'
 
 export default function Library() {
-  const [isCreateMaterialModalOpen, setIsCreateMaterialModalOpen] =
-    useState(false)
-  const [isUpdateMaterialModalOpen, setIsUpdateMaterialModalOpen] =
-    useState(false)
-  const [isDeleteMaterialModalOpen, setIsDeleteMaterialModalOpen] =
-    useState(false)
-
   return (
     <RequireAuth
       render={({auth}) => {
@@ -24,18 +13,19 @@ export default function Library() {
           <>
             <DashboardNavigation role={auth?.user?.role} />
             <Container>
-              <Header as="h1">Library</Header>
-
-              <Button
-                onClick={() => setIsCreateMaterialModalOpen(true)}
-                primary
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
               >
-                Add material
-              </Button>
-
+                <Header as="h1">Library</Header>
+                <Button primary>Add material</Button>
+              </div>
               <LibraryTable
-                setIsUpdateMaterialModalOpen={setIsUpdateMaterialModalOpen}
-                setIsDeleteMaterialModalOpen={setIsDeleteMaterialModalOpen}
+                onUpdateClick={() => null}
+                onDeleteClick={() => null}
                 rows={[
                   {
                     title: 'The lion king',
@@ -53,27 +43,6 @@ export default function Library() {
                   },
                 ]}
               />
-
-              {/* {isCreateUserModalOpen && (
-                <CreateUserModal
-                  open={isCreateUserModalOpen}
-                  setOpen={setIsCreateUserModalOpen}
-                />
-              )}
-
-              {isUpdateUserModalOpen && (
-                <UpdateUserModal
-                  open={isUpdateUserModalOpen}
-                  setOpen={setIsUpdateUserModalOpen}
-                />
-              )}
-
-              {isDeleteUserModalOpen && (
-                <DeleteUserModal
-                  open={isDeleteUserModalOpen}
-                  setOpen={setIsDeleteUserModalOpen}
-                />
-              )} */}
             </Container>
           </>
         )

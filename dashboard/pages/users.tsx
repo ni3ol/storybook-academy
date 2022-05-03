@@ -1,6 +1,4 @@
 import {useState} from 'react'
-import {Container} from 'reactstrap'
-import {Header, Button} from 'semantic-ui-react'
 import {RequireAuth} from '../src/auth/components/requireAuth'
 import {DashboardNavigation} from '../src/shared/components/dashboardNavigation/dashboardNavigation'
 import {UsersTable} from '../src/users/components/usersTable'
@@ -10,6 +8,9 @@ import {getUsers} from '../src/users/actions/getUsers'
 import {CreateUserModal} from '../src/users/components/createUserModal'
 import {User} from '../src/users/model'
 import {UpdateUserModal} from '../src/users/components/updateUserModal'
+import {Container} from '../src/shared/components/container'
+import {Button} from '../src/shared/components/button'
+import {Header} from '../src/shared/components/header'
 
 const Users = ({auth}: {auth: Auth}) => {
   const [isCreateUserModalOpen, setIsCreateUserModalOpen] = useState(false)
@@ -42,10 +43,18 @@ const Users = ({auth}: {auth: Auth}) => {
       )}
       <DashboardNavigation role={auth.user.role} />
       <Container>
-        <Header as="h1">Users</Header>
-        <Button onClick={() => setIsCreateUserModalOpen(true)} primary>
-          Add user
-        </Button>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <Header as="h1">Users</Header>
+          <Button onClick={() => setIsCreateUserModalOpen(true)} primary>
+            Add user
+          </Button>
+        </div>
         <UsersTable
           onUpdateClick={(user) => setUserToUpdate(user)}
           onDeleteClick={() => null}

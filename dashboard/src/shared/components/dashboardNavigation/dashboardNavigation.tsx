@@ -1,16 +1,10 @@
 import {useRouter} from 'next/router'
 import {Button, Menu} from 'semantic-ui-react'
-import {useState} from 'react'
 import {useAuth} from '../../../auth/hooks'
 import styles from './dashboardNavigation.module.css'
 import {UserRole} from '../../../users/model'
 
 export const DashboardNavigation = ({role}: {role: UserRole}) => {
-  const initActiveItem = [UserRole.Admin, UserRole.Principal].includes(role)
-    ? 'users'
-    : 'students'
-  const [activeItem, setActiveItem] = useState('dashboard')
-
   const router = useRouter()
   const auth = useAuth()
 
@@ -20,7 +14,6 @@ export const DashboardNavigation = ({role}: {role: UserRole}) => {
   }
 
   const handleClick = (item: string) => {
-    setActiveItem(item)
     router.push(`/${item}`)
   }
 
@@ -39,28 +32,17 @@ export const DashboardNavigation = ({role}: {role: UserRole}) => {
         <div>
           <Menu.Item
             name="dashboard"
-            active={activeItem === 'dashboard'}
             onClick={() => handleClick('/dashboard')}
             style={{color: 'white'}}
           >
-            Storybook Academy - {role}
+            Storybook Academy
           </Menu.Item>
         </div>
         <div style={{display: 'flex'}}>
-          {[UserRole.Teacher].includes(role) && (
-            <Menu.Item
-              name="students"
-              active={activeItem === 'students'}
-              onClick={() => handleClick('students')}
-              style={{color: 'white'}}
-            >
-              Students
-            </Menu.Item>
-          )}
           {[UserRole.Principal, UserRole.Admin].includes(role) && (
             <Menu.Item
               name="users"
-              active={activeItem === 'users'}
+              active={router.pathname === '/users'}
               onClick={() => handleClick('users')}
               style={{color: 'white'}}
             >
@@ -71,40 +53,35 @@ export const DashboardNavigation = ({role}: {role: UserRole}) => {
             role,
           ) && (
             <Menu.Item
-              name="learn-more"
-              active={activeItem === 'learn-more'}
-              onClick={() => handleClick('learn-more')}
-              style={{color: 'white'}}
-            >
-              Learn more
-            </Menu.Item>
-          )}
-          {[UserRole.Principal, UserRole.Admin].includes(role) && (
-            <Menu.Item
-              name="subscriptions"
-              active={activeItem === 'subscriptions'}
-              onClick={() => handleClick('subscriptions')}
-              style={{color: 'white'}}
-            >
-              Subscriptions
-            </Menu.Item>
-          )}
-          {[UserRole.Principal, UserRole.Teacher, UserRole.Admin].includes(
-            role,
-          ) && (
-            <Menu.Item
               name="library"
-              active={activeItem === 'library'}
+              active={router.pathname === '/library'}
               onClick={() => handleClick('library')}
               style={{color: 'white'}}
             >
               Library
             </Menu.Item>
           )}
+          {[UserRole.Teacher].includes(role) && (
+            <Menu.Item
+              name="students"
+              onClick={() => handleClick('students')}
+              style={{color: 'white'}}
+            >
+              Students
+            </Menu.Item>
+          )}
+          {[UserRole.Principal, UserRole.Admin].includes(role) && (
+            <Menu.Item
+              name="subscriptions"
+              onClick={() => handleClick('subscriptions')}
+              style={{color: 'white'}}
+            >
+              Subscriptions
+            </Menu.Item>
+          )}
           {[UserRole.Principal, UserRole.Admin].includes(role) && (
             <Menu.Item
               name="report"
-              active={activeItem === 'report'}
               onClick={() => handleClick('report')}
               style={{color: 'white'}}
             >
@@ -116,11 +93,21 @@ export const DashboardNavigation = ({role}: {role: UserRole}) => {
           ) && (
             <Menu.Item
               name="chat"
-              active={activeItem === 'chat'}
               onClick={() => handleClick('chat')}
               style={{color: 'white'}}
             >
               Chat
+            </Menu.Item>
+          )}
+          {[UserRole.Principal, UserRole.Teacher, UserRole.Admin].includes(
+            role,
+          ) && (
+            <Menu.Item
+              name="learn-more"
+              onClick={() => handleClick('learn-more')}
+              style={{color: 'white'}}
+            >
+              Learn more
             </Menu.Item>
           )}
           <li className={styles.navigationItem} style={{marginRight: 30}}>

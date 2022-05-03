@@ -51,5 +51,6 @@ module.exports = {
     'import/newline-after-import': 'off',
     'max-classes-per-file': 'off',
     '@typescript-eslint/no-misused-promises': 'warn',
+    'react/no-unused-prop-types': 'off',
   },
 }

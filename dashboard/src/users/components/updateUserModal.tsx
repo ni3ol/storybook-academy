@@ -20,7 +20,7 @@ type FormData = {
 
 export const UpdateUserModal = ({
   onClose,
-  onUserUpdated: onUserUpdated,
+  onUserUpdated,
   user,
 }: {
   user: User
@@ -30,16 +30,14 @@ export const UpdateUserModal = ({
   const form = useForm<FormData>()
   const {auth} = useAuth()
 
-  console.log('sss', user.firstName)
-
   const action = usePromiseLazy(async (data: FormData) => {
     return updateUser({id: user.id, authToken: auth.token!, data})
   }, [])
 
   const handleSubmit = async (data: FormData) => {
-    const {result: user} = await action.execute(data)
-    if (user && onUserUpdated) {
-      await onUserUpdated(user)
+    const {result: updatedUser} = await action.execute(data)
+    if (updatedUser && onUserUpdated) {
+      await onUserUpdated(updatedUser)
     }
   }
 

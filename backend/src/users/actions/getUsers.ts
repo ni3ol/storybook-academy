@@ -1,11 +1,8 @@
+import {Knex} from 'knex'
 import {z} from 'zod'
-import {db} from '../../db/db'
-import {
-  applyFilters,
-  createGetAction,
-  FilterMapping,
-} from '../../shared/actionUtils'
-import {userSchema} from '../model'
+import {db, useOrCreateTransaction} from '../../db/db'
+import {applyFilters, FilterMapping} from '../../shared/actionUtils'
+import {User, userSchema} from '../model'
 
 export const userFiltersSchema = z
   .object({
@@ -23,19 +20,17 @@ const filterMapping: FilterMapping<UserFilters> = {
     query.where('emailAddress', '=', filters.emailAddress!),
 }
 
-export const [getUsers] = createGetAction(
-  {
-    filterSchema: userFiltersSchema,
-    outputSchema: userSchema,
-    authorization: ({as}) => {
-      return !!as?.user
-    },
-  },
-  async ({trx, filters}) => {
+export const getUsers = async (params?: {
+  filters?: UserFilters
+  trx?: Knex.Transaction
+  as?: {user?: User}
+  skipAuth?: boolean
+}) => {
+  return useOrCreateTransaction(params?.trx, async (trx) => {
     const query = db.select('*').from('users').transacting(trx)
-    const filteredQuery = applyFilters(query, filterMapping, filters)
+    const filteredQuery = applyFilters(query, filterMapping, params?.filters)
     const rows: any[] = await filteredQuery
     const users = rows.map((row) => userSchema.parse(row))
     return users
-  },
-)
+  })
+}

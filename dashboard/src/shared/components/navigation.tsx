@@ -1,36 +1,27 @@
 /* eslint-disable react/display-name */
-import Link from "next/link";
-import {
-  Container,
-  Nav,
-  Navbar,
-  NavbarBrand,
-  NavbarToggler,
-  Collapse,
-  NavLink,
-} from "reactstrap";
-import { useRouter } from "next/router";
-import { forwardRef } from "react";
+import Link from 'next/link'
+import {useRouter} from 'next/router'
+import {Menu} from 'semantic-ui-react'
+import {Container} from './container'
 
 export const Navigation = () => {
-  const router = useRouter();
+  const router = useRouter()
+
   return (
-    <Navbar expand="lg">
-      <Link href="/" passHref>
-        <NavbarBrand>Storybook Academy</NavbarBrand>
-      </Link>
-      <NavbarToggler aria-controls="responsive-navbar-nav" />
-      <Collapse navbar>
-        <Nav className="me-auto" />
-        <Nav>
-          <Link href="/sign-in" passHref>
-            <NavLink active={router.pathname === "/sign-in"}>Sign in</NavLink>
+    <Menu secondary pointing>
+      <Container>
+        <Link href="/" passHref>
+          <Menu.Item header>Storybook Academy</Menu.Item>
+        </Link>
+        <Menu.Menu position="right">
+          <Link passHref href="/sign-in">
+            <Menu.Item name="Sign in" active={router.pathname === '/sign-in'} />
           </Link>
           <Link href="/sign-up" passHref>
-            <NavLink active={router.pathname === "/sign-up"}>Sign up</NavLink>
+            <Menu.Item name="Sign up" active={router.pathname === '/sign-up'} />
           </Link>
-        </Nav>
-      </Collapse>
-    </Navbar>
-  );
-};
+        </Menu.Menu>
+      </Container>
+    </Menu>
+  )
+}

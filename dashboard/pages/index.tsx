@@ -1,34 +1,29 @@
-import Link from "next/link";
-import { Container, Nav, Navbar, Button } from "reactstrap";
-import { Navigation } from "../src/shared/components/navigation";
+import Link from 'next/link'
+import {Button} from '../src/shared/components/button'
+import {Container} from '../src/shared/components/container'
 
 export default function Home() {
   return (
-    <>
-      <Container>
-        <Navigation />
-        <div
-          style={{
-            display: "flex",
-            minHeight: "calc(90vh - 90px)",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <div>
-            <h1 style={{ fontSize: "50px", padding: 28 }}>
-              Welcome to Storybook Academy
-            </h1>
-            <div style={{ textAlign: "center" }}>
-              <Link href="/sign-up" passHref>
-                <Button color="primary" size="lg">
-                  Get started
-                </Button>
-              </Link>
-            </div>
+    <Container>
+      <div
+        style={{
+          display: 'flex',
+          minHeight: 'calc(90vh - 90px)',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <div>
+          <h1 style={{fontSize: '50px', padding: 28}}>
+            Welcome to Storybook Academy
+          </h1>
+          <div style={{textAlign: 'center'}}>
+            <Link href="/sign-up" passHref>
+              <Button>Get started</Button>
+            </Link>
           </div>
         </div>
-      </Container>
-    </>
-  );
+      </div>
+    </Container>
+  )
 }
