@@ -4,11 +4,11 @@ import {User} from '../model'
 
 export const UsersTable = ({
   rows,
-  onEditClick,
+  onUpdateClick: onUpdateClick,
   onDeleteClick,
 }: {
   rows: User[]
-  onEditClick: () => any
+  onUpdateClick: (user: User) => any
   onDeleteClick: () => any
 }) => (
   <DataTable
@@ -62,9 +62,9 @@ export const UsersTable = ({
       {
         key: 'actions',
         title: 'Actions',
-        resolve: () => (
+        resolve: (row) => (
           <>
-            <Button onClick={() => onEditClick()} primary>
+            <Button onClick={() => onUpdateClick(row)} primary>
               Edit
             </Button>
             <Button onClick={() => onDeleteClick()}>Delete</Button>

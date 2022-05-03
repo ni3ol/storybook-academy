@@ -67,7 +67,9 @@ export const TextField = ({
   type,
   form,
   name,
+  value,
 }: fieldProps) => {
+  console.log('va', value)
   return (
     <Field label={label} required={required} helperText={helperText}>
       <Controller
@@ -78,6 +80,7 @@ export const TextField = ({
           return (
             <Input
               required={required}
+              defaultValue={value}
               type="text"
               placeholder={placeholder}
               {...field}
@@ -96,6 +99,7 @@ export const EmailField = ({
   helperText,
   form,
   name,
+  value,
 }: fieldProps) => {
   return (
     <Field label={label} required={required} helperText={helperText}>
@@ -109,6 +113,7 @@ export const EmailField = ({
               required={required}
               type="email"
               placeholder={placeholder}
+              defaultValue={value}
               {...field}
             />
           )
@@ -124,6 +129,7 @@ export const PasswordField = ({
   placeholder,
   helperText,
   form,
+  value,
   name,
 }: fieldProps) => {
   return (
@@ -138,6 +144,7 @@ export const PasswordField = ({
               required={required}
               type="password"
               placeholder={placeholder}
+              defaultValue={value}
               {...field}
             />
           )

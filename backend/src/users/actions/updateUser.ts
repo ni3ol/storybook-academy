@@ -1,7 +1,7 @@
 import {z} from 'zod'
 import {db} from '../../db/db'
 import {createUpdateAction} from '../../shared/actionUtils'
-import {UserRole, userSchema} from '../model'
+import {User, UserRole, userSchema} from '../model'
 
 export const updateUserInputSchema = z.object({
   emailAddress: userSchema.shape.emailAddress.optional(),
@@ -26,7 +26,7 @@ export const [updateUser] = createUpdateAction(
       .where('id', '=', id)
       .returning('*')
       .transacting(trx)
-    const [user] = (await query) as Record<string, any>[]
+    const [user] = (await query) as User[]
     return user
   },
 )

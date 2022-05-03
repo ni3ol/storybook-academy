@@ -8,9 +8,12 @@ import {Auth} from '../src/auth/hooks'
 import {usePromise} from '../src/shared/hooks'
 import {getUsers} from '../src/users/actions/getUsers'
 import {CreateUserModal} from '../src/users/components/createUserModal'
+import {User} from '../src/users/model'
+import {UpdateUserModal} from '../src/users/components/updateUserModal'
 
 const Users = ({auth}: {auth: Auth}) => {
   const [isCreateUserModalOpen, setIsCreateUserModalOpen] = useState(false)
+  const [userToUpdate, setUserToUpdate] = useState<User | undefined>()
 
   const action = usePromise(() => {
     return getUsers({authToken: auth.token})
@@ -27,6 +30,16 @@ const Users = ({auth}: {auth: Auth}) => {
           }}
         />
       )}
+      {userToUpdate && (
+        <UpdateUserModal
+          user={userToUpdate}
+          onClose={() => setUserToUpdate(undefined)}
+          onUserUpdated={() => {
+            setUserToUpdate(undefined)
+            action.execute()
+          }}
+        />
+      )}
       <DashboardNavigation role={auth.user.role} />
       <Container>
         <Header as="h1">Users</Header>
@@ -34,7 +47,7 @@ const Users = ({auth}: {auth: Auth}) => {
           Add user
         </Button>
         <UsersTable
-          onEditClick={() => null}
+          onUpdateClick={(user) => setUserToUpdate(user)}
           onDeleteClick={() => null}
           rows={action.result || []}
         />
