@@ -11,10 +11,12 @@ import {UpdateUserModal} from '../src/users/components/updateUserModal'
 import {Container} from '../src/shared/components/container'
 import {Button} from '../src/shared/components/button'
 import {Header} from '../src/shared/components/header'
+import {DeleteUserModal} from '../src/users/components/deleteUserModal'
 
 const Users = ({auth}: {auth: Auth}) => {
   const [isCreateUserModalOpen, setIsCreateUserModalOpen] = useState(false)
   const [userToUpdate, setUserToUpdate] = useState<User | undefined>()
+  const [userToDelete, setUserToDelete] = useState<User | undefined>()
 
   const action = usePromise(() => {
     return getUsers({authToken: auth.token})
@@ -41,6 +43,12 @@ const Users = ({auth}: {auth: Auth}) => {
           }}
         />
       )}
+      {userToDelete && (
+        <DeleteUserModal
+          user={userToDelete}
+          onClose={() => setUserToDelete(undefined)}
+        />
+      )}
       <DashboardNavigation role={auth.user.role} />
       <Container>
         <div
@@ -57,7 +65,7 @@ const Users = ({auth}: {auth: Auth}) => {
         </div>
         <UsersTable
           onUpdateClick={(user) => setUserToUpdate(user)}
-          onDeleteClick={() => null}
+          onDeleteClick={(user) => setUserToDelete(user)}
           rows={action.result || []}
         />
       </Container>

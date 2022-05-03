@@ -108,5 +108,13 @@ export const useAuth = () => {
     return false
   }
 
-  return {authenticate, isAuthenticated, deAuthenticate, auth}
+  const expectAuthToken = () => {
+    if (!auth.authSession?.token) {
+      throw new Error('Expected auth token')
+    }
+
+    return auth.authSession.token
+  }
+
+  return {authenticate, isAuthenticated, deAuthenticate, auth, expectAuthToken}
 }

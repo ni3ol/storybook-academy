@@ -9,7 +9,7 @@ export const UsersTable = ({
 }: {
   rows: User[]
   onUpdateClick: (user: User) => any
-  onDeleteClick: () => any
+  onDeleteClick: (user: User) => any
 }) => (
   <DataTable
     rows={rows}
@@ -17,28 +17,30 @@ export const UsersTable = ({
       {
         key: 'firstName',
         title: 'First name',
-        resolve: (row) => row.firstName,
+        resolve: (user) => user.firstName,
       },
       {
         key: 'lastName',
         title: 'Last name',
-        resolve: (row) => row.lastName,
+        resolve: (user) => user.lastName,
       },
       {
         key: 'email',
         title: 'Email',
-        resolve: (row) => row.emailAddress,
+        resolve: (user) => user.emailAddress,
       },
       {
         key: 'actions',
         title: 'Actions',
-        resolve: (row) => (
+        resolve: (user) => (
           <div style={{display: 'flex', justifyContent: 'flex-end'}}>
             <div>
-              <Button onClick={() => onUpdateClick(row)} primary>
+              <Button basic onClick={() => onUpdateClick(user)} primary>
                 Edit
               </Button>
-              <Button onClick={() => onDeleteClick()}>Delete</Button>
+              <Button basic color="red" onClick={() => onDeleteClick(user)}>
+                Delete
+              </Button>
             </div>
           </div>
         ),

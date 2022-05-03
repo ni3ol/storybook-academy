@@ -1,29 +1,54 @@
-import {Button, Header, Modal} from 'semantic-ui-react'
+import {useAuth} from '../../auth/hooks'
+import {Button} from '../../shared/components/button'
+import {Message} from '../../shared/components/message'
+import {Modal} from '../../shared/components/modal'
+import {usePromiseLazy} from '../../shared/hooks'
+import {deleteUser} from '../actions/deleteUser'
+import {User} from '../model'
 
 export const DeleteUserModal = ({
-  open,
-  setOpen,
+  onClose,
+  user,
+  onUserDeleted,
 }: {
-  open: boolean
-  setOpen: any
-}) => (
-  <Modal
-    size="small"
-    style={{height: 250, margin: 'auto', position: 'relative'}}
-    closeIcon
-    open={open}
-    onClose={() => setOpen(false)}
-    onOpen={() => setOpen(true)}
-  >
-    <Header icon="user" content="Delete student" />
-    <Modal.Content>Are you sure you would like to delete X?</Modal.Content>
-    <Modal.Actions style={{display: 'flex', justifyContent: 'space-between'}}>
-      <Button color="red" onClick={() => setOpen(false)}>
-        No
-      </Button>
-      <Button primary onClick={() => setOpen(false)}>
-        Yes
-      </Button>
-    </Modal.Actions>
-  </Modal>
-)
+  onClose: () => any
+  user: User
+  onUserDeleted?: () => any
+}) => {
+  const auth = useAuth()
+
+  const action = usePromiseLazy(() => {
+    return deleteUser({id: user.id, authToken: auth.expectAuthToken()})
+  }, [])
+
+  const handleDeleteUser = async () => {
+    const {error} = await action.execute()
+    if (!error && onUserDeleted) {
+      onUserDeleted()
+    }
+  }
+
+  return (
+    <Modal
+      onClose={onClose}
+      header="Delete user"
+      body={
+        <>
+          {action.error && <Message negative>{action.error.message}</Message>}
+          <p>
+            Are you sure you want to delete this user <b>{user.emailAddress}</b>
+            ?
+          </p>
+          <Button
+            fluid
+            color="red"
+            onClick={handleDeleteUser}
+            loading={action.isLoading}
+          >
+            Delete user
+          </Button>
+        </>
+      }
+    />
+  )
+}
