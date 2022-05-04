@@ -16,7 +16,7 @@ export class ValidationError extends Error {
   }
 }
 
-const baseUrl = process.env.BASE_URL || 'http://localhost:5001'
+const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL
 
 export const makeRequest = async ({
   method,
