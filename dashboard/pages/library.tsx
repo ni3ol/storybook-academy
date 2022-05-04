@@ -10,11 +10,14 @@ import {useState} from 'react'
 import {usePromise} from '../src/shared/hooks'
 import {getBooks} from '../src/library/actions/getBooks'
 import {CreateBookModal} from '../src/library/components/createBookModal'
+import {Book} from '../src/library/model'
+import {UpdateBookModal} from '../src/library/components/updateBookModal'
+import {DeleteBookModal} from '../src/library/components/deleteBookModal'
 
 const Library = ({auth}: {auth: Auth}) => {
   const [isCreateBookModalOpen, setIsCreateBookModalOpen] = useState(false)
-  // const [userToUpdate, setUserToUpdate] = useState<User | undefined>()
-  // const [userToDelete, setUserToDelete] = useState<User | undefined>()
+  const [bookToUpdate, setBookToUpdate] = useState<Book | undefined>()
+  const [bookToDelete, setBookToDelete] = useState<Book | undefined>()
 
   const action = usePromise(() => {
     return getBooks({authToken: auth.token})
@@ -27,6 +30,28 @@ const Library = ({auth}: {auth: Auth}) => {
           onClose={() => setIsCreateBookModalOpen(false)}
           onBookCreated={() => {
             setIsCreateBookModalOpen(false)
+            action.execute()
+          }}
+        />
+      )}
+      {bookToUpdate && (
+        <UpdateBookModal
+          book={bookToUpdate}
+          onClose={() => setBookToUpdate(undefined)}
+          onBookUpdated={() => {
+            setBookToUpdate(undefined)
+            action.execute()
+          }}
+        />
+      )}
+      {bookToDelete && (
+        <DeleteBookModal
+          book={bookToDelete}
+          onClose={() => {
+            setBookToDelete(undefined)
+          }}
+          onBookDeleted={() => {
+            setBookToDelete(undefined)
             action.execute()
           }}
         />
@@ -46,8 +71,8 @@ const Library = ({auth}: {auth: Auth}) => {
           </Button>
         </div>
         <LibraryTable
-          onUpdateClick={() => {}}
-          onDeleteClick={() => {}}
+          onUpdateClick={(book) => setBookToUpdate(book)}
+          onDeleteClick={(book) => setBookToDelete(book)}
           rows={action.result || []}
         />
       </Container>
