@@ -22,6 +22,7 @@ export const usePromiseLazy = <F, P>(
         setState({isLoading: false, result: theResult, error: undefined})
         return {result: theResult, error: undefined}
       } catch (caughtError: any) {
+        console.error('usePromise error', caughtError)
         setState({isLoading: false, result: undefined, error: caughtError})
         return {result: undefined, error: caughtError}
       }

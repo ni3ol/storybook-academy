@@ -26,6 +26,12 @@ const authTokenPath = 'authToken'
 export const useAuth = () => {
   const [auth, setAuth] = useRecoilState(authState)
 
+  const deAuthenticate = () => {
+    localStorage.removeItem(userIdPath)
+    localStorage.removeItem(authTokenPath)
+    setAuth({status: 'unauthenticated'})
+  }
+
   const action = usePromiseLazy(
     async ({token, userId}: {token: string; userId: string}) => {
       try {
@@ -37,18 +43,21 @@ export const useAuth = () => {
           authToken: token,
           filters: {id: userId},
         })
-        const newAuth = {
-          userId,
-          token,
-          user,
-          authSession,
+        if (!authSession || !user) {
+          deAuthenticate()
+        } else {
+          const newAuth = {
+            userId,
+            token,
+            user,
+            authSession,
+          }
+          setAuth({...newAuth, status: 'authenticated'})
         }
-        setAuth({...newAuth, status: 'authenticated'})
       } catch (error: any) {
         console.error(error)
         if (error.message === 'Authentication required') {
           deAuthenticate()
-          setAuth({status: 'unauthenticated'})
         }
         throw error
       }
@@ -65,7 +74,7 @@ export const useAuth = () => {
         action.execute({token, userId})
       }
       if (!token && !userId) {
-        setAuth({status: 'unauthenticated'})
+        deAuthenticate()
       }
     })()
   }, [])
@@ -86,12 +95,6 @@ export const useAuth = () => {
       token: authSession.token,
       status: 'authenticated',
     })
-  }
-
-  const deAuthenticate = () => {
-    localStorage.removeItem(userIdPath)
-    localStorage.removeItem(authTokenPath)
-    setAuth({})
   }
 
   const isAuthenticated = () => {
