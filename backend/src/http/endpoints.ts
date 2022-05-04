@@ -1,6 +1,7 @@
 import {signInEndpoint} from '../auth/endpoints/signInEndpoint'
 import {getAuthSessionsEndpoint} from '../authSessions/endpoints/getAuthSessionsEndpoint'
 import {createBookEndpoint} from '../books/endpoints/createBookEndpoint'
+import {getBooksEndpoint} from '../books/endpoints/getBooksEndpoint'
 import {createUserEndpoint} from '../users/endpoints/createUserEndpoint'
 import {deleteUserEndpoint} from '../users/endpoints/deleteUserEndpoint'
 import {getUserEndpoint} from '../users/endpoints/getUserEndpoint'
@@ -21,4 +22,6 @@ export const endpoints: Endpoint<any, any, any>[] = [
   signInEndpoint,
   // Books
   createBookEndpoint,
+  getBooksEndpoint,
+  updateUserEndpoint,
 ]

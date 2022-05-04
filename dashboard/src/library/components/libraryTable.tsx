@@ -1,12 +1,13 @@
 import {Button} from 'semantic-ui-react'
-import {DataTable} from '../../../shared/components/dataTable'
+import {DataTable} from '../../shared/components/dataTable'
+import {Book} from '../model'
 
 export const LibraryTable = ({
   rows,
   onUpdateClick,
   onDeleteClick,
 }: {
-  rows: any
+  rows: Book[]
   onUpdateClick: () => any
   onDeleteClick: () => any
 }) => (
@@ -19,24 +20,9 @@ export const LibraryTable = ({
         resolve: (row) => row.title,
       },
       {
-        key: 'course',
-        title: 'Course',
-        resolve: (row) => row.course,
-      },
-      {
-        key: 'area',
-        title: 'Area',
-        resolve: (row) => row.area,
-      },
-      {
-        key: 'readingDate',
-        title: 'Reading date',
-        resolve: (row) => row.readingDate,
-      },
-      {
         key: 'levels',
         title: 'Levels',
-        resolve: (row) => row.levels,
+        resolve: (row) => row.level,
       },
       {
         key: 'actions',

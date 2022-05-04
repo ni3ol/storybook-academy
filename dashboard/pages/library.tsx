@@ -1,16 +1,37 @@
 /* eslint-disable jsx-a11y/aria-role */
 import {RequireAuth} from '../src/auth/components/requireAuth'
 import {DashboardNavigation} from '../src/shared/components/dashboardNavigation/dashboardNavigation'
-import {LibraryTable} from '../src/library/components/libraryTable/libraryTable'
+import {LibraryTable} from '../src/library/components/libraryTable'
 import {Header} from '../src/shared/components/header'
 import {Button} from '../src/shared/components/button'
 import {Container} from '../src/shared/components/container'
 import {Auth} from '../src/auth/hooks'
+import {useState} from 'react'
+import {usePromise} from '../src/shared/hooks'
+import {getBooks} from '../src/library/actions/getBooks'
+import {CreateBookModal} from '../src/library/components/createBookModal'
 
 const Library = ({auth}: {auth: Auth}) => {
+  const [isCreateBookModalOpen, setIsCreateBookModalOpen] = useState(false)
+  // const [userToUpdate, setUserToUpdate] = useState<User | undefined>()
+  // const [userToDelete, setUserToDelete] = useState<User | undefined>()
+
+  const action = usePromise(() => {
+    return getBooks({authToken: auth.token})
+  }, [])
+
   return (
     <>
-      <DashboardNavigation role={auth?.user?.role} />
+      {isCreateBookModalOpen && (
+        <CreateBookModal
+          onClose={() => setIsCreateBookModalOpen(false)}
+          onBookCreated={() => {
+            setIsCreateBookModalOpen(false)
+            action.execute()
+          }}
+        />
+      )}
+      <DashboardNavigation role={auth.user.role} />
       <Container>
         <div
           style={{
@@ -20,27 +41,14 @@ const Library = ({auth}: {auth: Auth}) => {
           }}
         >
           <Header as="h1">Library</Header>
-          <Button primary>Add material</Button>
+          <Button onClick={() => setIsCreateBookModalOpen(true)} primary>
+            Add book
+          </Button>
         </div>
         <LibraryTable
-          onUpdateClick={() => null}
-          onDeleteClick={() => null}
-          rows={[
-            {
-              title: 'The lion king',
-              course: 'Conservation',
-              area: 'Science',
-              readingDate: '',
-              levels: '1, 2, 3',
-            },
-            {
-              title: 'Water in Kenya',
-              course: 'Conservation',
-              area: 'Science',
-              readingDate: '22 April 2022',
-              levels: '1, 2',
-            },
-          ]}
+          onUpdateClick={() => {}}
+          onDeleteClick={() => {}}
+          rows={action.result || []}
         />
       </Container>
     </>
