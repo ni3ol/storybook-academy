@@ -27,7 +27,11 @@ export const getUsers = async (params?: {
   skipAuth?: boolean
 }) => {
   return useOrCreateTransaction(params?.trx, async (trx) => {
-    const query = db.select('*').from('users').transacting(trx)
+    const query = db
+      .select('*')
+      .from('users')
+      .orderBy('createdAt', 'desc')
+      .transacting(trx)
     const filteredQuery = applyFilters(query, filterMapping, params?.filters)
     const rows: any[] = await filteredQuery
     const users = rows.map((row) => userSchema.parse(row))

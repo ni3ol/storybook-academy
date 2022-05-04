@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import {useForm} from 'react-hook-form'
 import {Button} from 'semantic-ui-react'
 import {useAuth} from '../../auth/hooks'

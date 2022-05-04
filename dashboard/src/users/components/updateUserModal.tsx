@@ -31,7 +31,7 @@ export const UpdateUserModal = ({
   const {auth} = useAuth()
 
   const action = usePromiseLazy(async (data: FormData) => {
-    return updateUser({id: user.id, authToken: auth.token!, data})
+    return updateUser({id: user.id, data, authToken: auth.token!})
   }, [])
 
   const handleSubmit = async (data: FormData) => {
@@ -51,27 +51,21 @@ export const UpdateUserModal = ({
             required
             name="firstName"
             label="First name"
-            value={user.firstName}
+            defaultValue={user.firstName}
             form={form}
           />
           <TextField
-            value={user.lastName}
             required
             name="lastName"
             label="Last name"
+            defaultValue={user.lastName}
             form={form}
           />
           <EmailField
             required
-            value={user.emailAddress}
             name="emailAddress"
             label="Email"
-            form={form}
-          />
-          <PasswordField
-            required
-            name="password"
-            label="Password"
+            defaultValue={user.emailAddress}
             form={form}
           />
           <Button primary type="submit" fluid loading={action.isLoading}>

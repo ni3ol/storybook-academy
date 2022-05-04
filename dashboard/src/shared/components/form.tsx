@@ -68,7 +68,7 @@ export const TextField = ({
   helperText,
   form,
   name,
-  value,
+  defaultValue,
 }: FieldProps) => {
   return (
     <Field label={label} required={required} helperText={helperText}>
@@ -76,11 +76,11 @@ export const TextField = ({
         name={name}
         control={form.control}
         rules={{required}}
+        defaultValue={defaultValue}
         render={({field}) => {
           return (
             <Input
               required={required}
-              defaultValue={value}
               type="text"
               placeholder={placeholder}
               {...field}
@@ -99,7 +99,7 @@ export const EmailField = ({
   helperText,
   form,
   name,
-  value,
+  defaultValue,
 }: FieldProps) => {
   return (
     <Field label={label} required={required} helperText={helperText}>
@@ -107,13 +107,13 @@ export const EmailField = ({
         name={name}
         control={form.control}
         rules={{required}}
+        defaultValue={defaultValue}
         render={({field}) => {
           return (
             <Input
               required={required}
               type="email"
               placeholder={placeholder}
-              defaultValue={value}
               {...field}
             />
           )
@@ -129,7 +129,7 @@ export const PasswordField = ({
   placeholder,
   helperText,
   form,
-  value,
+  defaultValue,
   name,
 }: FieldProps) => {
   return (
@@ -138,13 +138,13 @@ export const PasswordField = ({
         name={name}
         control={form.control}
         rules={{required}}
+        defaultValue={defaultValue}
         render={({field}) => {
           return (
             <Input
               required={required}
               type="password"
               placeholder={placeholder}
-              defaultValue={value}
               {...field}
             />
           )
@@ -162,6 +162,7 @@ export const CurrencyField = ({
   form,
   name,
   min,
+  defaultValue,
 }: FieldProps) => {
   return (
     <Field label={label} required={required} helperText={helperText}>
@@ -169,6 +170,7 @@ export const CurrencyField = ({
         name={name}
         control={form.control}
         rules={{required}}
+        defaultValue={defaultValue}
         render={({field}) => {
           return (
             <Input
@@ -197,6 +199,7 @@ export const NumberField = ({
   placeholder,
   helperText,
   form,
+  defaultValue,
   name,
   min,
 }: FieldProps) => {
@@ -205,6 +208,7 @@ export const NumberField = ({
       <Controller
         name={name}
         control={form.control}
+        defaultValue={defaultValue}
         rules={{required}}
         render={({field}) => {
           return (
