@@ -16,7 +16,7 @@ export type UpdateBookInputData = z.infer<typeof updateBookInputSchema>
 export const updateBook = (
   id: string,
   data: UpdateBookInputData,
-  params?: {trx?: Knex.Transaction; as?: {user?: User}},
+  params?: {trx?: Knex.Transaction; as?: {user?: User}; skipAuth?: boolean},
 ) => {
   return useOrCreateTransaction(params?.trx, async (trx) => {
     const now = utcNow()

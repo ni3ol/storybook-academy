@@ -16,7 +16,7 @@ export type UpdateUserInputData = z.infer<typeof updateUserInputSchema>
 export const updateUser = (
   id: string,
   data: UpdateUserInputData,
-  params?: {trx?: Knex.Transaction; as?: {user?: User}},
+  params?: {trx?: Knex.Transaction; as?: {user?: User}; skipAuth?: boolean},
 ) => {
   return useOrCreateTransaction(params?.trx, async (trx) => {
     const now = utcNow()

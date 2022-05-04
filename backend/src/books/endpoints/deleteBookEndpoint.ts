@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import {z} from 'zod'
 import {Endpoint} from '../../http/endpoint'
-import {deleteBook} from '../actions/deleteUser'
+import {deleteBook} from '../actions/deleteBook'
 
 export const deleteBookEndpoint: Endpoint<any, any, any> = {
   method: 'delete',
