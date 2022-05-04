@@ -46,7 +46,13 @@ const Users = ({auth}: {auth: Auth}) => {
       {userToDelete && (
         <DeleteUserModal
           user={userToDelete}
-          onClose={() => setUserToDelete(undefined)}
+          onClose={() => {
+            setUserToDelete(undefined)
+          }}
+          onUserDeleted={() => {
+            setUserToDelete(undefined)
+            action.execute()
+          }}
         />
       )}
       <DashboardNavigation role={auth.user.role} />
