@@ -8,8 +8,9 @@ import {userSchema} from '../../users/model'
 import {checkPassword} from '../utils'
 
 export const signInInputSchema = z.object({
-  emailAddress: z.string().email(),
+  emailAddress: z.string().email().optional(),
   password: z.string(),
+  username: z.string().optional(),
 })
 
 export type SignInInputData = z.infer<typeof signInInputSchema>
@@ -25,10 +26,20 @@ export const [signIn] = createCreateAction(
     inputSchema: signInInputSchema,
     outputSchema: signInOutputSchema,
   },
-  async ({emailAddress, password}) => {
-    const [user] = await getUsers({filters: {emailAddress}, skipAuth: true})
+  async (data) => {
+    let filterData = {}
+    if (data.emailAddress) {
+      filterData = {...filterData, emailAddress: data.emailAddress}
+    }
+    if (data.username) {
+      filterData = {...filterData, username: data.username}
+    }
+    const [user] = await getUsers({
+      filters: filterData,
+      skipAuth: true,
+    })
 
-    if (!user || !(await checkPassword(password, user.passwordHash))) {
+    if (!user || !(await checkPassword(data.password, user.passwordHash))) {
       throw new AuthenticationError('Invalid email or password.')
     }
 

@@ -9,7 +9,8 @@ import {getUsers} from './getUsers'
 
 export const createUserInputSchema = z.object({
   id: userSchema.shape.id.optional(),
-  emailAddress: userSchema.shape.emailAddress,
+  emailAddress: userSchema.shape.emailAddress.optional(),
+  username: userSchema.shape.username.optional(),
   firstName: userSchema.shape.firstName,
   lastName: userSchema.shape.lastName,
   password: z.string(),
