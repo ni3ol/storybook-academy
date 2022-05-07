@@ -39,8 +39,11 @@ export const [signIn] = createCreateAction(
       skipAuth: true,
     })
 
-    if (!user || !(await checkPassword(data.password, user.passwordHash))) {
-      throw new AuthenticationError('Invalid email or password.')
+    if (!user) {
+      throw new AuthenticationError('Invalid email or username.')
+    }
+    if (!(await checkPassword(data.password, user.passwordHash))) {
+      throw new AuthenticationError('Invalid password.')
     }
 
     const authSession = await createAuthSession(

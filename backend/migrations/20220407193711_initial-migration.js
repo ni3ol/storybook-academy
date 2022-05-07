@@ -9,7 +9,12 @@ exports.up = async (knex) => {
       "firstName" TEXT NOT NULL,
       "lastName" TEXT NOT NULL,
       "passwordHash" TEXT NOT NULL,
-      "role" TEXT NOT NULL
+      "role" TEXT NOT NULL,
+      "age" INTEGER,
+      "favouriteColor" TEXT,
+      "favouriteAnimal" TEXT,
+      "nickname" TEXT,
+      "profileCreated" BOOLEAN DEFAULT FALSE
     );
 
     CREATE TABLE "authSessions" (

@@ -8,6 +8,7 @@ import {Container} from '../src/shared/components/container'
 import {Form, PasswordField, TextField} from '../src/shared/components/form'
 import {Navigation} from '../src/shared/components/navigation'
 import {usePromiseLazy} from '../src/shared/hooks'
+import {UserRole} from '../src/users/model'
 
 type Data = {
   emailAddress: string
@@ -30,14 +31,20 @@ export default function SignIn() {
   }, [])
 
   if (auth.isAuthenticated()) {
-    router.push('/dashboard')
+    auth.auth.user?.role === UserRole.Child
+      ? auth.auth.user?.profileCreated
+        ? router.push('/child-dashboard')
+        : router.push('/child-profile-building')
+      : router.push('/dashboard')
   }
 
   const handleSubmit = async (data: Data) => {
     const {result} = await action.execute(data)
     if (result) {
       auth.authenticate({user: result.user, authSession: result.authSession})
-      router.push('/dashboard')
+      result.user.role === UserRole.Child
+        ? router.push('/child-profile-building')
+        : router.push('/dashboard')
     }
   }
 

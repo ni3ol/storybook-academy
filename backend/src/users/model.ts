@@ -17,6 +17,11 @@ export const userSchema = entitySchema
     lastName: z.string(),
     passwordHash: z.string(),
     role: z.nativeEnum(UserRole),
+    age: z.number().nullable().optional(),
+    favouriteAnimal: z.string().nullable().optional(),
+    favouriteColor: z.string().nullable().optional(),
+    nickname: z.string().nullable().optional(),
+    profileCreated: z.boolean().nullable().optional(),
   })
   .strict()
 
