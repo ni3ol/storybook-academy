@@ -1,6 +1,6 @@
 import {useRouter} from 'next/router'
 import {useState} from 'react'
-import {Table} from 'semantic-ui-react'
+import {Dropdown, Icon, Table} from 'semantic-ui-react'
 import {RequireAuth} from '../../src/auth/components/requireAuth'
 import {Auth} from '../../src/auth/hooks'
 import {getSchools} from '../../src/schools/actions/getSchools'
@@ -17,6 +17,7 @@ const SchoolPage = ({auth}: {auth: Auth}) => {
   const router = useRouter()
   const {schoolId} = router.query as {schoolId: string}
   const [showNewUserModal, setShowNewUserModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
 
   const getSchoolAction = usePromise(async () => {
     const [school] = await getSchools({
@@ -44,6 +45,7 @@ const SchoolPage = ({auth}: {auth: Auth}) => {
           }}
         />
       )}
+      {showEditModal && <div>Hi</div>}
       <DashboardNavigation role={auth.user.role} />
       <Container>
         <div
@@ -65,9 +67,14 @@ const SchoolPage = ({auth}: {auth: Auth}) => {
           <Header style={{margin: 0}} as="h3">
             Details
           </Header>
-          <Button basic primary>
-            :
-          </Button>
+          <Dropdown text="Actions" floating basic>
+            <Dropdown.Menu>
+              <Dropdown.Item onClick={() => setShowEditModal(true)}>
+                Edit
+              </Dropdown.Item>
+              <Dropdown.Item>Delete</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
         </div>
         <Table definition>
           <Table.Body>

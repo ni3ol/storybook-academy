@@ -29,6 +29,11 @@ export const UsersTable = ({
         title: 'Email',
         resolve: (user) => user.emailAddress,
       },
+      {
+        key: 'role',
+        title: 'Role',
+        resolve: (user) => user.role,
+      },
       ...(onUpdateClick || onDeleteClick
         ? [
             {
