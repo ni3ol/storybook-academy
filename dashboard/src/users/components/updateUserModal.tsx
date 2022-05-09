@@ -4,19 +4,45 @@ import {useAuth} from '../../auth/hooks'
 import {
   EmailField,
   Form,
-  PasswordField,
+  NumberField,
+  SelectField,
   TextField,
 } from '../../shared/components/form'
 import {Modal} from '../../shared/components/modal'
 import {usePromiseLazy} from '../../shared/hooks'
 import {updateUser} from '../actions/updateUser'
-import {User} from '../model'
+import {User, UserRole} from '../model'
+import {animals, colors} from './createChildProfileForm'
 
 type FormData = {
   firstName: string
   lastName: string
   emailAddress: string
+  role: UserRole
+  username: string
+  age: number
+  favouriteColor: string
+  favouriteAnimal: string
 }
+
+export const roles = [
+  {
+    label: 'Child',
+    value: UserRole.Child,
+  },
+  {
+    label: 'Teacher',
+    value: UserRole.Teacher,
+  },
+  {
+    label: 'Principal',
+    value: UserRole.Principal,
+  },
+  {
+    label: 'Admin',
+    value: UserRole.Admin,
+  },
+]
 
 export const UpdateUserModal = ({
   onClose,
@@ -41,6 +67,9 @@ export const UpdateUserModal = ({
     }
   }
 
+  const role: UserRole = form.watch('role')
+  const isChildRole = (role || user.role) === UserRole.Child
+
   return (
     <Modal
       onClose={onClose}
@@ -61,13 +90,60 @@ export const UpdateUserModal = ({
             defaultValue={user.lastName}
             form={form}
           />
-          <EmailField
+          {!isChildRole && (
+            <EmailField
+              required
+              name="emailAddress"
+              label="Email"
+              defaultValue={user.emailAddress}
+              form={form}
+            />
+          )}
+          {isChildRole && (
+            <TextField
+              required
+              name="username"
+              label="Username"
+              defaultValue={user.username}
+              form={form}
+            />
+          )}
+          <SelectField
             required
-            name="emailAddress"
-            label="Email"
-            defaultValue={user.emailAddress}
+            disabled={auth.user?.role === UserRole.Admin}
+            name="role"
+            label="Role"
+            defaultValue={user.role}
+            options={roles}
             form={form}
           />
+
+          {isChildRole && (
+            <NumberField
+              name="age"
+              label="Age"
+              defaultValue={user.age}
+              form={form}
+            />
+          )}
+          {isChildRole && (
+            <SelectField
+              name="favouriteColor"
+              label="Favourite color"
+              defaultValue={user.favouriteColor}
+              form={form}
+              options={colors}
+            />
+          )}
+          {isChildRole && (
+            <SelectField
+              name="favouriteAnimal"
+              label="Favourite animal"
+              defaultValue={user.favouriteAnimal}
+              form={form}
+              options={animals}
+            />
+          )}
           <Button primary type="submit" fluid loading={action.isLoading}>
             Update user
           </Button>

@@ -13,7 +13,7 @@ export const createUserInputSchema = z.object({
   username: userSchema.shape.username.optional(),
   firstName: userSchema.shape.firstName,
   lastName: userSchema.shape.lastName,
-  password: z.string(),
+  password: z.string().optional(),
   role: userSchema.shape.role.optional(),
   schoolId: userSchema.shape.schoolId,
 })

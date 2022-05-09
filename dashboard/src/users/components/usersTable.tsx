@@ -25,14 +25,39 @@ export const UsersTable = ({
         resolve: (user) => user.lastName,
       },
       {
+        key: 'role',
+        title: 'Role',
+        resolve: (user) => user.role,
+      },
+      {
         key: 'email',
         title: 'Email',
         resolve: (user) => user.emailAddress,
       },
       {
-        key: 'role',
-        title: 'Role',
-        resolve: (user) => user.role,
+        key: 'username',
+        title: 'Username',
+        resolve: (user) => user.username,
+      },
+      {
+        key: 'profileCreated',
+        title: 'Profile created',
+        resolve: (user) => user.profileCreated && 'Yes',
+      },
+      {
+        key: 'age',
+        title: 'Age',
+        resolve: (user) => user.age,
+      },
+      {
+        key: 'favouriteColor',
+        title: 'Favourite color',
+        resolve: (user) => user.favouriteColor,
+      },
+      {
+        key: 'favouriteAnimal',
+        title: 'Favourite animal',
+        resolve: (user) => user.favouriteAnimal,
       },
       ...(onUpdateClick || onDeleteClick
         ? [
