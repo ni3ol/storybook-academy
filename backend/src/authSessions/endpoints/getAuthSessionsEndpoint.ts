@@ -7,7 +7,7 @@ import {serializeAuthSession} from '../actions/serializeAuthSession'
 
 export const getAuthSessionsEndpoint: Endpoint<any, any, any> = {
   method: 'get',
-  path: '/authSesssions',
+  path: '/authSessions',
   requireAuth: false,
   validation: {
     queryParams: authSessionsFilterSchema,
