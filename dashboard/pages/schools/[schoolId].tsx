@@ -4,6 +4,7 @@ import {Dropdown, Icon, Table} from 'semantic-ui-react'
 import {RequireAuth} from '../../src/auth/components/requireAuth'
 import {Auth} from '../../src/auth/hooks'
 import {getSchools} from '../../src/schools/actions/getSchools'
+import {UpdateSchoolModal} from '../../src/schools/components/updateSchoolModal'
 import {Button} from '../../src/shared/components/button'
 import {Container} from '../../src/shared/components/container'
 import {DashboardNavigation} from '../../src/shared/components/dashboardNavigation/dashboardNavigation'
@@ -17,7 +18,7 @@ const SchoolPage = ({auth}: {auth: Auth}) => {
   const router = useRouter()
   const {schoolId} = router.query as {schoolId: string}
   const [showNewUserModal, setShowNewUserModal] = useState(false)
-  const [showEditModal, setShowEditModal] = useState(false)
+  const [showUpdateModal, setShowUpdateModal] = useState(false)
 
   const getSchoolAction = usePromise(async () => {
     const [school] = await getSchools({
@@ -45,7 +46,17 @@ const SchoolPage = ({auth}: {auth: Auth}) => {
           }}
         />
       )}
-      {showEditModal && <div>Hi</div>}
+      {showUpdateModal && (
+        <UpdateSchoolModal
+          onClose={() => setShowUpdateModal(false)}
+          school={school}
+          onSchoolUpdated={() => {
+            getUsersAction.execute()
+            getSchoolAction.execute()
+            setShowUpdateModal(false)
+          }}
+        />
+      )}
       <DashboardNavigation role={auth.user.role} />
       <Container>
         <div
@@ -69,7 +80,7 @@ const SchoolPage = ({auth}: {auth: Auth}) => {
           </Header>
           <Dropdown text="Actions" floating basic>
             <Dropdown.Menu>
-              <Dropdown.Item onClick={() => setShowEditModal(true)}>
+              <Dropdown.Item onClick={() => setShowUpdateModal(true)}>
                 Edit
               </Dropdown.Item>
               <Dropdown.Item>Delete</Dropdown.Item>

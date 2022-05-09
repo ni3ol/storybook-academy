@@ -6,6 +6,7 @@ import {getBooksEndpoint} from '../books/endpoints/getBooksEndpoint'
 import {updateBookEndpoint} from '../books/endpoints/updateBookEndpoint'
 import {createSchoolEndpoint} from '../schools/endpoints/createSchoolEndpoint'
 import {getSchoolsEndpoint} from '../schools/endpoints/getSchoolsEndpoint'
+import {updateSchoolEndpoint} from '../schools/endpoints/updateSchoolEndpoint'
 import {createUserEndpoint} from '../users/endpoints/createUserEndpoint'
 import {deleteUserEndpoint} from '../users/endpoints/deleteUserEndpoint'
 import {getUserEndpoint} from '../users/endpoints/getUserEndpoint'
@@ -32,4 +33,5 @@ export const endpoints: Endpoint<any, any, any>[] = [
   // Schools
   createSchoolEndpoint,
   getSchoolsEndpoint,
+  updateSchoolEndpoint,
 ]
