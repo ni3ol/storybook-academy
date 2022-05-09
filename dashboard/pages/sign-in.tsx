@@ -20,7 +20,7 @@ export default function SignIn() {
   const form = useForm<Partial<Data>, Data>()
   const router = useRouter()
   const auth = useAuth()
-  const [isChild, setIsChild] = useState(true)
+  const [isChildSelected, setIsChild] = useState(true)
 
   const action = usePromiseLazy((data: Data) => {
     return signIn({
@@ -79,6 +79,36 @@ export default function SignIn() {
     </Form>
   )
 
+  const UserTypeButton = ({
+    role,
+    color,
+    onClick,
+  }: {
+    role: string
+    color: string
+    onClick: any
+  }) => {
+    const adult = role === 'adult'
+    const child = role === 'child'
+    return (
+      <Button
+        color={color}
+        style={{
+          width: '50%',
+          margin: 0,
+          borderRadius: 0,
+          opacity:
+            (child && isChildSelected) || (adult && !isChildSelected)
+              ? '100%'
+              : '70%',
+        }}
+        onClick={onClick}
+      >
+        {child ? "I'm a child" : "I'm an adult"}
+      </Button>
+    )
+  }
+
   return auth.isAuthenticated() ? null : (
     <>
       <Navigation />
@@ -94,22 +124,18 @@ export default function SignIn() {
           <div style={{width: 400}}>
             <h2 style={{textAlign: 'center', margin: 28}}>Sign in</h2>
             <div style={{width: '90%', margin: 'auto', paddingBottom: 20}}>
-              <Button
+              <UserTypeButton
+                role="child"
                 color="green"
-                style={{width: '50%', margin: 0, borderRadius: 0}}
                 onClick={() => setIsChild(true)}
-              >
-                I'm a child
-              </Button>
-              <Button
+              />
+              <UserTypeButton
+                role="adult"
                 color="blue"
-                style={{width: '50%', margin: 0, borderRadius: 0}}
                 onClick={() => setIsChild(false)}
-              >
-                I'm an adult
-              </Button>
+              />
             </div>
-            {isChild ? ChildForm() : AdultForm()}
+            {isChildSelected ? ChildForm() : AdultForm()}
           </div>
         </div>
       </Container>

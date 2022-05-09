@@ -18,7 +18,7 @@ export default function Home() {
             Welcome to Storybook Academy
           </h1>
           <div style={{textAlign: 'center'}}>
-            <Link href="/sign-up" passHref>
+            <Link href="/sign-in" passHref>
               <Button>Get started</Button>
             </Link>
           </div>

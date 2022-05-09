@@ -13,14 +13,14 @@ export const Navigation = () => {
         <Link href="/" passHref>
           <Menu.Item header>Storybook Academy</Menu.Item>
         </Link>
-        <Menu.Menu position="right">
+        {/* <Menu.Menu position="right">
           <Link passHref href="/sign-in">
             <Menu.Item name="Sign in" active={router.pathname === '/sign-in'} />
           </Link>
           <Link href="/sign-up" passHref>
             <Menu.Item name="Sign up" active={router.pathname === '/sign-up'} />
           </Link>
-        </Menu.Menu>
+        </Menu.Menu> */}
       </Container>
     </Menu>
   )
