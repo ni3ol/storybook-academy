@@ -1,8 +1,7 @@
-import {z} from 'zod'
 import {makeRequest} from '../../shared/utils'
-import {userSchema} from '../model'
+import {bookSchema} from '../model'
 
-export const createUser = async ({
+export const createBook = async ({
   data,
   authToken,
 }: {
@@ -12,11 +11,11 @@ export const createUser = async ({
   const response = await makeRequest({
     authToken,
     method: 'post',
-    path: '/users',
+    path: '/books',
     data,
   })
 
-  const user = userSchema.parse(response.data)
+  const book = bookSchema.parse(response.data)
 
-  return user
+  return book
 }

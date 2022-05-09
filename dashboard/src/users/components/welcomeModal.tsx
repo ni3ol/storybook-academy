@@ -1,7 +1,7 @@
-import {Modal} from '../../../shared/components/modal'
-import {User} from '../../model'
-import Folly from '../../../shared//images/folly.svg'
 import Image from 'next/image'
+import {Modal} from '../../shared/components/modal'
+import {User} from '../model'
+import Folly from '../../../shared/images/folly.svg'
 
 export const WelcomeModal = ({
   onClose,

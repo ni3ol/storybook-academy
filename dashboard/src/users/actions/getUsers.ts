@@ -20,12 +20,6 @@ export const getUsers = async ({
     path: '/users',
     queryParams: filters,
   })
-  const users: User[] = data.entities.map((dto: any) =>
-    userSchema
-      .extend({
-        createdAt: z.string().transform((d) => new Date(d)),
-      })
-      .parse(dto),
-  )
+  const users: User[] = data.entities.map((dto: any) => userSchema.parse(dto))
   return users
 }

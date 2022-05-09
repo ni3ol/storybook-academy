@@ -1,16 +1,15 @@
 import {Button, Container} from 'semantic-ui-react'
+import {Document, Page, pdfjs} from 'react-pdf'
+import {useState} from 'react'
+import router, {useRouter} from 'next/router'
 import {RequireAuth} from '../src/auth/components/requireAuth'
 import {Auth} from '../src/auth/hooks'
 import {DashboardNavigation} from '../src/shared/components/dashboardNavigation/dashboardNavigation'
 // import HTMLFlipBook from 'react-pageflip'
-import {Document, Page} from 'react-pdf'
-import {pdfjs} from 'react-pdf'
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`
 
-import {useState} from 'react'
-import {WelcomeModal} from '../src/users/children/components/welcomeModal'
-import router, {useRouter} from 'next/router'
+import {WelcomeModal} from '../src/users/components/welcomeModal'
 import {Header} from '../src/shared/components/header'
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`
 
 const ChildDashboard = ({auth}: {auth: Auth}) => {
   const [numPages, setNumPages] = useState<number | null>(null)
@@ -104,9 +103,7 @@ const ChildDashboard = ({auth}: {auth: Auth}) => {
         <Header>The book of the day is:</Header>
         <div>
           <Document
-            file={
-              'https://cdn.shopify.com/s/files/1/2081/8163/files/002-GINGER-THE-GIRAFFE-Free-Childrens-Book-By-Monkey-Pen.pdf?v=1589846892'
-            }
+            file="https://cdn.shopify.com/s/files/1/2081/8163/files/002-GINGER-THE-GIRAFFE-Free-Childrens-Book-By-Monkey-Pen.pdf?v=1589846892"
             onLoadSuccess={onDocumentLoadSuccess}
           >
             <Page

@@ -1,15 +1,27 @@
-import {createListEndpoint} from '../../http/utils'
+import {Endpoint} from '../../http/endpoint'
 import {
   authSessionsFilterSchema,
   getAuthSessions,
 } from '../actions/getAuthSessions'
 import {serializeAuthSession} from '../actions/serializeAuthSession'
 
-export const getAuthSessionsEndpoint = createListEndpoint({
-  path: '/authSessions',
+export const getAuthSessionsEndpoint: Endpoint<any, any, any> = {
+  method: 'get',
+  path: '/authSesssions',
   requireAuth: false,
-  getEntities: getAuthSessions,
-  getEntitiesCount: () => Promise.resolve(4),
-  queryParamsSchema: authSessionsFilterSchema,
-  serializer: serializeAuthSession,
-})
+  validation: {
+    queryParams: authSessionsFilterSchema,
+  },
+  handler: async ({queryParams, user: authedUser}) => {
+    const authSessions = await getAuthSessions({
+      filters: queryParams,
+      as: {user: authedUser},
+    })
+    const serializedAuthSessions = await Promise.all(
+      authSessions.map((authSession) =>
+        serializeAuthSession(authSession, {as: {user: authedUser}}),
+      ),
+    )
+    return {entities: serializedAuthSessions}
+  },
+}

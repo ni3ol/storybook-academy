@@ -6,7 +6,7 @@ import {
   createGetAction,
   FilterMapping,
 } from '../../shared/actionUtils'
-import {authSessionSchema} from '../model'
+import {AuthSession, authSessionSchema} from '../model'
 
 export const authSessionsFilterSchema = z
   .object({
@@ -32,7 +32,7 @@ export const [getAuthSessions, getAuthSessionsAction] = createGetAction(
   async ({filters, trx}) => {
     const query = db.select('*').from('authSessions').transacting(trx)
     const filteredQuery = applyFilters(query, filterMapping, filters)
-    const entities: Record<string, any>[] = await filteredQuery
+    const entities: AuthSession[] = await filteredQuery
     return entities
   },
 )

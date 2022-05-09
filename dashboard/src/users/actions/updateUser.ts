@@ -1,4 +1,3 @@
-import {z} from 'zod'
 import {makeRequest} from '../../shared/utils'
 import {userSchema} from '../model'
 
@@ -18,11 +17,7 @@ export const updateUser = async ({
     data,
   })
 
-  const user = userSchema
-    .extend({
-      createdAt: z.string().transform((d) => new Date(d)),
-    })
-    .parse(response.data)
+  const user = userSchema.parse(response.data)
 
   return user
 }

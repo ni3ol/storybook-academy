@@ -2,18 +2,11 @@
 import {useForm} from 'react-hook-form'
 import {Button} from 'semantic-ui-react'
 import {useAuth} from '../../auth/hooks'
-import {
-  EmailField,
-  Form,
-  NumberField,
-  PasswordField,
-  TextField,
-} from '../../shared/components/form'
+import {Form, NumberField, TextField} from '../../shared/components/form'
 import {Modal} from '../../shared/components/modal'
 import {usePromiseLazy} from '../../shared/hooks'
 import {createBook} from '../actions/createBook'
-import {createUser} from '../actions/createUser'
-import {Book, User} from '../model'
+import {Book} from '../model'
 
 type FormData = {
   createdByUserId: string

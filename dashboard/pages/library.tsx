@@ -1,18 +1,18 @@
 /* eslint-disable jsx-a11y/aria-role */
+import {useState} from 'react'
 import {RequireAuth} from '../src/auth/components/requireAuth'
 import {DashboardNavigation} from '../src/shared/components/dashboardNavigation/dashboardNavigation'
-import {LibraryTable} from '../src/library/components/libraryTable'
+import {LibraryTable} from '../src/books/components/libraryTable'
 import {Header} from '../src/shared/components/header'
 import {Button} from '../src/shared/components/button'
 import {Container} from '../src/shared/components/container'
 import {Auth} from '../src/auth/hooks'
-import {useState} from 'react'
 import {usePromise} from '../src/shared/hooks'
-import {getBooks} from '../src/library/actions/getBooks'
-import {CreateBookModal} from '../src/library/components/createBookModal'
-import {Book} from '../src/library/model'
-import {UpdateBookModal} from '../src/library/components/updateBookModal'
-import {DeleteBookModal} from '../src/library/components/deleteBookModal'
+import {getBooks} from '../src/books/actions/getBooks'
+import {CreateBookModal} from '../src/books/components/createBookModal'
+import {Book} from '../src/books/model'
+import {UpdateBookModal} from '../src/books/components/updateBookModal'
+import {DeleteBookModal} from '../src/books/components/deleteBookModal'
 
 const Library = ({auth}: {auth: Auth}) => {
   const [isCreateBookModalOpen, setIsCreateBookModalOpen] = useState(false)

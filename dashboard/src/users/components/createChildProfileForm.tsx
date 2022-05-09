@@ -1,17 +1,17 @@
 import router from 'next/router'
 import {useForm} from 'react-hook-form'
 import {Button} from 'semantic-ui-react'
-import {useAuth} from '../../../auth/hooks'
+import {useAuth} from '../../auth/hooks'
 import {
   Form,
   NumberField,
   SelectField,
   TextField,
-} from '../../../shared/components/form'
-import {usePromiseLazy} from '../../../shared/hooks'
-import {updateUser} from '../../actions/updateUser'
+} from '../../shared/components/form'
+import {usePromiseLazy} from '../../shared/hooks'
+import {updateUser} from '../actions/updateUser'
 
-import {User} from '../../model'
+import {User} from '../model'
 
 type FormData = {
   firstName: string
