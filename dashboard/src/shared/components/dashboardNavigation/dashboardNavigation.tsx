@@ -61,6 +61,16 @@ export const DashboardNavigation = ({role}: {role: UserRole}) => {
               Library
             </Menu.Item>
           )}
+          {[UserRole.Principal, UserRole.Admin].includes(role) && (
+            <Menu.Item
+              name="schools"
+              active={router.pathname === '/schools'}
+              onClick={() => handleClick('schools')}
+              style={{color: 'white'}}
+            >
+              Schools
+            </Menu.Item>
+          )}
           {[UserRole.Teacher].includes(role) && (
             <Menu.Item
               name="students"

@@ -24,7 +24,7 @@ export const createUser = async (
   params?: {trx?: Knex.Transaction; as?: {user?: User}; skipAuth?: boolean},
 ) => {
   const [existingUser] = await getUsers({
-    filters: {emailAddress: data.emailAddress},
+    filters: {emailAddress: data.emailAddress || undefined},
     skipAuth: true,
   })
   if (existingUser) {

@@ -67,7 +67,7 @@ const Library = ({auth}: {auth: Auth}) => {
         >
           <Header as="h1">Library</Header>
           <Button onClick={() => setIsCreateBookModalOpen(true)} primary>
-            Add book
+            New book
           </Button>
         </div>
         <LibraryTable

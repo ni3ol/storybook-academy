@@ -33,15 +33,13 @@ export const UsersTable = ({
         key: 'actions',
         title: 'Actions',
         resolve: (user) => (
-          <div style={{display: 'flex', justifyContent: 'flex-end'}}>
-            <div>
-              <Button basic onClick={() => onUpdateClick(user)} primary>
-                Edit
-              </Button>
-              <Button basic color="red" onClick={() => onDeleteClick(user)}>
-                Delete
-              </Button>
-            </div>
+          <div>
+            <Button basic onClick={() => onUpdateClick(user)} primary>
+              Edit
+            </Button>
+            <Button basic color="red" onClick={() => onDeleteClick(user)}>
+              Delete
+            </Button>
           </div>
         ),
       },

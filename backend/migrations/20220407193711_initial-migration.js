@@ -33,6 +33,13 @@ exports.up = async (knex) => {
       "title" TEXT NOT NULL,
       "level" INTEGER NOT NULL
     );
+
+    CREATE TABLE "schools" (
+      "id" UUID PRIMARY KEY,
+      "createdAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+      "updatedAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+      "name" TEXT NOT NULL
+    );
   `)
 }
 

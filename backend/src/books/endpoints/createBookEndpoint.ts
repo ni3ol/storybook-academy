@@ -8,10 +8,13 @@ export const createBookEndpoint: Endpoint<any, any, any> = {
   path: '/books',
   requireAuth: true,
   validation: {
-    body: createBookInputSchema,
+    body: createBookInputSchema.omit({createdByUserId: true}),
   },
   handler: async ({body, user: authedUser}) => {
-    const book = await createBook(body, {as: {user: authedUser}})
+    const book = await createBook(
+      {...body, createdByUserId: authedUser!.id},
+      {as: {user: authedUser}},
+    )
     const serializedEntity = await serializeBook(book, {as: {user: authedUser}})
     return serializedEntity
   },
