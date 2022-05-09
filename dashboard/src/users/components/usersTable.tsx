@@ -8,8 +8,8 @@ export const UsersTable = ({
   onDeleteClick,
 }: {
   rows: User[]
-  onUpdateClick: (user: User) => any
-  onDeleteClick: (user: User) => any
+  onUpdateClick?: (user: User) => any
+  onDeleteClick?: (user: User) => any
 }) => (
   <DataTable
     rows={rows}
@@ -29,20 +29,32 @@ export const UsersTable = ({
         title: 'Email',
         resolve: (user) => user.emailAddress,
       },
-      {
-        key: 'actions',
-        title: 'Actions',
-        resolve: (user) => (
-          <div>
-            <Button basic onClick={() => onUpdateClick(user)} primary>
-              Edit
-            </Button>
-            <Button basic color="red" onClick={() => onDeleteClick(user)}>
-              Delete
-            </Button>
-          </div>
-        ),
-      },
+      ...(onUpdateClick || onDeleteClick
+        ? [
+            {
+              key: 'actions',
+              title: 'Actions',
+              resolve: (user: User) => (
+                <div>
+                  {onUpdateClick && (
+                    <Button basic onClick={() => onUpdateClick(user)} primary>
+                      Edit
+                    </Button>
+                  )}
+                  {onDeleteClick && (
+                    <Button
+                      basic
+                      color="red"
+                      onClick={() => onDeleteClick(user)}
+                    >
+                      Delete
+                    </Button>
+                  )}
+                </div>
+              ),
+            },
+          ]
+        : []),
     ]}
   />
 )

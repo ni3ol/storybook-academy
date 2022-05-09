@@ -1,13 +1,22 @@
+import {createSchool} from '../../src/schools/actions/createSchool'
 import {createUser} from '../../src/users/actions/createUser'
 import {UserRole} from '../../src/users/model'
 
 export async function seed(): Promise<void> {
+  const school = await createSchool(
+    {
+      name: 'Bishops',
+    },
+    {skipAuth: true},
+  )
+
   await createUser(
     {
       emailAddress: 'user@app.com',
       firstName: 'Normal',
       lastName: 'User',
       password: '123',
+      schoolId: school.id,
     },
     {skipAuth: true},
   )

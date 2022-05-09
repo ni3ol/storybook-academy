@@ -1,10 +1,10 @@
-import {z} from 'zod'
 import {makeRequest} from '../../shared/utils'
 import {User, userSchema} from '../model'
 
 type Filters = {
   id?: string
   search?: string
+  schoolId?: string
 }
 
 export const getUsers = async ({

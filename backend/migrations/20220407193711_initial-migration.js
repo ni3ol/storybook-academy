@@ -10,6 +10,7 @@ exports.up = async (knex) => {
       "lastName" TEXT NOT NULL,
       "passwordHash" TEXT NOT NULL,
       "role" TEXT NOT NULL,
+      "schoolId" UUID,
       "age" INTEGER,
       "favouriteColor" TEXT,
       "favouriteAnimal" TEXT,

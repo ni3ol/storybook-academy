@@ -9,6 +9,7 @@ export const userFiltersSchema = z
     id: z.string().uuid(),
     emailAddress: z.string(),
     username: z.string(),
+    schoolId: z.string().uuid(),
   })
   .strict()
   .partial()
@@ -20,6 +21,7 @@ const filterMapping: FilterMapping<UserFilters> = {
   emailAddress: (query, filters) =>
     query.where('emailAddress', '=', filters.emailAddress!),
   username: (query, filters) => query.where('username', '=', filters.username!),
+  schoolId: (query, filters) => query.where('schoolId', '=', filters.schoolId!),
 }
 
 export const getUsers = async (params?: {

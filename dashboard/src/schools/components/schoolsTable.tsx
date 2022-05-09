@@ -1,4 +1,4 @@
-import {Button} from 'semantic-ui-react'
+import NextLink from 'next/link'
 import {DataTable} from '../../shared/components/dataTable'
 import {School} from '../model'
 
@@ -17,21 +17,13 @@ export const SchoolsTable = ({
       {
         key: 'name',
         title: 'Name',
-        resolve: (school) => school.name,
-      },
-      {
-        key: 'actions',
-        title: 'Actions',
-        resolve: (school) => (
-          <div>
-            <Button basic onClick={() => onUpdateClick(school)} primary>
-              Edit
-            </Button>
-            <Button basic color="red" onClick={() => onDeleteClick(school)}>
-              Delete
-            </Button>
-          </div>
-        ),
+        resolve: (school) => {
+          return (
+            <NextLink passHref href={`/schools/${school.id}`}>
+              <a>{school.name}</a>
+            </NextLink>
+          )
+        },
       },
     ]}
   />
