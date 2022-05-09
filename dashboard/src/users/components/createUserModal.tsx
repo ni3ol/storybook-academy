@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import {useEffect} from 'react'
 import {useForm} from 'react-hook-form'
 import {Button} from 'semantic-ui-react'
 import {useAuth} from '../../auth/hooks'
@@ -59,6 +60,12 @@ export const CreateUserModal = ({
   const role: UserRole = form.watch('role')
   const isChildRole = role === UserRole.Child
 
+  useEffect(() => {
+    form.reset()
+    form.reset({role})
+    action.clearError()
+  }, [role])
+
   return (
     <Modal
       onClose={onClose}
@@ -116,7 +123,7 @@ export const CreateUserModal = ({
             disabled={isChildRole}
             label="Password"
             form={form}
-            helpText={'Password will be assigned on a class level'}
+            helpText="Password will be assigned on a class level"
             showHelpText={isChildRole}
           />
           <Button primary type="submit" fluid loading={action.isLoading}>
