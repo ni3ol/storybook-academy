@@ -20,13 +20,13 @@ type FormData = {
 }
 
 // fetch these from the BE?
-const colors = [
+export const colors = [
   {label: 'Red', value: 'red'},
   {label: 'Blue', value: 'blue'},
   {label: 'Green', value: 'green'},
 ]
 
-const animals = [
+export const animals = [
   {label: 'Dog', value: 'dog'},
   {label: 'Cat', value: 'cat'},
   {label: 'Parrot', value: 'parrot'},

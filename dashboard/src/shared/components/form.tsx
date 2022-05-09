@@ -130,7 +130,10 @@ export const PasswordField = ({
   helperText,
   form,
   defaultValue,
+  disabled,
   name,
+  helpText,
+  showHelpText,
 }: FieldProps) => {
   return (
     <Field label={label} required={required} helperText={helperText}>
@@ -141,12 +144,16 @@ export const PasswordField = ({
         defaultValue={defaultValue}
         render={({field}) => {
           return (
-            <Input
-              required={required}
-              type="password"
-              placeholder={placeholder}
-              {...field}
-            />
+            <>
+              <Input
+                required={required}
+                disabled={disabled}
+                type="password"
+                placeholder={placeholder}
+                {...field}
+              />
+              {showHelpText && <p style={{fontSize: 10}}>*{helpText}</p>}
+            </>
           )
         }}
       />
@@ -267,6 +274,7 @@ export const SelectField = <O,>({
   helperText,
   form,
   name,
+  defaultValue,
   options,
 }: FieldProps & {options: {label: string; value: O}[]}) => {
   return (
@@ -275,6 +283,7 @@ export const SelectField = <O,>({
         name={name}
         control={form.control}
         rules={{required}}
+        defaultValue={defaultValue}
         render={({field}) => {
           return (
             <Select

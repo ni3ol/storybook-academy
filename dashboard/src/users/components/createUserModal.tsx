@@ -5,18 +5,27 @@ import {useAuth} from '../../auth/hooks'
 import {
   EmailField,
   Form,
+  NumberField,
   PasswordField,
+  SelectField,
   TextField,
 } from '../../shared/components/form'
 import {Modal} from '../../shared/components/modal'
 import {usePromiseLazy} from '../../shared/hooks'
 import {createUser} from '../actions/createUser'
-import {User} from '../model'
+import {User, UserRole} from '../model'
+import {animals, colors} from './createChildProfileForm'
+import {roles} from './updateUserModal'
 
 type FormData = {
   firstName: string
   lastName: string
   emailAddress: string
+  role: UserRole
+  username: string
+  age: number
+  favouriteColor: string
+  favouriteAnimal: string
 }
 
 export const CreateUserModal = ({
@@ -40,20 +49,60 @@ export const CreateUserModal = ({
     }
   }
 
+  const role: UserRole = form.watch('role')
+  const isChildRole = role === UserRole.Child
+
   return (
     <Modal
       onClose={onClose}
       header="New user"
       body={
         <Form error={action.error} onSubmit={form.handleSubmit(handleSubmit)}>
+          <SelectField
+            required
+            name="role"
+            label="Role"
+            options={roles}
+            form={form}
+          />
           <TextField required name="firstName" label="First name" form={form} />
           <TextField required name="lastName" label="Last name" form={form} />
-          <EmailField required name="emailAddress" label="Email" form={form} />
+          {!isChildRole && (
+            <EmailField
+              required
+              name="emailAddress"
+              label="Email"
+              form={form}
+            />
+          )}
+          {isChildRole && (
+            <TextField required name="username" label="Username" form={form} />
+          )}
+          {isChildRole && <NumberField name="age" label="Age" form={form} />}
+          {isChildRole && (
+            <SelectField
+              name="favouriteColor"
+              label="Favourite color"
+              form={form}
+              options={colors}
+            />
+          )}
+          {isChildRole && (
+            <SelectField
+              name="favouriteAnimal"
+              label="Favourite animal"
+              form={form}
+              options={animals}
+            />
+          )}
           <PasswordField
-            required
+            required={!isChildRole}
             name="password"
+            disabled={isChildRole}
             label="Password"
             form={form}
+            helpText={'Password will be assigned on a class level'}
+            showHelpText={isChildRole}
           />
           <Button primary type="submit" fluid loading={action.isLoading}>
             Create user

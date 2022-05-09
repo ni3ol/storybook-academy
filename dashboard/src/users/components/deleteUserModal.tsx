@@ -4,7 +4,7 @@ import {Message} from '../../shared/components/message'
 import {Modal} from '../../shared/components/modal'
 import {usePromiseLazy} from '../../shared/hooks'
 import {deleteUser} from '../actions/deleteUser'
-import {User} from '../model'
+import {User, UserRole} from '../model'
 
 export const DeleteUserModal = ({
   onClose,
@@ -36,8 +36,15 @@ export const DeleteUserModal = ({
         <>
           {action.error && <Message negative>{action.error.message}</Message>}
           <p>
-            Are you sure you want to delete this user <b>{user.emailAddress}</b>
-            ?
+            Are you sure you want to delete{' '}
+            <b>
+              {user.firstName} {user.lastName}
+            </b>{' '}
+            (
+            {user.role === UserRole.Child
+              ? `Username: ${user.username}`
+              : `Email address: ${user.emailAddress}`}
+            ) ?
           </p>
           <Button
             fluid
