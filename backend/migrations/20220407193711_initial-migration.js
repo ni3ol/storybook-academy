@@ -10,6 +10,7 @@ exports.up = async (knex) => {
       "lastName" TEXT NOT NULL,
       "passwordHash" TEXT NOT NULL,
       "role" TEXT NOT NULL,
+      "schoolId" UUID,
       "age" INTEGER,
       "favouriteColor" TEXT,
       "favouriteAnimal" TEXT,
@@ -32,6 +33,13 @@ exports.up = async (knex) => {
       "createdByUserId" UUID NOT NULL,
       "title" TEXT NOT NULL,
       "level" INTEGER NOT NULL
+    );
+
+    CREATE TABLE "schools" (
+      "id" UUID PRIMARY KEY,
+      "createdAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+      "updatedAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+      "name" TEXT NOT NULL
     );
   `)
 }

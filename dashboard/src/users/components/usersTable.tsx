@@ -8,8 +8,8 @@ export const UsersTable = ({
   onDeleteClick,
 }: {
   rows: User[]
-  onUpdateClick: (user: User) => any
-  onDeleteClick: (user: User) => any
+  onUpdateClick?: (user: User) => any
+  onDeleteClick?: (user: User) => any
 }) => (
   <DataTable
     rows={rows}
@@ -59,22 +59,32 @@ export const UsersTable = ({
         title: 'Favourite animal',
         resolve: (user) => user.favouriteAnimal,
       },
-      {
-        key: 'actions',
-        title: 'Actions',
-        resolve: (user) => (
-          <div style={{display: 'flex', justifyContent: 'flex-end'}}>
-            <div>
-              <Button basic onClick={() => onUpdateClick(user)} primary>
-                Edit
-              </Button>
-              <Button basic color="red" onClick={() => onDeleteClick(user)}>
-                Delete
-              </Button>
-            </div>
-          </div>
-        ),
-      },
+      ...(onUpdateClick || onDeleteClick
+        ? [
+            {
+              key: 'actions',
+              title: 'Actions',
+              resolve: (user: User) => (
+                <div>
+                  {onUpdateClick && (
+                    <Button basic onClick={() => onUpdateClick(user)} primary>
+                      Edit
+                    </Button>
+                  )}
+                  {onDeleteClick && (
+                    <Button
+                      basic
+                      color="red"
+                      onClick={() => onDeleteClick(user)}
+                    >
+                      Delete
+                    </Button>
+                  )}
+                </div>
+              ),
+            },
+          ]
+        : []),
     ]}
   />
 )

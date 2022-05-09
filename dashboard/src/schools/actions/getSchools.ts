@@ -1,13 +1,11 @@
 import {makeRequest} from '../../shared/utils'
-import {User, userSchema} from '../model'
+import {Book, bookSchema, School, schoolSchema} from '../model'
 
 type Filters = {
   id?: string
-  search?: string
-  schoolId?: string
 }
 
-export const getUsers = async ({
+export const getSchools = async ({
   authToken,
   filters,
 }: {
@@ -17,9 +15,11 @@ export const getUsers = async ({
   const {data}: {data: any} = await makeRequest({
     authToken,
     method: 'get',
-    path: '/users',
+    path: '/schools',
     queryParams: filters,
   })
-  const users: User[] = data.entities.map((dto: any) => userSchema.parse(dto))
-  return users
+  const schools: School[] = data.entities.map((dto: any) =>
+    schoolSchema.parse(dto),
+  )
+  return schools
 }

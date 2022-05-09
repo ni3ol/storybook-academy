@@ -1,21 +1,21 @@
 import {makeRequest} from '../../shared/utils'
-import {bookSchema} from '../model'
+import {schoolSchema} from '../model'
 
-export const createBook = async ({
+export const createSchool = async ({
   data,
   authToken,
 }: {
-  data: {title: string; level: number}
+  data: {name: string}
   authToken: string
 }) => {
   const response = await makeRequest({
     authToken,
     method: 'post',
-    path: '/books',
+    path: '/schools',
     data,
   })
 
-  const book = bookSchema.parse(response.data)
+  const school = schoolSchema.parse(response.data)
 
-  return book
+  return school
 }

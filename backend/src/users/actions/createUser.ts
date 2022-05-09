@@ -15,6 +15,7 @@ export const createUserInputSchema = z.object({
   lastName: userSchema.shape.lastName,
   password: z.string().optional(),
   role: userSchema.shape.role.optional(),
+  schoolId: userSchema.shape.schoolId,
 })
 
 export type CreateUserInputData = z.infer<typeof createUserInputSchema>
@@ -24,7 +25,7 @@ export const createUser = async (
   params?: {trx?: Knex.Transaction; as?: {user?: User}; skipAuth?: boolean},
 ) => {
   const [existingUser] = await getUsers({
-    filters: {emailAddress: data.emailAddress},
+    filters: {emailAddress: data.emailAddress || undefined},
     skipAuth: true,
   })
   if (existingUser) {

@@ -14,6 +14,7 @@ export const updateUserInputSchema = z.object({
   favouriteColor: userSchema.shape.favouriteColor.optional(),
   nickname: userSchema.shape.nickname.optional(),
   profileCreated: userSchema.shape.profileCreated.optional(),
+  schoolId: userSchema.shape.schoolId,
 })
 
 export type UpdateUserInputData = z.infer<typeof updateUserInputSchema>

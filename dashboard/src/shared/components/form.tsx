@@ -27,7 +27,7 @@ export const Form = ({
   )
 }
 
-type FieldProps = {
+export type FieldProps = {
   required?: boolean
   label: string
   placeholder?: string
@@ -38,7 +38,7 @@ type FieldProps = {
   [key: string]: any
 }
 
-const Field = ({
+export const Field = ({
   children,
   label,
   required,

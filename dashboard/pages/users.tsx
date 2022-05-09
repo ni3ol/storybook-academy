@@ -66,7 +66,7 @@ const Users = ({auth}: {auth: Auth}) => {
         >
           <Header as="h1">Users</Header>
           <Button onClick={() => setIsCreateUserModalOpen(true)} primary>
-            Add user
+            New user
           </Button>
         </div>
         <UsersTable

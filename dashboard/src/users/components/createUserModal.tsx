@@ -2,6 +2,7 @@
 import {useForm} from 'react-hook-form'
 import {Button} from 'semantic-ui-react'
 import {useAuth} from '../../auth/hooks'
+import {SchoolSelectField} from '../../schools/components/schoolSelectField'
 import {
   EmailField,
   Form,
@@ -26,20 +27,26 @@ type FormData = {
   age: number
   favouriteColor: string
   favouriteAnimal: string
+  schoolId?: string
 }
 
 export const CreateUserModal = ({
   onClose,
+  schoolId,
   onUserCreated,
 }: {
   onClose: () => any
+  schoolId?: string
   onUserCreated?: (user: User) => any
 }) => {
   const form = useForm<FormData>()
   const {auth} = useAuth()
 
   const action = usePromiseLazy(async (data: FormData) => {
-    return createUser({authToken: auth.token!, data})
+    return createUser({
+      authToken: auth.token!,
+      data: {...data, schoolId: schoolId || data.schoolId},
+    })
   }, [])
 
   const handleSubmit = async (data: FormData) => {
@@ -72,6 +79,14 @@ export const CreateUserModal = ({
               required
               name="emailAddress"
               label="Email"
+              form={form}
+            />
+          )}
+          {!schoolId && (
+            <SchoolSelectField
+              required
+              name="schoolId"
+              label="School"
               form={form}
             />
           )}

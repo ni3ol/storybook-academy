@@ -9,7 +9,6 @@ import {Book} from '../model'
 
 type FormData = {
   title: string
-  createdByUserId: string
   level: number
 }
 
@@ -55,13 +54,6 @@ export const UpdateBookModal = ({
             label="Level"
             form={form}
             defaultValue={book.level}
-          />
-          <TextField
-            required
-            name="createdByUserId"
-            label="Created by"
-            form={form}
-            defaultValue={book.createdByUserId}
           />
           <Button primary type="submit" fluid loading={action.isLoading}>
             Update book
