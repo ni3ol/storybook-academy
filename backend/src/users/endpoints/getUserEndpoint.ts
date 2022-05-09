@@ -1,15 +1,18 @@
 import {z} from 'zod'
-import {createSingularEndpoint} from '../../http/utils'
+import {Endpoint} from '../../http/endpoint'
 import {getUsers} from '../actions/getUsers'
 import {serializeUser} from '../actions/serializeUser'
 
-export const getUserEndpoint = createSingularEndpoint({
+export const getUserEndpoint: Endpoint<any, any, any> = {
+  method: 'get',
   path: '/users/:id',
   requireAuth: true,
-  paramsSchema: z.object({id: z.string().uuid()}),
-  getEntity: async ({params}) => {
-    const [user] = await getUsers({filters: {id: params.id}})
-    return user
+  validation: {
+    params: z.object({id: z.string().uuid()}),
   },
-  serializer: serializeUser,
-})
+  handler: async ({params, user: authedUser}) => {
+    const [user] = await getUsers({filters: params.id, as: {user: authedUser}})
+    const serializedUser = await serializeUser(user, {as: {user: authedUser}})
+    return serializedUser
+  },
+}
