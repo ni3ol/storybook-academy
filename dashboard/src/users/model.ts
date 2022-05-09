@@ -15,6 +15,7 @@ export const userSchema = entitySchema.extend({
   emailAddress: z.string().email(),
   role: z.nativeEnum(UserRole),
   profileCreated: z.boolean(),
+  nickname: z.string(),
 })
 
 export type User = z.infer<typeof userSchema>

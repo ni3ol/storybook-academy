@@ -47,7 +47,7 @@ export const CreateChildProfileForm = ({user}: {user: User}) => {
   const handleSubmit = async (data: FormData) => {
     const {result: updatedUser} = await action.execute(data)
     if (updatedUser) {
-      router.push('/child-dashboard')
+      router.push('/child-dashboard?showWelcomeModal=true')
     }
   }
 
