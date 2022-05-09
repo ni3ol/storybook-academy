@@ -1,4 +1,5 @@
 import {useRouter} from 'next/router'
+import {useState} from 'react'
 import {Table} from 'semantic-ui-react'
 import {RequireAuth} from '../../src/auth/components/requireAuth'
 import {Auth} from '../../src/auth/hooks'
@@ -9,11 +10,13 @@ import {DashboardNavigation} from '../../src/shared/components/dashboardNavigati
 import {Header} from '../../src/shared/components/header'
 import {usePromise} from '../../src/shared/hooks'
 import {getUsers} from '../../src/users/actions/getUsers'
+import {CreateUserModal} from '../../src/users/components/createUserModal'
 import {UsersTable} from '../../src/users/components/usersTable'
 
 const SchoolPage = ({auth}: {auth: Auth}) => {
   const router = useRouter()
   const {schoolId} = router.query as {schoolId: string}
+  const [showNewUserModal, setShowNewUserModal] = useState(false)
 
   const getSchoolAction = usePromise(async () => {
     const [school] = await getSchools({
@@ -31,6 +34,16 @@ const SchoolPage = ({auth}: {auth: Auth}) => {
 
   return (
     <>
+      {showNewUserModal && (
+        <CreateUserModal
+          onClose={() => setShowNewUserModal(false)}
+          schoolId={schoolId}
+          onUserCreated={() => {
+            getUsersAction.execute()
+            setShowNewUserModal(false)
+          }}
+        />
+      )}
       <DashboardNavigation role={auth.user.role} />
       <Container>
         <div
@@ -72,7 +85,20 @@ const SchoolPage = ({auth}: {auth: Auth}) => {
             </Table.Row>
           </Table.Body>
         </Table>
-        <Header as="h3">Users</Header>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <Header style={{margin: 0}} as="h3">
+            Users
+          </Header>
+          <Button basic primary onClick={() => setShowNewUserModal(true)}>
+            New user
+          </Button>
+        </div>
         <UsersTable rows={users} />
       </Container>
     </>
