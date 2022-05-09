@@ -9,6 +9,11 @@ export const updateUserInputSchema = z.object({
   firstName: userSchema.shape.firstName.optional(),
   lastName: userSchema.shape.lastName.optional(),
   role: userSchema.shape.role.optional(),
+  age: userSchema.shape.age.optional(),
+  favouriteAnimal: userSchema.shape.favouriteAnimal.optional(),
+  favouriteColor: userSchema.shape.favouriteColor.optional(),
+  nickname: userSchema.shape.nickname.optional(),
+  profileCreated: userSchema.shape.profileCreated.optional(),
 })
 
 export type UpdateUserInputData = z.infer<typeof updateUserInputSchema>
@@ -16,7 +21,7 @@ export type UpdateUserInputData = z.infer<typeof updateUserInputSchema>
 export const updateUser = (
   id: string,
   data: UpdateUserInputData,
-  params?: {trx?: Knex.Transaction; as?: {user?: User}},
+  params?: {trx?: Knex.Transaction; as?: {user?: User}; skipAuth?: boolean},
 ) => {
   return useOrCreateTransaction(params?.trx, async (trx) => {
     const now = utcNow()

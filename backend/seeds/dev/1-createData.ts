@@ -44,6 +44,7 @@ export async function seed(): Promise<void> {
   await createUser(
     {
       emailAddress: 'child@app.com',
+      username: 'child123',
       firstName: 'Tuan',
       lastName: 'Child',
       password: '123',

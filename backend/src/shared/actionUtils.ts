@@ -234,7 +234,7 @@ export const applyFilters = <F>(
     ? Object.keys(filters).reduce((acc, filterKey) => {
         const applier = mapping[filterKey as keyof F]
         if (!applier) {
-          throw new Error('Missing filer applier')
+          throw new Error('Missing filter applier')
         }
         return applier(query, filters)
       }, query)

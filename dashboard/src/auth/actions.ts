@@ -5,16 +5,18 @@ import {User} from '../users/model'
 export const signIn = async ({
   emailAddress,
   password,
+  username,
 }: {
   emailAddress: string
   password: string
+  username: string
 }) => {
   const {
     data: {user, authSession},
   }: {data: {user: User; authSession: AuthSession}} = await makeRequest({
     method: 'post',
     path: '/signIn',
-    data: {emailAddress, password},
+    data: {emailAddress, password, username},
   })
   return {user, authSession}
 }

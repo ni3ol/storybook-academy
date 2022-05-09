@@ -4,11 +4,17 @@ exports.up = async (knex) => {
       "id" UUID PRIMARY KEY,
       "createdAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
       "updatedAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-      "emailAddress" TEXT UNIQUE NOT NULL,
+      "emailAddress" TEXT UNIQUE ,
+      "username" TEXT UNIQUE,
       "firstName" TEXT NOT NULL,
       "lastName" TEXT NOT NULL,
       "passwordHash" TEXT NOT NULL,
-      "role" TEXT NOT NULL
+      "role" TEXT NOT NULL,
+      "age" INTEGER,
+      "favouriteColor" TEXT,
+      "favouriteAnimal" TEXT,
+      "nickname" TEXT,
+      "profileCreated" BOOLEAN DEFAULT FALSE
     );
 
     CREATE TABLE "authSessions" (
