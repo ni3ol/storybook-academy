@@ -3,7 +3,10 @@ import {useState} from 'react'
 import {Dropdown, Icon, Table} from 'semantic-ui-react'
 import {RequireAuth} from '../../src/auth/components/requireAuth'
 import {Auth} from '../../src/auth/hooks'
+import {getBooks} from '../../src/books/actions/getBooks'
+import {LibraryTable} from '../../src/books/components/libraryTable'
 import {getSchools} from '../../src/schools/actions/getSchools'
+import {AssignBookToSchoolModal} from '../../src/schools/components/assignBookToSchoolModal'
 import {Button} from '../../src/shared/components/button'
 import {Container} from '../../src/shared/components/container'
 import {DashboardNavigation} from '../../src/shared/components/dashboardNavigation/dashboardNavigation'
@@ -18,6 +21,7 @@ const SchoolPage = ({auth}: {auth: Auth}) => {
   const {schoolId} = router.query as {schoolId: string}
   const [showNewUserModal, setShowNewUserModal] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
+  const [showAssignBookModal, setShowAssignBookModal] = useState(false)
 
   const getSchoolAction = usePromise(async () => {
     const [school] = await getSchools({
@@ -33,6 +37,11 @@ const SchoolPage = ({auth}: {auth: Auth}) => {
   }, [])
   const users = getUsersAction.result || []
 
+  const getBooksAction = usePromise(() => {
+    return getBooks({authToken: auth.token, filters: {schoolId}})
+  }, [])
+  const books = getBooksAction.result || []
+
   return (
     <>
       {showNewUserModal && (
@@ -46,6 +55,16 @@ const SchoolPage = ({auth}: {auth: Auth}) => {
         />
       )}
       {showEditModal && <div>Hi</div>}
+      {showAssignBookModal && (
+        <AssignBookToSchoolModal
+          schoolId={schoolId}
+          onClose={() => setShowAssignBookModal(false)}
+          onBookAssigned={() => {
+            setShowAssignBookModal(false)
+            getBooksAction.execute()
+          }}
+        />
+      )}
       <DashboardNavigation role={auth.user.role} />
       <Container>
         <div
@@ -107,6 +126,21 @@ const SchoolPage = ({auth}: {auth: Auth}) => {
           </Button>
         </div>
         <UsersTable rows={users} />
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <Header style={{margin: 0}} as="h3">
+            Books
+          </Header>
+          <Button basic primary onClick={() => setShowAssignBookModal(true)}>
+            Assign new book
+          </Button>
+        </div>
+        <LibraryTable rows={books} />
       </Container>
     </>
   )

@@ -41,6 +41,14 @@ exports.up = async (knex) => {
       "updatedAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
       "name" TEXT NOT NULL
     );
+
+    CREATE TABLE "bookAssignments" (
+      "id" UUID PRIMARY KEY,
+      "createdAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+      "updatedAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+      "bookId" UUID NOT NULL,
+      "schoolId" UUID NOT NULL
+    );
   `)
 }
 
@@ -49,5 +57,7 @@ exports.down = async (knex) => {
     DROP TABLE "users";
     DROP TABLE "authSessions";
     DROP TABLE "books";
+    DROP TABLE "schools";
+    DROP TABLE "bookAssignments";
 `)
 }
