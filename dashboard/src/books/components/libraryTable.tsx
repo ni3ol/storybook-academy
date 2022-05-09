@@ -8,8 +8,8 @@ export const LibraryTable = ({
   onDeleteClick,
 }: {
   rows: Book[]
-  onUpdateClick: (book: Book) => any
-  onDeleteClick: (book: Book) => any
+  onUpdateClick?: (book: Book) => any
+  onDeleteClick?: (book: Book) => any
 }) => (
   <DataTable
     rows={rows}
@@ -29,10 +29,14 @@ export const LibraryTable = ({
         title: 'Actions',
         resolve: (row) => (
           <>
-            <Button onClick={() => onUpdateClick(row)} primary>
-              Edit
-            </Button>
-            <Button onClick={() => onDeleteClick(row)}>Delete</Button>
+            {onUpdateClick && (
+              <Button onClick={() => onUpdateClick(row)} primary>
+                Edit
+              </Button>
+            )}
+            {onDeleteClick && (
+              <Button onClick={() => onDeleteClick(row)}>Delete</Button>
+            )}
           </>
         ),
       },

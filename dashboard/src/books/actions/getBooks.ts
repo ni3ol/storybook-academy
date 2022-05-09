@@ -4,6 +4,7 @@ import {Book, bookSchema} from '../model'
 type Filters = {
   id?: string
   search?: string
+  schoolId?: string
 }
 
 export const getBooks = async ({

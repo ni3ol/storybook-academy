@@ -8,6 +8,7 @@ import {bookSchema} from '../model'
 export const bookFiltersSchema = z
   .object({
     id: z.string().uuid(),
+    schoolId: z.string().uuid(),
   })
   .strict()
   .partial()
@@ -16,6 +17,10 @@ export type BookFilters = z.infer<typeof bookFiltersSchema>
 
 const filterMapping: FilterMapping<BookFilters> = {
   id: (query, filters) => query.where('id', '=', filters.id!),
+  schoolId: (query, filters) =>
+    query
+      .join('bookAssignments', 'bookAssignments.bookId', 'books.id')
+      .where('bookAssignments.schoolId', '=', filters.schoolId!),
 }
 
 export const getBooks = async (params?: {
@@ -28,7 +33,7 @@ export const getBooks = async (params?: {
     const query = db
       .select('*')
       .from('books')
-      .orderBy('createdAt', 'desc')
+      .orderBy('books.createdAt', 'desc')
       .transacting(trx)
     const filteredQuery = applyFilters(query, filterMapping, params?.filters)
     const rows: any[] = await filteredQuery
