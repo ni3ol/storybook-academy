@@ -8,7 +8,7 @@ exports.up = async (knex) => {
       "username" TEXT UNIQUE,
       "firstName" TEXT NOT NULL,
       "lastName" TEXT NOT NULL,
-      "passwordHash" TEXT NOT NULL,
+      "passwordHash" TEXT,
       "role" TEXT NOT NULL,
       "schoolId" UUID,
       "age" INTEGER,

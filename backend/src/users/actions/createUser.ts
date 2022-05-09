@@ -39,7 +39,7 @@ export const createUser = async (
   }
 
   const {password, ...other} = createUserInputSchema.parse(data)
-  const passwordHash = await hashPassword(password)
+  const passwordHash = password ? await hashPassword(password) : undefined
   const id = other.id || getUuid()
   const user: User = {
     ...other,
