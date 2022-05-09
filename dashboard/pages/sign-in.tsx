@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+/* eslint-disable @typescript-eslint/no-floating-promises */
 import {useRouter} from 'next/router'
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import {useForm} from 'react-hook-form'
 import {signIn} from '../src/auth/actions'
 import {useAuth} from '../src/auth/hooks'
@@ -11,73 +13,53 @@ import {usePromiseLazy} from '../src/shared/hooks'
 import {UserRole} from '../src/users/model'
 
 type Data = {
-  emailAddress: string
-  username: string
+  emailAddress?: string
+  username?: string
   password: string
 }
 
 export default function SignIn() {
-  const form = useForm<Partial<Data>, Data>()
+  const form = useForm<Partial<Data>>()
   const router = useRouter()
   const auth = useAuth()
   const [isChildSelected, setIsChild] = useState(true)
 
   const action = usePromiseLazy((data: Data) => {
+    const userData = isChildSelected
+      ? {username: data.username}
+      : {emailAddress: data.emailAddress}
     return signIn({
-      emailAddress: data.emailAddress,
+      ...userData,
       password: data.password,
-      username: data.username,
     })
   }, [])
 
   if (auth.isAuthenticated()) {
-    auth.auth.user?.role === UserRole.Child
-      ? auth.auth.user?.profileCreated
-        ? router.push('/child-dashboard')
-        : router.push('/child-profile-building')
-      : router.push('/dashboard')
+    const path =
+      auth.auth.user?.role === UserRole.Child
+        ? auth.auth.user?.profileCreated
+          ? '/child-dashboard'
+          : '/child-profile-building'
+        : '/dashboard'
+    router.push(path)
   }
 
   const handleSubmit = async (data: Data) => {
     const {result} = await action.execute(data)
     if (result) {
       auth.authenticate({user: result.user, authSession: result.authSession})
-      result.user.role === UserRole.Child
-        ? router.push('/child-profile-building')
-        : router.push('/dashboard')
+      const path =
+        result.user.role === UserRole.Child
+          ? '/child-profile-building'
+          : '/dashboard'
+      router.push(path)
     }
   }
 
-  const AdultForm = () => (
-    <Form
-      error={action.error}
-      onSubmit={form.handleSubmit((data) => handleSubmit(data as Data))}
-    >
-      <TextField
-        name="emailAddress"
-        form={form}
-        required
-        label="Email address"
-      />
-      <PasswordField name="password" form={form} required label="Password" />
-      <Button type="submit" disabled={action.isLoading}>
-        Log in
-      </Button>
-    </Form>
-  )
-
-  const ChildForm = () => (
-    <Form
-      error={action.error}
-      onSubmit={form.handleSubmit((data) => handleSubmit(data as Data))}
-    >
-      <TextField name="username" form={form} required label="Child username" />
-      <PasswordField name="password" form={form} required label="Password" />
-      <Button type="submit" disabled={action.isLoading}>
-        Log in
-      </Button>
-    </Form>
-  )
+  useEffect(() => {
+    action.clearError()
+    form.reset({emailAddress: '', username: '', password: ''})
+  }, [isChildSelected])
 
   const UserTypeButton = ({
     role,
@@ -134,8 +116,45 @@ export default function SignIn() {
                 color="blue"
                 onClick={() => setIsChild(false)}
               />
+              <div style={{marginTop: 20}}>
+                <Form
+                  error={action.error}
+                  onSubmit={form.handleSubmit((data) =>
+                    handleSubmit(data as Data),
+                  )}
+                >
+                  {isChildSelected ? (
+                    <TextField
+                      name="username"
+                      form={form}
+                      required
+                      label="Child username"
+                    />
+                  ) : (
+                    <TextField
+                      name="emailAddress"
+                      form={form}
+                      required
+                      label="Email address"
+                    />
+                  )}
+                  <PasswordField
+                    name="password"
+                    form={form}
+                    required
+                    label="Password"
+                  />
+                  <Button
+                    type="submit"
+                    fluid
+                    disabled={action.isLoading}
+                    loading={action.isLoading}
+                  >
+                    Log in
+                  </Button>
+                </Form>
+              </div>
             </div>
-            {isChildSelected ? ChildForm() : AdultForm()}
           </div>
         </div>
       </Container>

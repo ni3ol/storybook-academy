@@ -9,8 +9,8 @@ import {checkPassword} from '../utils'
 
 export const signInInputSchema = z.object({
   emailAddress: z.string().email().optional(),
-  password: z.string(),
   username: z.string().optional(),
+  password: z.string(),
 })
 
 export type SignInInputData = z.infer<typeof signInInputSchema>
@@ -27,15 +27,12 @@ export const [signIn] = createCreateAction(
     outputSchema: signInOutputSchema,
   },
   async (data) => {
-    let filterData = {}
-    if (data.emailAddress) {
-      filterData = {...filterData, emailAddress: data.emailAddress}
-    }
-    if (data.username) {
-      filterData = {...filterData, username: data.username}
+    const filters = {
+      emailAddress: data.emailAddress || undefined,
+      username: data.username || undefined,
     }
     const [user] = await getUsers({
-      filters: filterData,
+      filters,
       skipAuth: true,
     })
 

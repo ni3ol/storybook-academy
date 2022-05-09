@@ -4,12 +4,12 @@ import {User} from '../users/model'
 
 export const signIn = async ({
   emailAddress,
-  password,
   username,
+  password,
 }: {
-  emailAddress: string
+  emailAddress?: string
+  username?: string
   password: string
-  username: string
 }) => {
   const {
     data: {user, authSession},

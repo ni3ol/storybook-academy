@@ -231,13 +231,15 @@ export const applyFilters = <F>(
   filters?: F,
 ) => {
   const filteredQuery = filters
-    ? Object.keys(filters).reduce((acc, filterKey) => {
-        const applier = mapping[filterKey as keyof F]
-        if (!applier) {
-          throw new Error('Missing filter applier')
-        }
-        return applier(query, filters)
-      }, query)
+    ? Object.keys(filters)
+        .filter((key) => !!filters[key as keyof F])
+        .reduce((acc, filterKey) => {
+          const applier = mapping[filterKey as keyof F]
+          if (!applier) {
+            throw new Error('Missing filter applier')
+          }
+          return applier(query, filters)
+        }, query)
     : query
 
   return filteredQuery

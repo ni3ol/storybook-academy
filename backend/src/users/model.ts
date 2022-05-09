@@ -11,8 +11,8 @@ export enum UserRole {
 
 export const userSchema = entitySchema
   .extend({
-    emailAddress: z.string().email().optional(),
-    username: z.string().optional(),
+    emailAddress: z.string().email().optional().nullable(),
+    username: z.string().optional().nullable(),
     firstName: z.string(),
     lastName: z.string(),
     passwordHash: z.string(),

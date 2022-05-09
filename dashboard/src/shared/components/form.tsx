@@ -22,9 +22,7 @@ export const Form = ({
           {error.message} {JSON.stringify(error)}{' '}
         </Message>
       )}
-      <SemanticForm style={{minWidth: 550}} onSubmit={onSubmit}>
-        {children}
-      </SemanticForm>
+      <SemanticForm onSubmit={onSubmit}>{children}</SemanticForm>
     </>
   )
 }

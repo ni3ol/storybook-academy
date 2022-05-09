@@ -40,6 +40,7 @@ export const usePromiseLazy = <F, P>(
     isLoading: state.isLoading,
     setResult,
     execute,
+    clearError: () => setState({...state, error: undefined}),
   }
 }
 
