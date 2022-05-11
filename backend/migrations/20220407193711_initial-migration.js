@@ -11,6 +11,8 @@ exports.up = async (knex) => {
       "passwordHash" TEXT,
       "role" TEXT NOT NULL,
       "schoolId" UUID,
+      "educatorId" UUID,
+      "readingLevel" INTEGER,
       "age" INTEGER,
       "favouriteColor" TEXT,
       "favouriteAnimal" TEXT,

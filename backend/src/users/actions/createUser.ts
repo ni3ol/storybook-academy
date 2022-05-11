@@ -16,6 +16,8 @@ export const createUserInputSchema = z.object({
   password: z.string().optional(),
   role: userSchema.shape.role.optional(),
   schoolId: userSchema.shape.schoolId,
+  educatorId: userSchema.shape.educatorId.optional(),
+  readingLevel: userSchema.shape.readingLevel.optional(),
 })
 
 export type CreateUserInputData = z.infer<typeof createUserInputSchema>

@@ -1,3 +1,4 @@
+import {useState} from 'react'
 import {useForm} from 'react-hook-form'
 import {Button} from 'semantic-ui-react'
 import {useAuth} from '../../auth/hooks'
@@ -10,7 +11,8 @@ import {
   TextField,
 } from '../../shared/components/form'
 import {Modal} from '../../shared/components/modal'
-import {usePromiseLazy} from '../../shared/hooks'
+import {usePromise, usePromiseLazy} from '../../shared/hooks'
+import {getUsers} from '../actions/getUsers'
 import {updateUser} from '../actions/updateUser'
 import {User, UserRole} from '../model'
 import {animals, colors} from './createChildProfileForm'
@@ -24,6 +26,8 @@ type FormData = {
   age: number
   favouriteColor: string
   favouriteAnimal: string
+  profileCreated: boolean
+  readingLevel: number
 }
 
 export const roles = [
@@ -45,6 +49,29 @@ export const roles = [
   },
 ]
 
+export const readingLevels = [
+  {
+    label: 'Level 1',
+    value: 1,
+  },
+  {
+    label: 'Level 2',
+    value: 2,
+  },
+  {
+    label: 'Level 3',
+    value: 3,
+  },
+  {
+    label: 'Level 4',
+    value: 4,
+  },
+  {
+    label: 'Level 5',
+    value: 5,
+  },
+]
+
 export const UpdateUserModal = ({
   onClose,
   onUserUpdated,
@@ -62,7 +89,12 @@ export const UpdateUserModal = ({
   }, [])
 
   const handleSubmit = async (data: FormData) => {
-    const {result: updatedUser} = await action.execute(data)
+    const isChildProfileCreated =
+      data.age && data.favouriteAnimal && data.favouriteColor ? true : false
+    const {result: updatedUser} = await action.execute({
+      ...data,
+      profileCreated: isChildProfileCreated,
+    })
     if (updatedUser && onUserUpdated) {
       await onUserUpdated(updatedUser)
     }
@@ -70,6 +102,28 @@ export const UpdateUserModal = ({
 
   const role: UserRole = form.watch('role')
   const isChildRole = (role || user.role) === UserRole.Child
+
+  const [selectedSchool, setSelectedSchool] = useState<
+    string | undefined | null
+  >(user?.schoolId)
+
+  const educatorsAction = usePromise(async () => {
+    const result = await getUsers({
+      authToken: auth.authSession?.token!,
+      filters: {role: UserRole.Teacher},
+    })
+
+    return result
+  }, [])
+
+  const educators = educatorsAction.result || []
+
+  const educatorOptions = educators
+    .filter((educator) => educator.schoolId === selectedSchool)
+    .map((educator) => ({
+      label: `${educator.firstName} ${educator.lastName}`,
+      value: educator.id,
+    })) as any[]
 
   return (
     <Modal
@@ -125,33 +179,50 @@ export const UpdateUserModal = ({
             label="School"
             form={form}
             defaultValue={user.schoolId}
+            setSelectedSchool={(schoolId: string) =>
+              setSelectedSchool(schoolId)
+            }
           />
 
           {isChildRole && (
-            <NumberField
-              name="age"
-              label="Age"
-              defaultValue={user.age}
-              form={form}
-            />
-          )}
-          {isChildRole && (
-            <SelectField
-              name="favouriteColor"
-              label="Favourite color"
-              defaultValue={user.favouriteColor}
-              form={form}
-              options={colors}
-            />
-          )}
-          {isChildRole && (
-            <SelectField
-              name="favouriteAnimal"
-              label="Favourite animal"
-              defaultValue={user.favouriteAnimal}
-              form={form}
-              options={animals}
-            />
+            <>
+              <SelectField
+                name="educatorId"
+                label="Educator"
+                form={form}
+                defaultValue={user.educatorId}
+                options={educatorOptions}
+              />
+              <SelectField
+                name="readingLevel"
+                label="Reading level"
+                form={form}
+                defaultValue={user.readingLevel}
+                options={readingLevels}
+              />
+              <NumberField
+                name="age"
+                label="Age"
+                defaultValue={user.age}
+                form={form}
+              />
+
+              <SelectField
+                name="favouriteColor"
+                label="Favourite color"
+                defaultValue={user.favouriteColor}
+                form={form}
+                options={colors}
+              />
+
+              <SelectField
+                name="favouriteAnimal"
+                label="Favourite animal"
+                defaultValue={user.favouriteAnimal}
+                form={form}
+                options={animals}
+              />
+            </>
           )}
           <Button primary type="submit" fluid loading={action.isLoading}>
             Update user

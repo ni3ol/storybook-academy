@@ -2,7 +2,7 @@ import {Knex} from 'knex'
 import {z} from 'zod'
 import {db, useOrCreateTransaction} from '../../db/db'
 import {applyFilters, FilterMapping} from '../../shared/actionUtils'
-import {User, userSchema} from '../model'
+import {User, UserRole, userSchema} from '../model'
 
 export const userFiltersSchema = z
   .object({
@@ -11,6 +11,7 @@ export const userFiltersSchema = z
     username: z.string(),
     schoolId: z.string().uuid(),
     search: z.string().optional(),
+    role: z.string().optional(),
   })
   .strict()
   .partial()
@@ -23,6 +24,7 @@ const filterMapping: FilterMapping<UserFilters> = {
     query.where('emailAddress', '=', filters.emailAddress!),
   username: (query, filters) => query.where('username', '=', filters.username!),
   schoolId: (query, filters) => query.where('schoolId', '=', filters.schoolId!),
+  role: (query, filters) => query.where('role', '=', filters.role!),
   // problem when putting a camelcased column name in LOWER() -> complains that firstName !== firstname
   search: (query, filters) =>
     query.whereRaw(`LOWER(role) like '%${filters.search!.toLowerCase()}%'`),

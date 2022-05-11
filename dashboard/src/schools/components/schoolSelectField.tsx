@@ -14,6 +14,7 @@ export const SchoolSelectField = <O,>({
   name,
   options,
   defaultValue,
+  setSelectedSchool,
 }: FieldProps & {options?: {label: string; value: O}[]}) => {
   const auth = useAuth()
 
@@ -48,6 +49,7 @@ export const SchoolSelectField = <O,>({
                   : finalOptions.find((option) => option.value === defaultValue)
               }
               onChange={(v) => {
+                setSelectedSchool && setSelectedSchool(v?.value)
                 field.onChange(v?.value)
               }}
             />

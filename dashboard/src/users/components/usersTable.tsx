@@ -44,18 +44,19 @@ export const UsersTable = ({
         {
           key: 'role',
           title: 'Role',
-          resolve: (user) => user.role,
+          resolve: (user) =>
+            user.role.charAt(0).toUpperCase() + user.role.slice(1),
         },
-        {
-          key: 'email',
-          title: 'Email',
-          resolve: (user) => user.emailAddress,
-        },
-        {
-          key: 'username',
-          title: 'Username',
-          resolve: (user) => user.username,
-        },
+        // {
+        //   key: 'email',
+        //   title: 'Email',
+        //   resolve: (user) => user.emailAddress,
+        // },
+        // {
+        //   key: 'username',
+        //   title: 'Username',
+        //   resolve: (user) => user.username,
+        // },
       ]}
     />
   )

@@ -1,10 +1,11 @@
 import {makeRequest} from '../../shared/utils'
-import {User, userSchema} from '../model'
+import {User, UserRole, userSchema} from '../model'
 
 type Filters = {
   id?: string
   search?: string
   schoolId?: string
+  role?: UserRole
 }
 
 export const getUsers = async ({

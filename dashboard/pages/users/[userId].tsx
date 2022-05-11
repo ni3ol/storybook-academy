@@ -13,8 +13,8 @@ import NextLink from 'next/link'
 import {useState} from 'react'
 import {UpdateUserModal} from '../../src/users/components/updateUserModal'
 import {DeleteUserModal} from '../../src/users/components/deleteUserModal'
-import router from 'next/router'
 import {getSchools} from '../../src/schools/actions/getSchools'
+import {UsersTable} from '../../src/users/components/usersTable'
 
 const UserPage = ({auth}: {auth: Auth}) => {
   const router = useRouter()
@@ -23,13 +23,21 @@ const UserPage = ({auth}: {auth: Auth}) => {
   const [isUserDeleteModalOpen, setIsUserDeleteModalOpen] = useState(false)
 
   const getUserAction = usePromise(async () => {
-    const [user] = await getUsers({
+    const users = await getUsers({
       authToken: auth.authSession.token,
-      filters: {id: userId},
     })
-    return user
+    return users
   }, [])
-  const user = getUserAction.result
+  const user = (getUserAction.result || []).find((user) => user.id === userId)
+  const educator = (getUserAction.result || []).find(
+    (u) => user?.educatorId === u.id,
+  )
+
+  const students = (getUserAction.result || []).filter(
+    (u) => u.educatorId === user?.id && user?.role === UserRole.Teacher,
+  )
+
+  console.log(students, educator)
 
   const schoolsAction = usePromise(() => {
     return getSchools({authToken: auth.authSession.token})
@@ -155,12 +163,10 @@ const UserPage = ({auth}: {auth: Auth}) => {
             <Table.Row>
               <Table.Cell width={4}>Name</Table.Cell>
               <Table.Cell>
-                {user && schools && (
+                {user?.schoolId && schools && (
                   <NextLink passHref href={`/schools/${user?.schoolId}`}>
-                    {
-                      schools.find((school) => school.id === user?.schoolId)
-                        ?.name
-                    }
+                    {schools.find((school) => school.id === user?.schoolId)
+                      ?.name || ''}
                   </NextLink>
                 )}
               </Table.Cell>
@@ -172,13 +178,19 @@ const UserPage = ({auth}: {auth: Auth}) => {
             {user?.role === UserRole.Child && (
               <Table.Row>
                 <Table.Cell>Teacher</Table.Cell>
-                <Table.Cell>TODO</Table.Cell>
+                <Table.Cell>
+                  {educator && (
+                    <NextLink passHref href={`/users/${educator?.id}`}>
+                      {educator.firstName + ' ' + educator.lastName}
+                    </NextLink>
+                  )}
+                </Table.Cell>
               </Table.Row>
             )}
             {user?.role === UserRole.Child && (
               <Table.Row>
                 <Table.Cell>Reading level</Table.Cell>
-                <Table.Cell>TODO</Table.Cell>
+                <Table.Cell>{user.readingLevel}</Table.Cell>
               </Table.Row>
             )}
           </Table.Body>
@@ -220,6 +232,23 @@ const UserPage = ({auth}: {auth: Auth}) => {
                 </Table.Row>
               </Table.Body>
             </Table>
+          </>
+        )}
+
+        {user?.role === UserRole.Teacher && (
+          <>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <Header style={{margin: 0}} as="h3">
+                Class
+              </Header>
+            </div>
+            <UsersTable rows={students} authToken={auth.authSession.token!} />
           </>
         )}
       </Container>
