@@ -13,6 +13,7 @@ export const SchoolSelectField = <O,>({
   form,
   name,
   options,
+  defaultValue,
 }: FieldProps & {options?: {label: string; value: O}[]}) => {
   const auth = useAuth()
 
@@ -41,7 +42,11 @@ export const SchoolSelectField = <O,>({
               placeholder={placeholder}
               getOptionLabel={(o) => o.label}
               {...field}
-              value={finalOptions.find((o) => o.value === field.value)}
+              value={
+                field.value
+                  ? finalOptions.find((o) => o.value === field.value)
+                  : finalOptions.find((option) => option.value === defaultValue)
+              }
               onChange={(v) => {
                 field.onChange(v?.value)
               }}

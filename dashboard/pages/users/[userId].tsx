@@ -14,6 +14,7 @@ import {useState} from 'react'
 import {UpdateUserModal} from '../../src/users/components/updateUserModal'
 import {DeleteUserModal} from '../../src/users/components/deleteUserModal'
 import router from 'next/router'
+import {getSchools} from '../../src/schools/actions/getSchools'
 
 const UserPage = ({auth}: {auth: Auth}) => {
   const router = useRouter()
@@ -29,6 +30,12 @@ const UserPage = ({auth}: {auth: Auth}) => {
     return user
   }, [])
   const user = getUserAction.result
+
+  const schoolsAction = usePromise(() => {
+    return getSchools({authToken: auth.authSession.token})
+  }, [])
+
+  const schools = schoolsAction.result || []
 
   return (
     <>
@@ -69,7 +76,7 @@ const UserPage = ({auth}: {auth: Auth}) => {
               Back
             </NextLink>
             <Header as="h1" style={{marginBottom: 20}}>
-              {user?.firstName} {user?.lastName}
+              User - {user?.firstName} {user?.lastName}
             </Header>
           </div>
         </div>
@@ -147,7 +154,16 @@ const UserPage = ({auth}: {auth: Auth}) => {
           <Table.Body>
             <Table.Row>
               <Table.Cell width={4}>Name</Table.Cell>
-              <Table.Cell>TODO</Table.Cell>
+              <Table.Cell>
+                {user && schools && (
+                  <NextLink passHref href={`/schools/${user?.schoolId}`}>
+                    {
+                      schools.find((school) => school.id === user?.schoolId)
+                        ?.name
+                    }
+                  </NextLink>
+                )}
+              </Table.Cell>
             </Table.Row>
             <Table.Row>
               <Table.Cell>Role</Table.Cell>

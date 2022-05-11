@@ -6,18 +6,13 @@ import {Auth} from '../../src/auth/hooks'
 import {useDebounce, usePromise} from '../../src/shared/hooks'
 import {getUsers} from '../../src/users/actions/getUsers'
 import {CreateUserModal} from '../../src/users/components/createUserModal'
-import {User} from '../../src/users/model'
-import {UpdateUserModal} from '../../src/users/components/updateUserModal'
 import {Container} from '../../src/shared/components/container'
 import {Button} from '../../src/shared/components/button'
 import {Header} from '../../src/shared/components/header'
-import {DeleteUserModal} from '../../src/users/components/deleteUserModal'
 import {Input} from 'semantic-ui-react'
 
 const Users = ({auth}: {auth: Auth}) => {
   const [isCreateUserModalOpen, setIsCreateUserModalOpen] = useState(false)
-  const [userToUpdate, setUserToUpdate] = useState<User | undefined>()
-  const [userToDelete, setUserToDelete] = useState<User | undefined>()
   const [search, setSearch] = useState('')
   const debouncedSearch = useDebounce(search, 500)
 
@@ -32,28 +27,6 @@ const Users = ({auth}: {auth: Auth}) => {
           onClose={() => setIsCreateUserModalOpen(false)}
           onUserCreated={() => {
             setIsCreateUserModalOpen(false)
-            action.execute()
-          }}
-        />
-      )}
-      {userToUpdate && (
-        <UpdateUserModal
-          user={userToUpdate}
-          onClose={() => setUserToUpdate(undefined)}
-          onUserUpdated={() => {
-            setUserToUpdate(undefined)
-            action.execute()
-          }}
-        />
-      )}
-      {userToDelete && (
-        <DeleteUserModal
-          user={userToDelete}
-          onClose={() => {
-            setUserToDelete(undefined)
-          }}
-          onUserDeleted={() => {
-            setUserToDelete(undefined)
             action.execute()
           }}
         />
@@ -82,8 +55,7 @@ const Users = ({auth}: {auth: Auth}) => {
           </div>
         </div>
         <UsersTable
-          onUpdateClick={(user) => setUserToUpdate(user)}
-          onDeleteClick={(user) => setUserToDelete(user)}
+          authToken={auth?.authSession!.token}
           rows={action.result || []}
         />
       </Container>

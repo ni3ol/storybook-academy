@@ -1,5 +1,5 @@
 import {makeRequest} from '../../shared/utils'
-import {Book, bookSchema, School, schoolSchema} from '../model'
+import {School, schoolSchema} from '../model'
 
 type Filters = {
   id?: string

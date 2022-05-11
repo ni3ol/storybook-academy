@@ -1,6 +1,7 @@
 import {useForm} from 'react-hook-form'
 import {Button} from 'semantic-ui-react'
 import {useAuth} from '../../auth/hooks'
+import {SchoolSelectField} from '../../schools/components/schoolSelectField'
 import {
   EmailField,
   Form,
@@ -116,6 +117,14 @@ export const UpdateUserModal = ({
             defaultValue={user.role}
             options={roles}
             form={form}
+          />
+
+          <SchoolSelectField
+            required
+            name="schoolId"
+            label="School"
+            form={form}
+            defaultValue={user.schoolId}
           />
 
           {isChildRole && (
