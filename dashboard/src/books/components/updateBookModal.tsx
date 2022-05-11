@@ -1,7 +1,12 @@
 import {useForm} from 'react-hook-form'
 import {Button} from 'semantic-ui-react'
 import {useAuth} from '../../auth/hooks'
-import {Form, NumberField, TextField} from '../../shared/components/form'
+import {
+  FileUploadField,
+  Form,
+  NumberField,
+  TextField,
+} from '../../shared/components/form'
 import {Modal} from '../../shared/components/modal'
 import {usePromiseLazy} from '../../shared/hooks'
 import {updateBook} from '../actions/updateBook'
@@ -54,6 +59,37 @@ export const UpdateBookModal = ({
             label="Level"
             form={form}
             defaultValue={book.level}
+          />
+          <FileUploadField
+            required
+            name="level-1"
+            label="Level 1"
+            form={form}
+            // defaultValue={book.level1Copy}
+          />
+          <FileUploadField
+            name="level-2"
+            label="Level 2"
+            form={form}
+            // defaultValue={book.level2Copy}
+          />
+          <FileUploadField
+            name="level-3"
+            label="Level 3"
+            form={form}
+            // defaultValue={book.level3Copy}
+          />
+          <FileUploadField
+            name="level-4"
+            label="Level 4"
+            form={form}
+            // defaultValue={book.level4Copy}
+          />
+          <FileUploadField
+            name="level-5"
+            label="Level 5"
+            form={form}
+            // defaultValue={book.level5Copy}
           />
           <Button primary type="submit" fluid loading={action.isLoading}>
             Update book

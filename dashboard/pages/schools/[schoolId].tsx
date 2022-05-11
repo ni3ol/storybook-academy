@@ -16,6 +16,8 @@ import {usePromise} from '../../src/shared/hooks'
 import {getUsers} from '../../src/users/actions/getUsers'
 import {CreateUserModal} from '../../src/users/components/createUserModal'
 import {UsersTable} from '../../src/users/components/usersTable'
+import {Book} from '../../src/books/model'
+import {UnassignBookFromSchoolModal} from '../../src/schools/components/unassignBookFromSchoolModal'
 
 const SchoolPage = ({auth}: {auth: Auth}) => {
   const router = useRouter()
@@ -23,6 +25,9 @@ const SchoolPage = ({auth}: {auth: Auth}) => {
   const [showNewUserModal, setShowNewUserModal] = useState(false)
   const [showUpdateModal, setShowUpdateModal] = useState(false)
   const [showAssignBookModal, setShowAssignBookModal] = useState(false)
+  const [bookToUnassign, setBookToUnassign] = useState<Book | undefined>(
+    undefined,
+  )
 
   const getSchoolAction = usePromise(async () => {
     const [school] = await getSchools({
@@ -72,6 +77,17 @@ const SchoolPage = ({auth}: {auth: Auth}) => {
           onClose={() => setShowAssignBookModal(false)}
           onBookAssigned={() => {
             setShowAssignBookModal(false)
+            getBooksAction.execute()
+          }}
+        />
+      )}
+      {bookToUnassign && school && (
+        <UnassignBookFromSchoolModal
+          school={school}
+          book={bookToUnassign}
+          onClose={() => setBookToUnassign(undefined)}
+          onBookUnassigned={() => {
+            setBookToUnassign(undefined)
             getBooksAction.execute()
           }}
         />
@@ -151,7 +167,10 @@ const SchoolPage = ({auth}: {auth: Auth}) => {
             Assign new book
           </Button>
         </div>
-        <LibraryTable rows={books} />
+        <LibraryTable
+          rows={books}
+          onDeleteClick={(row) => setBookToUnassign(row)}
+        />
       </Container>
     </>
   )

@@ -10,6 +10,7 @@ export const userFiltersSchema = z
     emailAddress: z.string(),
     username: z.string(),
     schoolId: z.string().uuid(),
+    search: z.string().optional(),
   })
   .strict()
   .partial()
@@ -22,6 +23,9 @@ const filterMapping: FilterMapping<UserFilters> = {
     query.where('emailAddress', '=', filters.emailAddress!),
   username: (query, filters) => query.where('username', '=', filters.username!),
   schoolId: (query, filters) => query.where('schoolId', '=', filters.schoolId!),
+  // problem when putting a camelcased column name in LOWER() -> complains that firstName !== firstname
+  search: (query, filters) =>
+    query.whereRaw(`LOWER(role) like '%${filters.search!.toLowerCase()}%'`),
 }
 
 export const getUsers = async (params?: {

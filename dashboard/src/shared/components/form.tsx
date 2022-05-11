@@ -302,3 +302,25 @@ export const SelectField = <O,>({
     </Field>
   )
 }
+
+export const FileUploadField = ({
+  required,
+  label,
+  form,
+  name,
+  defaultValue,
+}: FieldProps) => {
+  return (
+    <Field label={label} required={required}>
+      <Controller
+        name={name}
+        control={form.control}
+        rules={{required}}
+        defaultValue={defaultValue}
+        render={({field}) => {
+          return <Input required={required} type="file" {...field} />
+        }}
+      />
+    </Field>
+  )
+}

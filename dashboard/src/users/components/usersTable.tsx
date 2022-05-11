@@ -1,6 +1,7 @@
 import {Button} from 'semantic-ui-react'
 import {DataTable} from '../../shared/components/dataTable'
 import {User} from '../model'
+import NextLink from 'next/link'
 
 export const UsersTable = ({
   rows,
@@ -15,14 +16,22 @@ export const UsersTable = ({
     rows={rows}
     headers={[
       {
-        key: 'firstName',
-        title: 'First name',
-        resolve: (user) => user.firstName,
+        key: 'name',
+        title: 'Name',
+        resolve: (user) => {
+          return (
+            <NextLink passHref href={`/users/${user.id}`}>
+              <a>
+                {user.firstName} {user.lastName}
+              </a>
+            </NextLink>
+          )
+        },
       },
       {
-        key: 'lastName',
-        title: 'Last name',
-        resolve: (user) => user.lastName,
+        key: 'school',
+        title: 'School',
+        resolve: (user) => 'TODO',
       },
       {
         key: 'role',
@@ -39,52 +48,32 @@ export const UsersTable = ({
         title: 'Username',
         resolve: (user) => user.username,
       },
-      {
-        key: 'profileCreated',
-        title: 'Profile created',
-        resolve: (user) => user.profileCreated && 'Yes',
-      },
-      {
-        key: 'age',
-        title: 'Age',
-        resolve: (user) => user.age,
-      },
-      {
-        key: 'favouriteColor',
-        title: 'Favourite color',
-        resolve: (user) => user.favouriteColor,
-      },
-      {
-        key: 'favouriteAnimal',
-        title: 'Favourite animal',
-        resolve: (user) => user.favouriteAnimal,
-      },
-      ...(onUpdateClick || onDeleteClick
-        ? [
-            {
-              key: 'actions',
-              title: 'Actions',
-              resolve: (user: User) => (
-                <div>
-                  {onUpdateClick && (
-                    <Button basic onClick={() => onUpdateClick(user)} primary>
-                      Edit
-                    </Button>
-                  )}
-                  {onDeleteClick && (
-                    <Button
-                      basic
-                      color="red"
-                      onClick={() => onDeleteClick(user)}
-                    >
-                      Delete
-                    </Button>
-                  )}
-                </div>
-              ),
-            },
-          ]
-        : []),
+      // ...(onUpdateClick || onDeleteClick
+      //   ? [
+      //       {
+      //         key: 'actions',
+      //         title: 'Actions',
+      //         resolve: (user: User) => (
+      //           <div>
+      //             {onUpdateClick && (
+      //               <Button basic onClick={() => onUpdateClick(user)} primary>
+      //                 Edit
+      //               </Button>
+      //             )}
+      //             {onDeleteClick && (
+      //               <Button
+      //                 basic
+      //                 color="red"
+      //                 onClick={() => onDeleteClick(user)}
+      //               >
+      //                 Delete
+      //               </Button>
+      //             )}
+      //           </div>
+      //         ),
+      //       },
+      //     ]
+      //   : []),
     ]}
   />
 )

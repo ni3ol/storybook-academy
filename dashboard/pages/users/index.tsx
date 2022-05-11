@@ -1,26 +1,29 @@
 import {useState} from 'react'
-import {RequireAuth} from '../src/auth/components/requireAuth'
-import {DashboardNavigation} from '../src/shared/components/dashboardNavigation/dashboardNavigation'
-import {UsersTable} from '../src/users/components/usersTable'
-import {Auth} from '../src/auth/hooks'
-import {usePromise} from '../src/shared/hooks'
-import {getUsers} from '../src/users/actions/getUsers'
-import {CreateUserModal} from '../src/users/components/createUserModal'
-import {User} from '../src/users/model'
-import {UpdateUserModal} from '../src/users/components/updateUserModal'
-import {Container} from '../src/shared/components/container'
-import {Button} from '../src/shared/components/button'
-import {Header} from '../src/shared/components/header'
-import {DeleteUserModal} from '../src/users/components/deleteUserModal'
+import {RequireAuth} from '../../src/auth/components/requireAuth'
+import {DashboardNavigation} from '../../src/shared/components/dashboardNavigation/dashboardNavigation'
+import {UsersTable} from '../../src/users/components/usersTable'
+import {Auth} from '../../src/auth/hooks'
+import {useDebounce, usePromise} from '../../src/shared/hooks'
+import {getUsers} from '../../src/users/actions/getUsers'
+import {CreateUserModal} from '../../src/users/components/createUserModal'
+import {User} from '../../src/users/model'
+import {UpdateUserModal} from '../../src/users/components/updateUserModal'
+import {Container} from '../../src/shared/components/container'
+import {Button} from '../../src/shared/components/button'
+import {Header} from '../../src/shared/components/header'
+import {DeleteUserModal} from '../../src/users/components/deleteUserModal'
+import {Input} from 'semantic-ui-react'
 
 const Users = ({auth}: {auth: Auth}) => {
   const [isCreateUserModalOpen, setIsCreateUserModalOpen] = useState(false)
   const [userToUpdate, setUserToUpdate] = useState<User | undefined>()
   const [userToDelete, setUserToDelete] = useState<User | undefined>()
+  const [search, setSearch] = useState('')
+  const debouncedSearch = useDebounce(search, 500)
 
   const action = usePromise(() => {
-    return getUsers({authToken: auth.token})
-  }, [])
+    return getUsers({authToken: auth.token, filters: {search: debouncedSearch}})
+  }, [debouncedSearch])
 
   return (
     <>
@@ -65,9 +68,18 @@ const Users = ({auth}: {auth: Auth}) => {
           }}
         >
           <Header as="h1">Users</Header>
-          <Button onClick={() => setIsCreateUserModalOpen(true)} primary>
-            New user
-          </Button>
+          <div>
+            <Input
+              icon="search"
+              iconPosition="left"
+              placeholder="Search email"
+              style={{marginRight: 10}}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <Button onClick={() => setIsCreateUserModalOpen(true)} primary>
+              New user
+            </Button>
+          </div>
         </div>
         <UsersTable
           onUpdateClick={(user) => setUserToUpdate(user)}

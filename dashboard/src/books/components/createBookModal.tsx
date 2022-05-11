@@ -2,7 +2,12 @@
 import {useForm} from 'react-hook-form'
 import {Button} from 'semantic-ui-react'
 import {useAuth} from '../../auth/hooks'
-import {Form, NumberField, TextField} from '../../shared/components/form'
+import {
+  FileUploadField,
+  Form,
+  NumberField,
+  TextField,
+} from '../../shared/components/form'
 import {Modal} from '../../shared/components/modal'
 import {usePromiseLazy} from '../../shared/hooks'
 import {createBook} from '../actions/createBook'
@@ -42,6 +47,16 @@ export const CreateBookModal = ({
         <Form error={action.error} onSubmit={form.handleSubmit(handleSubmit)}>
           <TextField required name="title" label="Title" form={form} />
           <NumberField required name="level" label="Level" form={form} />
+          <FileUploadField
+            required
+            name="level-1"
+            label="Level 1"
+            form={form}
+          />
+          <FileUploadField name="level-2" label="Level 2" form={form} />
+          <FileUploadField name="level-3" label="Level 3" form={form} />
+          <FileUploadField name="level-4" label="Level 4" form={form} />
+          <FileUploadField name="level-5" label="Level 5" form={form} />
           <Button primary type="submit" fluid loading={action.isLoading}>
             Create book
           </Button>
