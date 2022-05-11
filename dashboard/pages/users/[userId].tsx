@@ -1,5 +1,5 @@
 import {useRouter} from 'next/router'
-import {Dropdown, Icon, Tab, Table} from 'semantic-ui-react'
+import {Dropdown, Table} from 'semantic-ui-react'
 import {RequireAuth} from '../../src/auth/components/requireAuth'
 import {Auth} from '../../src/auth/hooks'
 import {Container} from '../../src/shared/components/container'
@@ -7,14 +7,14 @@ import {DashboardNavigation} from '../../src/shared/components/dashboardNavigati
 import {Header} from '../../src/shared/components/header'
 import {usePromise} from '../../src/shared/hooks'
 import {getUsers} from '../../src/users/actions/getUsers'
-import format from 'date-fns/format'
-import {User, UserRole} from '../../src/users/model'
+import {UserRole} from '../../src/users/model'
 import NextLink from 'next/link'
 import {useState} from 'react'
 import {UpdateUserModal} from '../../src/users/components/updateUserModal'
 import {DeleteUserModal} from '../../src/users/components/deleteUserModal'
 import {getSchools} from '../../src/schools/actions/getSchools'
 import {UsersTable} from '../../src/users/components/usersTable'
+import {formatDateSimple} from '../../src/shared/utils'
 
 const UserPage = ({auth}: {auth: Auth}) => {
   const router = useRouter()
@@ -142,7 +142,7 @@ const UserPage = ({auth}: {auth: Auth}) => {
             <Table.Row>
               <Table.Cell>Created at</Table.Cell>
               <Table.Cell>
-                {user?.createdAt && format(user?.createdAt, 'd LLLL y')}
+                {user?.createdAt && formatDateSimple(user.createdAt)}
               </Table.Cell>
             </Table.Row>
           </Table.Body>

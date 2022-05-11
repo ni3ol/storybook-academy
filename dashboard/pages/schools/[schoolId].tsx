@@ -1,5 +1,6 @@
 import {useRouter} from 'next/router'
 import {useState} from 'react'
+import NextLink from 'next/link'
 import {Dropdown, Icon, Table} from 'semantic-ui-react'
 import {RequireAuth} from '../../src/auth/components/requireAuth'
 import {Auth} from '../../src/auth/hooks'
@@ -18,6 +19,7 @@ import {CreateUserModal} from '../../src/users/components/createUserModal'
 import {UsersTable} from '../../src/users/components/usersTable'
 import {Book} from '../../src/books/model'
 import {UnassignBookFromSchoolModal} from '../../src/schools/components/unassignBookFromSchoolModal'
+import {formatDateSimple} from '../../src/shared/utils'
 
 const SchoolPage = ({auth}: {auth: Auth}) => {
   const router = useRouter()
@@ -92,17 +94,18 @@ const SchoolPage = ({auth}: {auth: Auth}) => {
           }}
         />
       )}
+
       <DashboardNavigation role={auth.user.role} />
       <Container>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          <Header as="h1">Schools / {school?.name}</Header>
+        <div>
+          <NextLink passHref href={`/schools`}>
+            Back
+          </NextLink>
+          <Header as="h1" style={{marginBottom: 20}}>
+            School - {school?.name}
+          </Header>
         </div>
+
         <div
           style={{
             display: 'flex',
@@ -125,16 +128,18 @@ const SchoolPage = ({auth}: {auth: Auth}) => {
         <Table definition>
           <Table.Body>
             <Table.Row>
-              <Table.Cell>ID</Table.Cell>
+              <Table.Cell>Name</Table.Cell>
+              <Table.Cell>{school?.name}</Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>ID (internal use only)</Table.Cell>
               <Table.Cell>{schoolId}</Table.Cell>
             </Table.Row>
             <Table.Row>
               <Table.Cell>Created at</Table.Cell>
-              <Table.Cell>{school?.createdAt.toISOString()}</Table.Cell>
-            </Table.Row>
-            <Table.Row>
-              <Table.Cell>Name</Table.Cell>
-              <Table.Cell>{school?.name}</Table.Cell>
+              <Table.Cell>
+                {school?.createdAt && formatDateSimple(school?.createdAt)}
+              </Table.Cell>
             </Table.Row>
           </Table.Body>
         </Table>
@@ -152,7 +157,7 @@ const SchoolPage = ({auth}: {auth: Auth}) => {
             New user
           </Button>
         </div>
-        <UsersTable rows={users} />
+        <UsersTable authToken={auth.authSession.token!} rows={users} />
         <div
           style={{
             display: 'flex',
@@ -169,6 +174,7 @@ const SchoolPage = ({auth}: {auth: Auth}) => {
         </div>
         <LibraryTable
           rows={books}
+          unassign
           onDeleteClick={(row) => setBookToUnassign(row)}
         />
       </Container>

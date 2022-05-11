@@ -32,7 +32,7 @@ type FormData = {
   schoolId?: string
 }
 
-export const CreateUserModal = async ({
+export const CreateUserModal = ({
   onClose,
   schoolId,
   onUserCreated,
@@ -71,10 +71,16 @@ export const CreateUserModal = async ({
     string | undefined | null
   >()
 
-  const educators = await getUsers({
-    authToken: auth.authSession?.token!,
-    filters: {role: UserRole.Teacher},
-  })
+  const educatorsAction = usePromiseLazy(async () => {
+    const result = getUsers({
+      authToken: auth.authSession?.token!,
+      filters: {role: UserRole.Teacher},
+    })
+
+    return result
+  }, [])
+
+  const educators = educatorsAction.result || []
 
   const educatorOptions = educators
     .filter((educator) => educator.schoolId === selectedSchool)

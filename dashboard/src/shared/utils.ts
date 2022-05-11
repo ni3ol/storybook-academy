@@ -84,3 +84,7 @@ export const formatCurrency = (value: number) => {
 export const formatDate = (date: Date) => {
   return format(date, 'd MMM yyy HH:mm:ss')
 }
+
+export const formatDateSimple = (date: Date) => {
+  return format(date, 'd LLLL y')
+}
