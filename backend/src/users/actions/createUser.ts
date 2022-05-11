@@ -24,10 +24,12 @@ export const createUser = async (
   data: CreateUserInputData,
   params?: {trx?: Knex.Transaction; as?: {user?: User}; skipAuth?: boolean},
 ) => {
-  const [existingUser] = await getUsers({
-    filters: {emailAddress: data.emailAddress || undefined},
-    skipAuth: true,
-  })
+  const [existingUser] = data.emailAddress
+    ? await getUsers({
+        filters: {emailAddress: data.emailAddress},
+        skipAuth: true,
+      })
+    : []
   if (existingUser) {
     throw new ConflictError(`User with that email address already exists`)
   }

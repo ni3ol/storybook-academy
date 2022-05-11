@@ -12,7 +12,7 @@ export enum UserRole {
 export const userSchema = entitySchema.extend({
   firstName: z.string(),
   lastName: z.string(),
-  emailAddress: z.string().email(),
+  emailAddress: z.string().email().optional().nullable(),
   role: z.nativeEnum(UserRole),
   profileCreated: z.boolean().optional().nullable(),
   nickname: z.string().optional().nullable(),

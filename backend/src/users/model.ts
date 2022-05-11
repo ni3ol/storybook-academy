@@ -15,7 +15,7 @@ export const userSchema = entitySchema
     username: z.string().optional().nullable(),
     firstName: z.string(),
     lastName: z.string(),
-    passwordHash: z.string().optional(),
+    passwordHash: z.string().optional().nullable(),
     role: z.nativeEnum(UserRole),
     schoolId: z.string().uuid().nullable().optional(),
     age: z.number().nullable().optional(),
