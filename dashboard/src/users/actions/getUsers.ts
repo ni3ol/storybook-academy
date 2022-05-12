@@ -6,6 +6,7 @@ type Filters = {
   search?: string
   schoolId?: string
   role?: UserRole
+  educatorId?: string
 }
 
 export const getUsers = async ({

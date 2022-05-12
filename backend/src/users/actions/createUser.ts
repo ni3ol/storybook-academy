@@ -3,6 +3,7 @@ import {z} from 'zod'
 import {hashPassword} from '../../auth/utils'
 import {db, useOrCreateTransaction} from '../../db/db'
 import {AuthorizationError, ConflictError} from '../../errors'
+import {getSchools} from '../../schools/actions/getSchools'
 import {getUuid, utcNow} from '../../shared/utils'
 import {User, UserRole, userSchema} from '../model'
 import {getUsers} from './getUsers'
@@ -38,20 +39,49 @@ export const createUser = async (
 
   const asOf = utcNow()
 
-  if (params?.skipAuth !== true && params?.as?.user?.role !== UserRole.Admin) {
+  if (
+    params?.skipAuth !== true &&
+    params?.as?.user?.role !== (UserRole.Teacher || UserRole.Admin)
+  ) {
     throw new AuthorizationError()
   }
 
-  const {password, ...other} = createUserInputSchema.parse(data)
+  const {password, schoolId, firstName, lastName, ...other} =
+    createUserInputSchema.parse(data)
   const passwordHash = password ? await hashPassword(password) : undefined
   const id = other.id || getUuid()
+  const schools = await getSchools()
+  const schoolName = schools
+    .find((s) => s.id === schoolId)
+    ?.name?.slice(0, 3)
+    .toLowerCase()
+
+  let username = `${firstName.slice(0, 3).toLowerCase()}${lastName
+    .slice(0, 3)
+    .toLowerCase()}${schoolName ? '-' : ''}${schoolName || ''}`
+
+  const isUsernameUnique = async (userName: string) =>
+    (await getUsers({filters: {username: userName}})).length === 0
+  const getRandomNumber = () => Math.floor(Math.random() * (9 - 1 + 1) + 1)
+
+  if (!(await isUsernameUnique(username))) {
+    username += getRandomNumber()
+    if (!(await isUsernameUnique(username))) {
+      username += getRandomNumber()
+    }
+  }
+
   const user: User = {
     ...other,
     id,
     createdAt: asOf,
     updatedAt: asOf,
     passwordHash,
+    schoolId,
+    firstName,
+    lastName,
     role: data.role || UserRole.User,
+    username,
   }
 
   await useOrCreateTransaction(params?.trx, async (trx) => {

@@ -54,10 +54,7 @@ const Users = ({auth}: {auth: Auth}) => {
             </Button>
           </div>
         </div>
-        <UsersTable
-          authToken={auth?.authSession!.token}
-          rows={action.result || []}
-        />
+        <UsersTable auth={auth} rows={action.result || []} />
       </Container>
     </>
   )

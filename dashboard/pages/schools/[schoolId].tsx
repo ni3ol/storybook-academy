@@ -157,7 +157,7 @@ const SchoolPage = ({auth}: {auth: Auth}) => {
             New user
           </Button>
         </div>
-        <UsersTable authToken={auth.authSession.token!} rows={users} />
+        <UsersTable auth={auth} rows={users} />
         <div
           style={{
             display: 'flex',

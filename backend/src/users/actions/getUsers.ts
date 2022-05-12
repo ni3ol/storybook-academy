@@ -12,6 +12,7 @@ export const userFiltersSchema = z
     schoolId: z.string().uuid(),
     search: z.string().optional(),
     role: z.string().optional(),
+    educatorId: z.string().optional(),
   })
   .strict()
   .partial()
@@ -25,6 +26,8 @@ const filterMapping: FilterMapping<UserFilters> = {
   username: (query, filters) => query.where('username', '=', filters.username!),
   schoolId: (query, filters) => query.where('schoolId', '=', filters.schoolId!),
   role: (query, filters) => query.where('role', '=', filters.role!),
+  educatorId: (query, filters) =>
+    query.where('educatorId', '=', filters.educatorId!),
   // problem when putting a camelcased column name in LOWER() -> complains that firstName !== firstname
   search: (query, filters) =>
     query.whereRaw(`LOWER(role) like '%${filters.search!.toLowerCase()}%'`),

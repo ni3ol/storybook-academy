@@ -1,19 +1,14 @@
 import {Button} from 'semantic-ui-react'
 import {DataTable} from '../../shared/components/dataTable'
-import {User} from '../model'
+import {User, UserRole} from '../model'
 import NextLink from 'next/link'
 import {usePromise} from '../../shared/hooks'
 import {getSchools} from '../../schools/actions/getSchools'
+import {Auth} from '../../auth/hooks'
 
-export const UsersTable = ({
-  rows,
-  authToken,
-}: {
-  rows: User[]
-  authToken: string
-}) => {
+export const UsersTable = ({rows, auth}: {rows: User[]; auth: Auth}) => {
   const schoolsAction = usePromise(() => {
-    return getSchools({authToken: authToken})
+    return getSchools({authToken: auth.authSession!.token})
   }, [])
 
   const schools = schoolsAction.result || []
@@ -35,28 +30,36 @@ export const UsersTable = ({
             )
           },
         },
-        {
-          key: 'school',
-          title: 'School',
-          resolve: (user) =>
-            schools.find((school) => school.id === user.schoolId)?.name,
-        },
-        {
-          key: 'role',
-          title: 'Role',
-          resolve: (user) =>
-            user.role.charAt(0).toUpperCase() + user.role.slice(1),
-        },
+        ...(auth.user.role !== UserRole.Teacher
+          ? [
+              {
+                key: 'school',
+                title: 'School',
+                resolve: (user: User) =>
+                  schools.find((school) => school.id === user.schoolId)?.name,
+              },
+              {
+                key: 'role',
+                title: 'Role',
+                resolve: (user: User) =>
+                  user.role.charAt(0).toUpperCase() + user.role.slice(1),
+              },
+            ]
+          : []),
         // {
         //   key: 'email',
         //   title: 'Email',
         //   resolve: (user) => user.emailAddress,
         // },
-        // {
-        //   key: 'username',
-        //   title: 'Username',
-        //   resolve: (user) => user.username,
-        // },
+        ...(auth.user.role === UserRole.Teacher
+          ? [
+              {
+                key: 'username',
+                title: 'Username',
+                resolve: (user: User) => user.username,
+              },
+            ]
+          : []),
       ]}
     />
   )

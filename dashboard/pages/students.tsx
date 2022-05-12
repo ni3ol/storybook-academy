@@ -1,82 +1,75 @@
 import {useState} from 'react'
-import {Container} from 'reactstrap'
-import {Header, Menu, Button, Modal, Icon} from 'semantic-ui-react'
 import {RequireAuth} from '../src/auth/components/requireAuth'
 import {DashboardNavigation} from '../src/shared/components/dashboardNavigation/dashboardNavigation'
-import {DeleteUserModal} from '../src/users/components/deleteUserModal'
-import {UpdateUserModal} from '../src/users/components/updateUserModal'
 import {UsersTable} from '../src/users/components/usersTable'
+import {Auth} from '../src/auth/hooks'
+import {useDebounce, usePromise} from '../src/shared/hooks'
+import {getUsers} from '../src/users/actions/getUsers'
+import {CreateUserModal} from '../src/users/components/createUserModal'
+import {Container} from '../src/shared/components/container'
+import {Button} from '../src/shared/components/button'
+import {Header} from '../src/shared/components/header'
+import {Input} from 'semantic-ui-react'
 
-export default function Users() {
+const Students = ({auth}: {auth: Auth}) => {
   const [isCreateUserModalOpen, setIsCreateUserModalOpen] = useState(false)
-  const [isUpdateUserModalOpen, setIsUpdateUserModalOpen] = useState(false)
-  const [isDeleteUserModalOpen, setIsDeleteUserModalOpen] = useState(false)
+  const [search, setSearch] = useState('')
+  const debouncedSearch = useDebounce(search, 500)
 
+  const action = usePromise(() => {
+    return getUsers({
+      authToken: auth.authSession!.token,
+      filters: {educatorId: auth.user.id, search: debouncedSearch},
+    })
+  }, [debouncedSearch])
+
+  return (
+    <>
+      {isCreateUserModalOpen && (
+        <CreateUserModal
+          schoolId={auth.user.schoolId}
+          educatorId={auth.user.id}
+          onClose={() => setIsCreateUserModalOpen(false)}
+          onUserCreated={() => {
+            setIsCreateUserModalOpen(false)
+            action.execute()
+          }}
+        />
+      )}
+      <DashboardNavigation role={auth.user.role} />
+      <Container>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <Header as="h1">Students</Header>
+          <div>
+            <Input
+              icon="search"
+              iconPosition="left"
+              placeholder="Search email"
+              style={{marginRight: 10}}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <Button onClick={() => setIsCreateUserModalOpen(true)} primary>
+              Add new student
+            </Button>
+          </div>
+        </div>
+        <UsersTable auth={auth} rows={action.result || []} />
+      </Container>
+    </>
+  )
+}
+
+export default function StudentsPage() {
   return (
     <RequireAuth
       render={({auth}) => {
-        return (
-          <>
-            <DashboardNavigation role={auth?.user?.role} />
-            <Container>
-              <Header as="h1">Students</Header>
-
-              <Button onClick={() => setIsCreateUserModalOpen(true)} primary>
-                Add student
-              </Button>
-
-              <UsersTable
-                onEditClick={setIsUpdateUserModalOpen}
-                onDeleteClick={setIsDeleteUserModalOpen}
-                rows={[
-                  {
-                    firstName: 'Nicol',
-                    lastName: 'Vojacek',
-                    childId: 'nic123',
-                    age: 8,
-                    school: 'FHP',
-                    teacher: 'Rory James',
-                    readingLevel: 1,
-                    lastLoggedIn: '2 April 2022',
-                    aveReadingTime: 29,
-                  },
-                  {
-                    firstName: 'Michele',
-                    lastName: 'Lemonius',
-                    age: 7,
-                    childId: 'mic123',
-                    school: 'FHP',
-                    teacher: 'Rory James',
-                    readingLevel: 2,
-                    lastLoggedIn: '2 April 2022',
-                    aveReadingTime: 31,
-                  },
-                ]}
-              />
-
-              {isCreateUserModalOpen && (
-                <CreateUserModal
-                  open={isCreateUserModalOpen}
-                  setOpen={setIsCreateUserModalOpen}
-                />
-              )}
-
-              {isUpdateUserModalOpen && (
-                <UpdateUserModal
-                  open={isUpdateUserModalOpen}
-                  setOpen={setIsUpdateUserModalOpen}
-                />
-              )}
-
-              {isDeleteUserModalOpen && (
-                <DeleteUserModal
-                  open={isDeleteUserModalOpen}
-                  setOpen={setIsDeleteUserModalOpen}
-                />
-              )}
-            </Container>
-          </>
-        )
+        return <Students auth={auth} />
       }}
     />
   )

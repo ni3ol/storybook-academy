@@ -25,29 +25,37 @@ type FormData = {
   lastName: string
   emailAddress: string
   role: UserRole
-  username: string
+  // username: string
   age: number
   favouriteColor: string
   favouriteAnimal: string
   schoolId?: string
+  educatorId?: string
 }
 
 export const CreateUserModal = ({
   onClose,
   schoolId,
   onUserCreated,
+  educatorId,
 }: {
   onClose: () => any
   schoolId?: string
   onUserCreated?: (user: User) => any
+  educatorId?: string
 }) => {
   const form = useForm<FormData>()
   const {auth} = useAuth()
 
   const action = usePromiseLazy(async (data: FormData) => {
     return createUser({
-      authToken: auth.token!,
-      data: {...data, schoolId: schoolId || data.schoolId},
+      authToken: auth.authSession!.token,
+      data: {
+        ...data,
+        schoolId: schoolId || data.schoolId,
+        educatorId: educatorId || data.educatorId,
+        role: UserRole.Child || data.role,
+      },
     })
   }, [])
 
@@ -95,16 +103,18 @@ export const CreateUserModal = ({
       header="New user"
       body={
         <Form error={action.error} onSubmit={form.handleSubmit(handleSubmit)}>
-          <SelectField
-            required
-            name="role"
-            label="Role"
-            options={roles}
-            form={form}
-          />
+          {!educatorId && (
+            <SelectField
+              required
+              name="role"
+              label="Role"
+              options={roles}
+              form={form}
+            />
+          )}
           <TextField required name="firstName" label="First name" form={form} />
           <TextField required name="lastName" label="Last name" form={form} />
-          {!isChildRole && (
+          {!isChildRole && !educatorId && (
             <EmailField
               required
               name="emailAddress"
@@ -124,47 +134,55 @@ export const CreateUserModal = ({
             />
           )}
 
-          {isChildRole && (
-            <>
-              <SelectField
-                required
-                name="educatorId"
-                label="Educator"
-                form={form}
-                options={educatorOptions}
-              />
+          {isChildRole ||
+            (educatorId && (
+              <>
+                {!educatorId && (
+                  <SelectField
+                    required
+                    name="educatorId"
+                    label="Educator"
+                    form={form}
+                    options={educatorOptions}
+                  />
+                )}
 
-              <TextField
-                required
-                name="username"
-                label="Username"
-                form={form}
-              />
+                {/* <TextField
+                  required
+                  name="username"
+                  label="Username"
+                  form={form}
+                /> */}
 
-              <SelectField
-                required
-                name="readingLevel"
-                label="Reading level"
-                form={form}
-                options={readingLevels}
-              />
-              <NumberField name="age" label="Age" form={form} />
+                <SelectField
+                  required
+                  name="readingLevel"
+                  label="Reading level"
+                  form={form}
+                  options={readingLevels}
+                />
 
-              <SelectField
-                name="favouriteColor"
-                label="Favourite color"
-                form={form}
-                options={colors}
-              />
+                {!educatorId && (
+                  <>
+                    <NumberField name="age" label="Age" form={form} />
 
-              <SelectField
-                name="favouriteAnimal"
-                label="Favourite animal"
-                form={form}
-                options={animals}
-              />
-            </>
-          )}
+                    <SelectField
+                      name="favouriteColor"
+                      label="Favourite color"
+                      form={form}
+                      options={colors}
+                    />
+
+                    <SelectField
+                      name="favouriteAnimal"
+                      label="Favourite animal"
+                      form={form}
+                      options={animals}
+                    />
+                  </>
+                )}
+              </>
+            ))}
           <PasswordField
             required={!isChildRole}
             name="password"

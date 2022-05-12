@@ -248,7 +248,7 @@ const UserPage = ({auth}: {auth: Auth}) => {
                 Class
               </Header>
             </div>
-            <UsersTable rows={students} authToken={auth.authSession.token!} />
+            <UsersTable rows={students} auth={auth} />
           </>
         )}
       </Container>
