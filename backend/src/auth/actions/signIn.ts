@@ -36,10 +36,11 @@ export const [signIn] = createCreateAction(
       skipAuth: true,
     })
 
-    if (!user) {
-      throw new AuthenticationError('Invalid email or username.')
-    }
-    if (!(await checkPassword(data.password, user.passwordHash))) {
+    if (
+      !user ||
+      !user.passwordHash ||
+      !(await checkPassword(data.password, user.passwordHash))
+    ) {
       throw new AuthenticationError('Invalid password.')
     }
 
