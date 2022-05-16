@@ -1,12 +1,12 @@
 import {makeRequest} from '../../shared/utils'
 import {User, UserRole, userSchema} from '../model'
 
-type Filters = {
+export type UserFilters = {
   id?: string
   search?: string
   schoolId?: string
   role?: UserRole
-  educatorId?: string
+  classId?: string
 }
 
 export const getUsers = async ({
@@ -14,7 +14,7 @@ export const getUsers = async ({
   filters,
 }: {
   authToken: string
-  filters?: Filters
+  filters?: UserFilters
 }) => {
   const {data}: {data: any} = await makeRequest({
     authToken,

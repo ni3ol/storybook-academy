@@ -30,7 +30,6 @@ type FormData = {
   favouriteColor: string
   favouriteAnimal: string
   schoolId?: string
-  educatorId?: string
 }
 
 export const CreateUserModal = ({
@@ -53,7 +52,6 @@ export const CreateUserModal = ({
       data: {
         ...data,
         schoolId: schoolId || data.schoolId,
-        educatorId: educatorId || data.educatorId,
         role: UserRole.Child || data.role,
       },
     })
@@ -137,16 +135,6 @@ export const CreateUserModal = ({
           {isChildRole ||
             (educatorId && (
               <>
-                {!educatorId && (
-                  <SelectField
-                    required
-                    name="educatorId"
-                    label="Educator"
-                    form={form}
-                    options={educatorOptions}
-                  />
-                )}
-
                 {!educatorId && (
                   <TextField
                     required

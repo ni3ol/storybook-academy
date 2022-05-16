@@ -4,16 +4,21 @@ import {db, useOrCreateTransaction} from '../../db/db'
 import {AuthorizationError} from '../../errors'
 import {getUuid, utcNow} from '../../shared/utils'
 import {User, UserRole} from '../../users/model'
-import {School, schoolSchema} from '../model'
+import {classSchema, Class} from '../model'
 
-export const createSchoolInputSchema = z.object({
+export const createClassInputSchema = z.object({
   name: z.string(),
+  educatorId: z.string().uuid(),
+  schoolId: z.string().uuid(),
+  linkedClassId: z.string().uuid().optional(),
+  bookId: z.string().uuid().optional(),
+  password: z.string(),
 })
 
-export type CreateSchoolInputData = z.infer<typeof createSchoolInputSchema>
+export type CreateClassInputData = z.infer<typeof createClassInputSchema>
 
-export const createSchool = async (
-  data: CreateSchoolInputData,
+export const createClass = async (
+  data: CreateClassInputData,
   params?: {trx?: Knex.Transaction; as?: {user?: User}; skipAuth?: boolean},
 ) => {
   const asOf = utcNow()
@@ -22,9 +27,9 @@ export const createSchool = async (
     throw new AuthorizationError()
   }
 
-  const parsedData = createSchoolInputSchema.parse(data)
+  const parsedData = createClassInputSchema.parse(data)
   const id = getUuid()
-  const school: School = {
+  const theClass: Class = {
     ...parsedData,
     id,
     createdAt: asOf,
@@ -32,9 +37,9 @@ export const createSchool = async (
   }
 
   await useOrCreateTransaction(params?.trx, async (trx) => {
-    await db('schools').insert(school).returning('*').transacting(trx)
+    await db('classes').insert(theClass).returning('*').transacting(trx)
   })
 
-  const parsedClass = schoolSchema.parse(school)
+  const parsedClass = classSchema.parse(theClass)
   return parsedClass
 }

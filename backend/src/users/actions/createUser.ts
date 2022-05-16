@@ -17,7 +17,6 @@ export const createUserInputSchema = z.object({
   password: z.string().optional(),
   role: userSchema.shape.role.optional(),
   schoolId: userSchema.shape.schoolId,
-  educatorId: userSchema.shape.educatorId.optional(),
   readingLevel: userSchema.shape.readingLevel.optional(),
 })
 
@@ -39,10 +38,7 @@ export const createUser = async (
 
   const asOf = utcNow()
 
-  if (
-    params?.skipAuth !== true &&
-    params?.as?.user?.role !== (UserRole.Teacher || UserRole.Admin)
-  ) {
+  if (params?.skipAuth !== true && params?.as?.user?.role !== UserRole.Admin) {
     throw new AuthorizationError()
   }
 

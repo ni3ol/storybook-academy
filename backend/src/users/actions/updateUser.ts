@@ -15,7 +15,7 @@ export const updateUserInputSchema = z.object({
   nickname: userSchema.shape.nickname.optional(),
   profileCreated: userSchema.shape.profileCreated.optional(),
   schoolId: userSchema.shape.schoolId,
-  educatorId: userSchema.shape.educatorId.optional(),
+  classId: userSchema.shape.classId,
   readingLevel: userSchema.shape.readingLevel.optional(),
   username: userSchema.shape.username.optional(),
 })

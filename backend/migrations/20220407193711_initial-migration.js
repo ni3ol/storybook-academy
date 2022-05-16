@@ -11,7 +11,7 @@ exports.up = async (knex) => {
       "passwordHash" TEXT,
       "role" TEXT NOT NULL,
       "schoolId" UUID,
-      "educatorId" UUID,
+      "classId" UUID,
       "readingLevel" INTEGER,
       "age" INTEGER,
       "favouriteColor" TEXT,
@@ -51,6 +51,18 @@ exports.up = async (knex) => {
       "bookId" UUID NOT NULL,
       "schoolId" UUID NOT NULL
     );
+
+    CREATE TABLE "classes" (
+      "id" UUID PRIMARY KEY,
+      "createdAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+      "updatedAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+      "name" TEXT NOT NULL,
+      "educatorId" UUID NOT NULL,
+      "schoolId" UUID NOT NULL,
+      "linkedClassId" UUID,
+      "bookId" UUID,
+      "password" TEXT NOT NULL
+    );
   `)
 }
 
@@ -61,5 +73,6 @@ exports.down = async (knex) => {
     DROP TABLE "books";
     DROP TABLE "schools";
     DROP TABLE "bookAssignments";
+    DROP TABLE "classes";
 `)
 }

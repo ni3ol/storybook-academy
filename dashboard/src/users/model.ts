@@ -15,7 +15,7 @@ export const userSchema = entitySchema.extend({
   emailAddress: z.string().email().optional().nullable(),
   role: z.nativeEnum(UserRole),
   schoolId: z.string().optional().nullable(),
-  educatorId: z.string().optional().nullable(),
+  classId: z.string().optional().nullable(),
   profileCreated: z.boolean().optional().nullable(),
   nickname: z.string().optional().nullable(),
   readingLevel: z.number().optional().nullable(),
