@@ -102,6 +102,7 @@ export const UpdateUserModal = ({
 
   const role: UserRole = form.watch('role')
   const isChildRole = (role || user.role) === UserRole.Child
+  const isAdmin = auth.user?.role === UserRole.Admin
 
   const [selectedSchool, setSelectedSchool] = useState<
     string | undefined | null
@@ -163,36 +164,41 @@ export const UpdateUserModal = ({
               form={form}
             />
           )}
-          <SelectField
-            required
-            disabled={auth.user?.role === UserRole.Admin}
-            name="role"
-            label="Role"
-            defaultValue={user.role}
-            options={roles}
-            form={form}
-          />
+          {isAdmin && (
+            <SelectField
+              required
+              disabled={auth.user?.role === UserRole.Admin}
+              name="role"
+              label="Role"
+              defaultValue={user.role}
+              options={roles}
+              form={form}
+            />
+          )}
 
-          <SchoolSelectField
-            required
-            name="schoolId"
-            label="School"
-            form={form}
-            defaultValue={user.schoolId}
-            setSelectedSchool={(schoolId: string) =>
-              setSelectedSchool(schoolId)
-            }
-          />
-
+          {isAdmin && (
+            <SchoolSelectField
+              required
+              name="schoolId"
+              label="School"
+              form={form}
+              defaultValue={user.schoolId}
+              setSelectedSchool={(schoolId: string) =>
+                setSelectedSchool(schoolId)
+              }
+            />
+          )}
           {isChildRole && (
             <>
-              <SelectField
-                name="educatorId"
-                label="Educator"
-                form={form}
-                defaultValue={user.educatorId}
-                options={educatorOptions}
-              />
+              {isAdmin && (
+                <SelectField
+                  name="educatorId"
+                  label="Educator"
+                  form={form}
+                  defaultValue={user.educatorId}
+                  options={educatorOptions}
+                />
+              )}
               <SelectField
                 name="readingLevel"
                 label="Reading level"

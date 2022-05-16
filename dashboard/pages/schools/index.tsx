@@ -10,6 +10,8 @@ import {School} from '../../src/schools/model'
 import {getSchools} from '../../src/schools/actions/getSchools'
 import {SchoolsTable} from '../../src/schools/components/schoolsTable'
 import {CreateSchoolModal} from '../../src/schools/components/createSchoolModal'
+import {UserRole} from '../../src/users/model'
+import router from 'next/router'
 
 const Schools = ({auth}: {auth: Auth}) => {
   const [isCreateSchoolModalOpen, setIsCreateUserModalOpen] = useState(false)
@@ -59,6 +61,11 @@ export default function SchoolsPage() {
   return (
     <RequireAuth
       render={({auth}) => {
+        if (auth.user.role !== UserRole.Admin) {
+          router.push('/students')
+          return
+        }
+
         return <Schools auth={auth} />
       }}
     />

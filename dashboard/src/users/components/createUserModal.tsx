@@ -147,12 +147,14 @@ export const CreateUserModal = ({
                   />
                 )}
 
-                {/* <TextField
-                  required
-                  name="username"
-                  label="Username"
-                  form={form}
-                /> */}
+                {!educatorId && (
+                  <TextField
+                    required
+                    name="username"
+                    label="Username"
+                    form={form}
+                  />
+                )}
 
                 <SelectField
                   required
@@ -183,15 +185,17 @@ export const CreateUserModal = ({
                 )}
               </>
             ))}
-          <PasswordField
-            required={!isChildRole}
-            name="password"
-            disabled={isChildRole}
-            label="Password"
-            form={form}
-            helpText="Password will be assigned on a class level"
-            showHelpText={isChildRole}
-          />
+          {!educatorId && (
+            <PasswordField
+              required={!isChildRole}
+              name="password"
+              disabled={isChildRole}
+              label="Password"
+              form={form}
+              helpText="Password will be assigned on a class level"
+              showHelpText={isChildRole}
+            />
+          )}
           <Button primary type="submit" fluid loading={action.isLoading}>
             Create user
           </Button>

@@ -45,6 +45,9 @@ const UserPage = ({auth}: {auth: Auth}) => {
 
   const schools = schoolsAction.result || []
 
+  const schoolName =
+    schools.find((school) => school.id === user?.schoolId)?.name || ''
+
   return (
     <>
       {isUserUpdateModalOpen && user && (
@@ -66,7 +69,9 @@ const UserPage = ({auth}: {auth: Auth}) => {
           onUserDeleted={() => {
             setIsUserDeleteModalOpen(false)
             getUserAction.execute()
-            router.push('/users')
+            router.push(
+              auth.user.role === UserRole.Teacher ? '/students' : '/users',
+            )
           }}
         />
       )}
@@ -80,7 +85,12 @@ const UserPage = ({auth}: {auth: Auth}) => {
           }}
         >
           <div>
-            <NextLink passHref href={`/users`}>
+            <NextLink
+              passHref
+              href={
+                auth.user.role === UserRole.Teacher ? '/students' : `/users`
+              }
+            >
               Back
             </NextLink>
             <Header as="h1" style={{marginBottom: 20}}>
@@ -129,16 +139,18 @@ const UserPage = ({auth}: {auth: Auth}) => {
                 <Table.Cell>{user?.username}</Table.Cell>
               </Table.Row>
             )}
-            {user?.role === UserRole.Child && (
+            {/* {user?.role === UserRole.Child && (
               <Table.Row>
                 <Table.Cell>Password</Table.Cell>
                 <Table.Cell>TODO - teacher set</Table.Cell>
               </Table.Row>
+            )} */}
+            {auth.user?.role === UserRole.Admin && (
+              <Table.Row>
+                <Table.Cell>ID (internal use only)</Table.Cell>
+                <Table.Cell>{userId}</Table.Cell>
+              </Table.Row>
             )}
-            <Table.Row>
-              <Table.Cell>ID (internal use only)</Table.Cell>
-              <Table.Cell>{userId}</Table.Cell>
-            </Table.Row>
             <Table.Row>
               <Table.Cell>Created at</Table.Cell>
               <Table.Cell>
@@ -163,12 +175,14 @@ const UserPage = ({auth}: {auth: Auth}) => {
             <Table.Row>
               <Table.Cell width={4}>Name</Table.Cell>
               <Table.Cell>
-                {user?.schoolId && schools && (
-                  <NextLink passHref href={`/schools/${user?.schoolId}`}>
-                    {schools.find((school) => school.id === user?.schoolId)
-                      ?.name || ''}
-                  </NextLink>
-                )}
+                {auth.user?.role === UserRole.Teacher
+                  ? user?.schoolId && schools && schoolName
+                  : user?.schoolId &&
+                    schools && (
+                      <NextLink passHref href={`/schools/${user?.schoolId}`}>
+                        {schoolName}
+                      </NextLink>
+                    )}
               </Table.Cell>
             </Table.Row>
             <Table.Row>
@@ -179,11 +193,14 @@ const UserPage = ({auth}: {auth: Auth}) => {
               <Table.Row>
                 <Table.Cell>Teacher</Table.Cell>
                 <Table.Cell>
-                  {educator && (
-                    <NextLink passHref href={`/users/${educator?.id}`}>
-                      {educator.firstName + ' ' + educator.lastName}
-                    </NextLink>
-                  )}
+                  {educator &&
+                    (auth.user.role === UserRole.Teacher ? (
+                      educator.firstName + ' ' + educator.lastName
+                    ) : (
+                      <NextLink passHref href={`/users/${educator?.id}`}>
+                        {educator.firstName + ' ' + educator.lastName}
+                      </NextLink>
+                    ))}
                 </Table.Cell>
               </Table.Row>
             )}

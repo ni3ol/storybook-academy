@@ -39,6 +39,17 @@ export const DashboardNavigation = ({role}: {role: UserRole}) => {
           </Menu.Item>
         </div>
         <div style={{display: 'flex'}}>
+          {[UserRole.Principal, UserRole.Teacher, UserRole.Admin].includes(
+            role,
+          ) && (
+            <Menu.Item
+              name="learn-more"
+              onClick={() => handleClick('learn-more')}
+              style={{color: 'white'}}
+            >
+              Learn more
+            </Menu.Item>
+          )}
           {[UserRole.Principal, UserRole.Admin].includes(role) && (
             <Menu.Item
               name="users"
@@ -49,13 +60,22 @@ export const DashboardNavigation = ({role}: {role: UserRole}) => {
               Users
             </Menu.Item>
           )}
+          {[UserRole.Teacher].includes(role) && (
+            <Menu.Item
+              name="students"
+              onClick={() => handleClick('students')}
+              style={{color: 'white'}}
+            >
+              Students
+            </Menu.Item>
+          )}
           {[UserRole.Principal, UserRole.Teacher, UserRole.Admin].includes(
             role,
           ) && (
             <Menu.Item
-              name="library"
-              active={router.pathname === '/library'}
-              onClick={() => handleClick('library')}
+              name="books"
+              active={router.pathname === '/books'}
+              onClick={() => handleClick('books')}
               style={{color: 'white'}}
             >
               Library
@@ -69,15 +89,6 @@ export const DashboardNavigation = ({role}: {role: UserRole}) => {
               style={{color: 'white'}}
             >
               Schools
-            </Menu.Item>
-          )}
-          {[UserRole.Teacher].includes(role) && (
-            <Menu.Item
-              name="students"
-              onClick={() => handleClick('students')}
-              style={{color: 'white'}}
-            >
-              Students
             </Menu.Item>
           )}
           {[UserRole.Principal, UserRole.Admin].includes(role) && (
@@ -107,17 +118,6 @@ export const DashboardNavigation = ({role}: {role: UserRole}) => {
               style={{color: 'white'}}
             >
               Chat
-            </Menu.Item>
-          )}
-          {[UserRole.Principal, UserRole.Teacher, UserRole.Admin].includes(
-            role,
-          ) && (
-            <Menu.Item
-              name="learn-more"
-              onClick={() => handleClick('learn-more')}
-              style={{color: 'white'}}
-            >
-              Learn more
             </Menu.Item>
           )}
           <li className={styles.navigationItem} style={{marginRight: 30}}>

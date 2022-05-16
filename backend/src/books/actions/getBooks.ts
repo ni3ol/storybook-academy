@@ -31,7 +31,7 @@ export const getBooks = async (params?: {
 }) => {
   return useOrCreateTransaction(params?.trx, async (trx) => {
     const query = db
-      .select('*')
+      .select('books.*')
       .from('books')
       .orderBy('books.createdAt', 'desc')
       .transacting(trx)

@@ -10,9 +10,13 @@ import {Container} from '../src/shared/components/container'
 import {Button} from '../src/shared/components/button'
 import {Header} from '../src/shared/components/header'
 import {Input} from 'semantic-ui-react'
+import {UpdateClassPasswordModal} from '../src/users/components/updateClassPasswordModal'
 
 const Students = ({auth}: {auth: Auth}) => {
   const [isCreateUserModalOpen, setIsCreateUserModalOpen] = useState(false)
+  const [isUpdateClassPasswordModalOpen, setIsUpdateClassPasswordModalOpen] =
+    useState(false)
+  const [classPassword, setClassPassword] = useState('flower')
   const [search, setSearch] = useState('')
   const debouncedSearch = useDebounce(search, 500)
 
@@ -36,6 +40,17 @@ const Students = ({auth}: {auth: Auth}) => {
           }}
         />
       )}
+      {isUpdateClassPasswordModalOpen && (
+        <UpdateClassPasswordModal
+          educatorId={auth.user.id}
+          password={classPassword}
+          onClose={() => setIsUpdateClassPasswordModalOpen(false)}
+          onClassPasswordUpdated={(password) => {
+            setIsUpdateClassPasswordModalOpen(false)
+            setClassPassword(password)
+          }}
+        />
+      )}
       <DashboardNavigation role={auth.user.role} />
       <Container>
         <div
@@ -45,17 +60,29 @@ const Students = ({auth}: {auth: Auth}) => {
             alignItems: 'center',
           }}
         >
-          <Header as="h1">Students</Header>
           <div>
-            <Input
+            <Header as="h1">Students</Header>
+            <p>
+              Password for student's login: <strong>{classPassword}</strong>{' '}
+              (Missing Backend)
+            </p>
+          </div>
+          <div style={{display: 'grid', gridGap: 10}}>
+            {/* <Input
               icon="search"
               iconPosition="left"
               placeholder="Search email"
               style={{marginRight: 10}}
               onChange={(e) => setSearch(e.target.value)}
-            />
+            /> */}
             <Button onClick={() => setIsCreateUserModalOpen(true)} primary>
               Add new student
+            </Button>
+            <Button
+              onClick={() => setIsUpdateClassPasswordModalOpen(true)}
+              primary
+            >
+              Set password for students login
             </Button>
           </div>
         </div>

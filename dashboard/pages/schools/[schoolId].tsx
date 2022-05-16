@@ -1,4 +1,4 @@
-import {useRouter} from 'next/router'
+import router, {useRouter} from 'next/router'
 import {useState} from 'react'
 import NextLink from 'next/link'
 import {Dropdown, Icon, Table} from 'semantic-ui-react'
@@ -20,6 +20,7 @@ import {UsersTable} from '../../src/users/components/usersTable'
 import {Book} from '../../src/books/model'
 import {UnassignBookFromSchoolModal} from '../../src/schools/components/unassignBookFromSchoolModal'
 import {formatDateSimple} from '../../src/shared/utils'
+import {UserRole} from '../../src/users/model'
 
 const SchoolPage = ({auth}: {auth: Auth}) => {
   const router = useRouter()
@@ -186,6 +187,11 @@ export default function SchoolPageWrapper() {
   return (
     <RequireAuth
       render={({auth}) => {
+        if (auth.user.role !== UserRole.Admin) {
+          router.push('/students')
+          return
+        }
+
         return <SchoolPage auth={auth} />
       }}
     />

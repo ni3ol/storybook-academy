@@ -10,6 +10,8 @@ import {Container} from '../../src/shared/components/container'
 import {Button} from '../../src/shared/components/button'
 import {Header} from '../../src/shared/components/header'
 import {Input} from 'semantic-ui-react'
+import {UserRole} from '../../src/users/model'
+import router from 'next/router'
 
 const Users = ({auth}: {auth: Auth}) => {
   const [isCreateUserModalOpen, setIsCreateUserModalOpen] = useState(false)
@@ -64,6 +66,11 @@ export default function UsersPage() {
   return (
     <RequireAuth
       render={({auth}) => {
+        if (auth.user.role !== UserRole.Admin) {
+          router.push('/students')
+          return
+        }
+
         return <Users auth={auth} />
       }}
     />

@@ -7,7 +7,11 @@ export const deleteUser = async (
   id: string,
   params?: {trx?: Knex.Transaction; as?: {user?: User}; skipAuth?: boolean},
 ) => {
-  if (params?.skipAuth !== true && params?.as?.user?.role !== UserRole.Admin) {
+  if (
+    params?.skipAuth !== true &&
+    (params?.as?.user?.role === UserRole.Child ||
+      params?.as?.user?.role === UserRole.Principal)
+  ) {
     throw new AuthorizationError()
   }
 
