@@ -39,30 +39,10 @@ const BookPage = ({auth}: {auth: Auth}) => {
       <DashboardNavigation role={auth.user.role} />
       <Container>
         <div>
-          <NextLink passHref href={`/books`}>
-            Back
-          </NextLink>
           <Header as="h1" style={{marginBottom: 20}}>
             Book - {book?.title}
           </Header>
         </div>
-        <Header as="h3">Information</Header>
-        <Table definition>
-          <Table.Body>
-            <Table.Row>
-              <Table.Cell width={4}>Currently assigned</Table.Cell>
-              <Table.Cell>TODO</Table.Cell>
-            </Table.Row>
-            <Table.Row>
-              <Table.Cell>Date assigned</Table.Cell>
-              <Table.Cell>TODO</Table.Cell>
-            </Table.Row>
-            <Table.Row>
-              <Table.Cell>Assigned by</Table.Cell>
-              <Table.Cell>TODO</Table.Cell>
-            </Table.Row>
-          </Table.Body>
-        </Table>
         <Header as="h3">Reading levels</Header>
         <Table>
           <Table.Body>

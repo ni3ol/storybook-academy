@@ -32,7 +32,7 @@ export const UserSelectField = <O,>({
 
   const finalOptions = (options ||
     users.map((user) => ({
-      label: user.firstName,
+      label: `${user.firstName} ${user.lastName}`,
       value: user.id,
     }))) as any[]
 

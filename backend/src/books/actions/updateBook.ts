@@ -8,7 +8,6 @@ import {Book, bookSchema} from '../model'
 export const updateBookInputSchema = z.object({
   createdByUserId: bookSchema.shape.createdByUserId.optional(),
   title: bookSchema.shape.title.optional(),
-  level: bookSchema.shape.level.optional(),
 })
 
 export type UpdateBookInputData = z.infer<typeof updateBookInputSchema>

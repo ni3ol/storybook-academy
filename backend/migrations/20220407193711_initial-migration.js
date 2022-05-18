@@ -33,8 +33,7 @@ exports.up = async (knex) => {
       "createdAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
       "updatedAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
       "createdByUserId" UUID NOT NULL,
-      "title" TEXT NOT NULL,
-      "level" INTEGER NOT NULL
+      "title" TEXT NOT NULL
     );
 
     CREATE TABLE "schools" (
@@ -49,7 +48,8 @@ exports.up = async (knex) => {
       "createdAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
       "updatedAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
       "bookId" UUID NOT NULL,
-      "schoolId" UUID NOT NULL
+      "schoolId" UUID,
+      "classId" UUID
     );
 
     CREATE TABLE "classes" (

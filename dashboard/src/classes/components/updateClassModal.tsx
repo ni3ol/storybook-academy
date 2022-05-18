@@ -10,6 +10,7 @@ import {UserFilters} from '../../users/actions/getUsers'
 import {UserSelectField} from '../../users/components/userSelectField'
 import {UserRole} from '../../users/model'
 import {createClass} from '../actions/createClass'
+import {updateClass} from '../actions/updateClass'
 import {Class} from '../model'
 
 type FormData = {
@@ -18,59 +19,62 @@ type FormData = {
   educatorId: string
 }
 
-export const CreateClassModal = ({
-  schoolId,
+export const UpdateClassModal = ({
+  class: theClass,
   onClose,
-  onClassCreated,
+  onClassUpdated,
 }: {
-  schoolId?: string
+  class: Class
   onClose: () => any
-  onClassCreated?: (thClass: Class) => any
+  onClassUpdated?: (thClass: Class) => any
 }) => {
   const form = useForm<FormData>()
   const {auth} = useAuth()
 
   const action = usePromiseLazy(async (data: FormData) => {
-    return createClass({
-      authToken: auth.token!,
-      data: {...data, schoolId: schoolId || data.schoolId},
-    })
+    return updateClass({id: theClass.id, authToken: auth.token!, data})
   }, [])
 
   const handleSubmit = async (data: FormData) => {
     const {result: theClass} = await action.execute(data)
-    if (theClass && onClassCreated) {
-      await onClassCreated(theClass)
+    if (theClass && onClassUpdated) {
+      await onClassUpdated(theClass)
     }
   }
 
   const userFilters: UserFilters = {
-    schoolId: form.watch('schoolId') || schoolId,
+    schoolId: form.watch('schoolId'),
     role: UserRole.Teacher,
   }
 
   return (
     <Modal
       onClose={onClose}
-      header="New class"
+      header="Update class"
       body={
         <Form error={action.error} onSubmit={form.handleSubmit(handleSubmit)}>
-          <TextField required name="name" label="Name" form={form} />
+          <TextField
+            required
+            name="name"
+            label="Name"
+            form={form}
+            defaultValue={theClass.name}
+          />
           <TextField
             required
             name="password"
             label="Password for children"
             form={form}
+            defaultValue={theClass.password}
           />
 
-          {!schoolId && (
-            <SchoolSelectField
-              required
-              name="schoolId"
-              label="School"
-              form={form}
-            />
-          )}
+          <SchoolSelectField
+            required
+            name="schoolId"
+            label="School"
+            form={form}
+            defaultValue={theClass.schoolId}
+          />
 
           <UserSelectField
             required
@@ -78,10 +82,11 @@ export const CreateClassModal = ({
             label="Educator"
             form={form}
             filters={userFilters}
+            defaultValue={theClass.educatorId}
           />
 
           <Button primary type="submit" fluid loading={action.isLoading}>
-            Create class
+            Update class
           </Button>
         </Form>
       }

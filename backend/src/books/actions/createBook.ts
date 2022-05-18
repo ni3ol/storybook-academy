@@ -9,7 +9,6 @@ import {Book, bookSchema} from '../model'
 export const createBookInputSchema = z.object({
   createdByUserId: z.string().uuid(),
   title: z.string(),
-  level: z.number(),
 })
 
 export type CreateBookInputData = z.infer<typeof createBookInputSchema>

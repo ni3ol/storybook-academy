@@ -18,6 +18,8 @@ import {unassignBookFromSchoolEndpoint} from '../schools/endpoints/unassignBookF
 import {createClassEndpoint} from '../classes/endpoints/createClassEndpoint'
 import {getClassesEndpoint} from '../classes/endpoints/getClassesEndpoint'
 import {assignChildToClassEndpoint} from '../users/endpoints/assignChildToClassEndpoint'
+import {updateClassEndpoint} from '../classes/endpoints/updateClassEndpoint'
+import {assignBookToClassEndpoint} from '../schools/endpoints/assignBookToClassEndpoint'
 
 export const endpoints: Endpoint<any, any, any>[] = [
   // Users
@@ -42,7 +44,9 @@ export const endpoints: Endpoint<any, any, any>[] = [
   updateSchoolEndpoint,
   assignBookToSchoolEndpoint,
   unassignBookFromSchoolEndpoint,
+  assignBookToClassEndpoint,
   // classes
   createClassEndpoint,
   getClassesEndpoint,
+  updateClassEndpoint,
 ]

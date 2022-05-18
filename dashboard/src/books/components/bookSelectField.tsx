@@ -13,11 +13,16 @@ export const BookSelectField = <O,>({
   form,
   name,
   options,
+  schoolId,
+  classId,
 }: FieldProps & {options?: {label: string; value: O}[]}) => {
   const auth = useAuth()
 
   const action = usePromise(() => {
-    return getBooks({authToken: auth.auth.authSession!.token})
+    return getBooks({
+      authToken: auth.auth.authSession!.token,
+      filters: {schoolId: schoolId && classId ? schoolId : undefined},
+    })
   }, [])
 
   const books = action.result || []

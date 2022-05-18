@@ -30,11 +30,7 @@ export const LibraryTable = ({
           </NextLink>
         ),
       },
-      {
-        key: 'levels',
-        title: 'Levels',
-        resolve: (row) => row.level,
-      },
+
       {
         key: 'actions',
         title: 'Actions',

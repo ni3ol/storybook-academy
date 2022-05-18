@@ -3,6 +3,7 @@ import {useEffect, useState} from 'react'
 import {useForm} from 'react-hook-form'
 import {Button} from 'semantic-ui-react'
 import {useAuth} from '../../auth/hooks'
+import {ClassSelectField} from '../../classes/components/classSelectField'
 import {SchoolSelectField} from '../../schools/components/schoolSelectField'
 import {
   EmailField,
@@ -52,7 +53,7 @@ export const CreateUserModal = ({
       data: {
         ...data,
         schoolId: schoolId || data.schoolId,
-        role: UserRole.Child || data.role,
+        role: data.role || UserRole.Child,
       },
     })
   }, [])
@@ -67,33 +68,13 @@ export const CreateUserModal = ({
   const role: UserRole = form.watch('role')
   const isChildRole = role === UserRole.Child
 
+  const schoolIdValue = form.watch('schoolId')
+
   useEffect(() => {
     form.reset()
     form.reset({role})
     action.clearError()
   }, [role])
-
-  const [selectedSchool, setSelectedSchool] = useState<
-    string | undefined | null
-  >()
-
-  const educatorsAction = usePromiseLazy(async () => {
-    const result = getUsers({
-      authToken: auth.authSession?.token!,
-      filters: {role: UserRole.Teacher},
-    })
-
-    return result
-  }, [])
-
-  const educators = educatorsAction.result || []
-
-  const educatorOptions = educators
-    .filter((educator) => educator.schoolId === selectedSchool)
-    .map((educator) => ({
-      label: `${educator.firstName} ${educator.lastName}`,
-      value: educator.id,
-    })) as any[]
 
   return (
     <Modal
@@ -120,15 +101,21 @@ export const CreateUserModal = ({
               form={form}
             />
           )}
-          {!schoolId && (
+          {!schoolId && role !== UserRole.Admin && (
             <SchoolSelectField
               required
               name="schoolId"
               label="School"
               form={form}
-              setSelectedSchool={(schoolId: string) =>
-                setSelectedSchool(schoolId)
-              }
+            />
+          )}
+
+          {role !== UserRole.Admin && role !== UserRole.Principal && (
+            <ClassSelectField
+              name="classId"
+              label="Class"
+              form={form}
+              filters={{schoolId: schoolIdValue || schoolId}}
             />
           )}
 
@@ -173,15 +160,12 @@ export const CreateUserModal = ({
                 )}
               </>
             ))}
-          {!educatorId && (
+          {!educatorId && role !== UserRole.Child && (
             <PasswordField
-              required={!isChildRole}
+              required
               name="password"
-              disabled={isChildRole}
               label="Password"
               form={form}
-              helpText="Password will be assigned on a class level"
-              showHelpText={isChildRole}
             />
           )}
           <Button primary type="submit" fluid loading={action.isLoading}>

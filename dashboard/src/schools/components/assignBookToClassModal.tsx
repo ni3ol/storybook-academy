@@ -4,39 +4,40 @@ import {Button} from 'semantic-ui-react'
 import {useAuth} from '../../auth/hooks'
 import {BookSelectField} from '../../books/components/bookSelectField'
 import {Book} from '../../books/model'
-import {ClassSelectField} from '../../classes/components/classSelectField'
-import {Form, TextField} from '../../shared/components/form'
+import {updateClass} from '../../classes/actions/updateClass'
+import {Form} from '../../shared/components/form'
 import {Modal} from '../../shared/components/modal'
 import {usePromiseLazy} from '../../shared/hooks'
-import {assignBookToClass} from '../actions/assignBookToClass'
-import {assignBookToSchool} from '../actions/assignBookToSchool'
-import {SchoolSelectField} from './schoolSelectField'
 
 type FormData = {
   bookId?: string
+  classId?: string
   schoolId?: string
 }
 
-export const AssignBookToSchoolModal = ({
+export const AssignBookToClassModal = ({
   onClose,
-  schoolId,
   bookId,
+  classId,
+  schoolId,
   onBookAssigned,
 }: {
   onClose: () => any
-  schoolId?: string
   bookId?: string
-  onBookAssigned?: (book: Book) => any
+  classId: string
+  schoolId?: string
+  onBookAssigned?: () => any
 }) => {
   const form = useForm<FormData>()
   const {auth} = useAuth()
 
   const action = usePromiseLazy(async (data: FormData) => {
-    return assignBookToSchool({
+    return updateClass({
       authToken: auth.token!,
+      id: classId,
       data: {
         bookId: (bookId || data.bookId) as string,
-        schoolId: (schoolId || data.schoolId) as string,
+        classId: (classId || data.classId) as string,
       },
     })
   }, [])
@@ -44,7 +45,7 @@ export const AssignBookToSchoolModal = ({
   const handleSubmit = async (data: FormData) => {
     const {result: book} = await action.execute(data)
     if (book && onBookAssigned) {
-      await onBookAssigned(book)
+      await onBookAssigned()
     }
   }
 
@@ -60,15 +61,8 @@ export const AssignBookToSchoolModal = ({
               name="bookId"
               label="Book"
               form={form}
+              classId={classId}
               schoolId={schoolId}
-            />
-          )}
-          {!schoolId && (
-            <SchoolSelectField
-              required
-              name="schoolId"
-              label="School"
-              form={form}
             />
           )}
           <Button primary type="submit" fluid loading={action.isLoading}>

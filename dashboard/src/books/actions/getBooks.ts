@@ -5,6 +5,7 @@ type Filters = {
   id?: string
   search?: string
   schoolId?: string
+  classId?: string
 }
 
 export const getBooks = async ({

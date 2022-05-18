@@ -18,6 +18,7 @@ export const createUserInputSchema = z.object({
   role: userSchema.shape.role.optional(),
   schoolId: userSchema.shape.schoolId,
   readingLevel: userSchema.shape.readingLevel.optional(),
+  classId: userSchema.shape.classId.optional(),
 })
 
 export type CreateUserInputData = z.infer<typeof createUserInputSchema>

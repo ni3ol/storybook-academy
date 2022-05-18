@@ -1,17 +1,19 @@
 import {makeRequest} from '../../shared/utils'
 import {classSchema} from '../model'
 
-export const createClass = async ({
+export const updateClass = async ({
+  id,
   data,
   authToken,
 }: {
-  data: {name: string; educatorId: string; schoolId: string}
+  id: string
+  data: any
   authToken: string
 }) => {
   const response = await makeRequest({
     authToken,
-    method: 'post',
-    path: '/classes',
+    method: 'patch',
+    path: `/classes/${id}`,
     data,
   })
 

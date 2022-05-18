@@ -28,9 +28,9 @@ export const ClassSelectField = <O,>({
   const classes = action.result || []
 
   const finalOptions = (options ||
-    classes.map((school) => ({
-      label: school.name,
-      value: school.id,
+    classes.map((theClass) => ({
+      label: theClass.name,
+      value: theClass.id,
     }))) as any[]
 
   return (

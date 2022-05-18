@@ -23,16 +23,18 @@ import {formatDateSimple} from '../../src/shared/utils'
 import {UserRole} from '../../src/users/model'
 import {getClasses} from '../../src/classes/actions/getClasses'
 import {AssignChildToClassModal} from '../../src/classes/components/assignChildToClassModal'
+import {UpdateClassModal} from '../../src/classes/components/updateClassModal'
+import {AssignBookToClassModal} from '../../src/schools/components/assignBookToClassModal'
+import {AssignLinkedClassToClassModal} from '../../src/classes/components/assignLinkedClassToClassModal'
 
 const TheClassPage = ({auth}: {auth: Auth}) => {
   const router = useRouter()
   const {classId} = router.query as {classId: string}
   const [showAssignChildModal, setShowAssignChildModal] = useState(false)
-  // const [showUpdateModal, setShowUpdateModal] = useState(false)
-  // const [showAssignBookModal, setShowAssignBookModal] = useState(false)
-  // const [bookToUnassign, setBookToUnassign] = useState<Book | undefined>(
-  // undefined,
-  // )
+  const [showUpdateModal, setShowUpdateModal] = useState(false)
+  const [showAssignBookModal, setShowAssignBookModal] = useState(false)
+  const [showAssignLinkedClassModal, setShowAssignLinkedClassModal] =
+    useState(false)
 
   const getClassAction = usePromise(async () => {
     const [theClass] = await getClasses({
@@ -43,15 +45,49 @@ const TheClassPage = ({auth}: {auth: Auth}) => {
   }, [])
   const theClass = getClassAction.result
 
+  const getLinkedClassAction = usePromise(async () => {
+    const [linkedClass] = await getClasses({
+      authToken: auth.authSession.token,
+      filters: {id: theClass?.linkedClassId!},
+    })
+    return linkedClass
+  }, [theClass])
+  const linkedClass = getLinkedClassAction.result
+
   const getUsersAction = usePromise(() => {
-    return getUsers({authToken: auth.token, filters: {classId}})
+    return getUsers({authToken: auth.token})
   }, [])
   const users = getUsersAction.result || []
 
-  // const getBooksAction = usePromise(() => {
-  //   return getBooks({authToken: auth.token, filters: {schoolId}})
-  // }, [])
-  // const books = getBooksAction.result || []
+  const educator = users.find((user) => user.id === theClass?.educatorId)
+  const linkedEducator = users.find(
+    (user) => user.id === linkedClass?.educatorId,
+  )
+  const students = users.filter(
+    (user) => user.classId === theClass?.id && user.role === UserRole.Child,
+  )
+
+  const getBooksAction = usePromise(() => {
+    if (!theClass?.bookId) return Promise.resolve([])
+    return getBooks({
+      authToken: auth.token,
+      filters: {id: theClass?.bookId},
+    })
+  }, [theClass?.bookId])
+  const [book] = getBooksAction.result || []
+
+  const getSchoolsAction = usePromise(async () => {
+    return await getSchools({
+      authToken: auth.authSession.token,
+    })
+  }, [])
+  const school = getSchoolsAction.result?.find(
+    (school) => school.id === theClass?.schoolId,
+  )
+
+  const linkedSchool = getSchoolsAction.result?.find(
+    (school) => school.id === linkedClass?.schoolId,
+  )
 
   return (
     <>
@@ -67,45 +103,46 @@ const TheClassPage = ({auth}: {auth: Auth}) => {
           }}
         />
       )}
-      {/* {showUpdateModal && (
-        <UpdateSchoolModal
+      {showUpdateModal && (
+        <UpdateClassModal
           onClose={() => setShowUpdateModal(false)}
-          school={school}
-          onSchoolUpdated={() => {
-            getUsersAction.execute()
-            getSchoolAction.execute()
+          class={theClass!}
+          onClassUpdated={() => {
+            getClassAction.execute()
             setShowUpdateModal(false)
           }}
         />
       )}
       {showAssignBookModal && (
-        <AssignBookToSchoolModal
-          schoolId={schoolId}
+        <AssignBookToClassModal
+          schoolId={theClass?.schoolId}
+          classId={theClass?.id!}
           onClose={() => setShowAssignBookModal(false)}
           onBookAssigned={() => {
             setShowAssignBookModal(false)
+            getClassAction.execute()
             getBooksAction.execute()
           }}
         />
       )}
-      {bookToUnassign && school && (
-        <UnassignBookFromSchoolModal
-          school={school}
-          book={bookToUnassign}
-          onClose={() => setBookToUnassign(undefined)}
-          onBookUnassigned={() => {
-            setBookToUnassign(undefined)
+
+      {showAssignLinkedClassModal && (
+        <AssignLinkedClassToClassModal
+          schoolId={theClass?.schoolId!}
+          classId={theClass?.id!}
+          onClose={() => setShowAssignLinkedClassModal(false)}
+          onLinkedClassAssigned={() => {
+            setShowAssignLinkedClassModal(false)
+            getClassAction.execute()
             getBooksAction.execute()
+            getLinkedClassAction.execute()
           }}
         />
-      )} */}
+      )}
 
       <DashboardNavigation role={auth.user.role} />
       <Container>
         <div>
-          <NextLink passHref href={`/classes`}>
-            Back
-          </NextLink>
           <Header as="h1" style={{marginBottom: 20}}>
             Class - {theClass?.name}
           </Header>
@@ -121,14 +158,14 @@ const TheClassPage = ({auth}: {auth: Auth}) => {
           <Header style={{margin: 0}} as="h3">
             Details
           </Header>
-          {/* <Dropdown text="Actions" floating basic>
+          <Dropdown text="Actions" floating basic>
             <Dropdown.Menu>
               <Dropdown.Item onClick={() => setShowUpdateModal(true)}>
                 Edit
               </Dropdown.Item>
               <Dropdown.Item>Delete</Dropdown.Item>
             </Dropdown.Menu>
-          </Dropdown> */}
+          </Dropdown>
         </div>
         <Table definition>
           <Table.Body>
@@ -137,13 +174,83 @@ const TheClassPage = ({auth}: {auth: Auth}) => {
               <Table.Cell>{theClass?.name}</Table.Cell>
             </Table.Row>
             <Table.Row>
-              <Table.Cell>ID (internal use only)</Table.Cell>
-              <Table.Cell>{theClass?.id}</Table.Cell>
-            </Table.Row>
-            <Table.Row>
               <Table.Cell>Created at</Table.Cell>
               <Table.Cell>
                 {theClass?.createdAt && formatDateSimple(theClass?.createdAt)}
+              </Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>School</Table.Cell>
+              <Table.Cell>
+                {school && (
+                  <NextLink passHref href={`/schools/${school?.id}`}>
+                    {school?.name}
+                  </NextLink>
+                )}
+              </Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>Teacher</Table.Cell>
+              <Table.Cell>
+                <NextLink passHref href={`/users/${educator?.id}`}>
+                  {educator?.firstName + ' ' + educator?.lastName}
+                </NextLink>
+              </Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>Class password</Table.Cell>
+              <Table.Cell>{theClass?.password}</Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>Paired school</Table.Cell>
+              <Table.Cell>
+                {theClass?.linkedClassId ? (
+                  <Table definition>
+                    <Table.Row>
+                      <Table.Cell>School</Table.Cell>
+                      <Table.Cell>
+                        {linkedSchool && (
+                          <NextLink
+                            passHref
+                            href={`/schools/${linkedSchool?.id}`}
+                          >
+                            {linkedSchool?.name}
+                          </NextLink>
+                        )}
+                      </Table.Cell>
+                    </Table.Row>
+                    <Table.Row>
+                      <Table.Cell>Class name</Table.Cell>
+                      <Table.Cell>
+                        {linkedClass && (
+                          <NextLink
+                            passHref
+                            href={`/classes/${linkedClass?.id}`}
+                          >
+                            {linkedClass?.name}
+                          </NextLink>
+                        )}
+                      </Table.Cell>
+                    </Table.Row>
+                    <Table.Row>
+                      <Table.Cell>Teacher</Table.Cell>
+                      <Table.Cell>
+                        <NextLink
+                          passHref
+                          href={`/users/${linkedEducator?.id}`}
+                        >
+                          {linkedEducator?.firstName +
+                            ' ' +
+                            linkedEducator?.lastName}
+                        </NextLink>
+                      </Table.Cell>
+                    </Table.Row>
+                  </Table>
+                ) : (
+                  <Button onClick={() => setShowAssignLinkedClassModal(true)}>
+                    Pair a class
+                  </Button>
+                )}
               </Table.Cell>
             </Table.Row>
           </Table.Body>
@@ -156,14 +263,18 @@ const TheClassPage = ({auth}: {auth: Auth}) => {
           }}
         >
           <Header style={{margin: 0}} as="h3">
-            Children
+            Books
           </Header>
-          <Button basic primary onClick={() => setShowAssignChildModal(true)}>
-            Add child to class
+          <Button basic primary onClick={() => setShowAssignBookModal(true)}>
+            Assign new reading
           </Button>
         </div>
-        <UsersTable auth={auth} rows={users} />
-        {/* <div
+        {book ? (
+          <p>the current book is {book?.title}</p>
+        ) : (
+          <p>No book is currently assigned for this class</p>
+        )}
+        <div
           style={{
             display: 'flex',
             justifyContent: 'space-between',
@@ -171,17 +282,14 @@ const TheClassPage = ({auth}: {auth: Auth}) => {
           }}
         >
           <Header style={{margin: 0}} as="h3">
-            Books
+            Children
           </Header>
-          <Button basic primary onClick={() => setShowAssignBookModal(true)}>
-            Assign new book
+
+          <Button basic primary onClick={() => setShowAssignChildModal(true)}>
+            Add child to class
           </Button>
         </div>
-        <LibraryTable
-          rows={books}
-          unassign
-          onDeleteClick={(row) => setBookToUnassign(row)}
-        /> */}
+        <UsersTable auth={auth} rows={students} />
       </Container>
     </>
   )

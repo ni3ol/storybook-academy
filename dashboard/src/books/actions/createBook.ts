@@ -5,7 +5,7 @@ export const createBook = async ({
   data,
   authToken,
 }: {
-  data: {title: string; level: number}
+  data: {title: string}
   authToken: string
 }) => {
   const response = await makeRequest({

@@ -14,7 +14,6 @@ import {Book} from '../model'
 
 type FormData = {
   title: string
-  level: number
 }
 
 export const UpdateBookModal = ({
@@ -52,13 +51,6 @@ export const UpdateBookModal = ({
             label="Title"
             form={form}
             defaultValue={book.title}
-          />
-          <NumberField
-            required
-            name="level"
-            label="Level"
-            form={form}
-            defaultValue={book.level}
           />
           <FileUploadField
             required

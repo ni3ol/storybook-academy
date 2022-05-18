@@ -8,7 +8,8 @@ import {BookAssignment, bookAssignmentSchema} from '../model'
 
 export const createBookAssignmentInputSchema = z.object({
   bookId: z.string().uuid(),
-  schoolId: z.string().uuid(),
+  schoolId: z.string().uuid().optional().nullable(),
+  classId: z.string().uuid().optional().nullable(),
 })
 
 export type CreateBookAssignmentInputData = z.infer<
