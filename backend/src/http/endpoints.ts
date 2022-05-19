@@ -20,6 +20,8 @@ import {getClassesEndpoint} from '../classes/endpoints/getClassesEndpoint'
 import {assignChildToClassEndpoint} from '../users/endpoints/assignChildToClassEndpoint'
 import {updateClassEndpoint} from '../classes/endpoints/updateClassEndpoint'
 import {assignBookToClassEndpoint} from '../schools/endpoints/assignBookToClassEndpoint'
+import {generatePreSignedPutUrl} from '../s3/generatePreSignedPutUrl'
+import {generatePreSignedGetUrl} from '../s3/generatePreSignedGetUrl'
 
 export const endpoints: Endpoint<any, any, any>[] = [
   // Users
@@ -49,4 +51,7 @@ export const endpoints: Endpoint<any, any, any>[] = [
   createClassEndpoint,
   getClassesEndpoint,
   updateClassEndpoint,
+  // S3
+  generatePreSignedPutUrl,
+  generatePreSignedGetUrl,
 ]

@@ -9,13 +9,11 @@ export const LibraryTable = ({
   rows,
   onUpdateClick,
   onDeleteClick,
-  unassign,
   auth,
 }: {
   rows: Book[]
   onUpdateClick?: (book: Book) => any
   onDeleteClick?: (book: Book) => any
-  unassign?: boolean
   auth?: Auth
 }) => (
   <DataTable
@@ -43,9 +41,7 @@ export const LibraryTable = ({
                 </Button>
               )}
               {onDeleteClick && (
-                <Button onClick={() => onDeleteClick(row)}>
-                  {unassign ? 'Unassign' : 'Delete'}
-                </Button>
+                <Button onClick={() => onDeleteClick(row)}>Delete</Button>
               )}
             </>
           ) : (

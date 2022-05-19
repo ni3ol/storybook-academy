@@ -14,7 +14,7 @@ const myBucket = new AWS.S3({
   region: REGION,
 })
 
-const UploadImageToS3WithNativeSdk = () => {
+export const UploadImageToS3WithNativeSdk = () => {
   const [progress, setProgress] = useState(0)
   const [selectedFile, setSelectedFile] = useState(null)
 
@@ -48,5 +48,3 @@ const UploadImageToS3WithNativeSdk = () => {
     </div>
   )
 }
-
-export default UploadImageToS3WithNativeSdk

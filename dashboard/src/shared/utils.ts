@@ -25,7 +25,7 @@ export const makeRequest = async ({
   data,
   authToken,
 }: {
-  method: 'get' | 'post' | 'patch' | 'delete'
+  method: 'get' | 'post' | 'patch' | 'delete' | 'put'
   path: string
   queryParams?: Record<string, any>
   data?: Record<string, any>

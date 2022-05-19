@@ -1,24 +1,18 @@
 import router, {useRouter} from 'next/router'
 import {useState} from 'react'
 import NextLink from 'next/link'
-import {Dropdown, Icon, Table} from 'semantic-ui-react'
+import {Dropdown, Table} from 'semantic-ui-react'
 import {RequireAuth} from '../../src/auth/components/requireAuth'
 import {Auth} from '../../src/auth/hooks'
 import {getBooks} from '../../src/books/actions/getBooks'
-import {LibraryTable} from '../../src/books/components/libraryTable'
 import {getSchools} from '../../src/schools/actions/getSchools'
-import {UpdateSchoolModal} from '../../src/schools/components/updateSchoolModal'
-import {AssignBookToSchoolModal} from '../../src/schools/components/assignBookToSchoolModal'
 import {Button} from '../../src/shared/components/button'
 import {Container} from '../../src/shared/components/container'
 import {DashboardNavigation} from '../../src/shared/components/dashboardNavigation/dashboardNavigation'
 import {Header} from '../../src/shared/components/header'
 import {usePromise} from '../../src/shared/hooks'
 import {getUsers} from '../../src/users/actions/getUsers'
-import {CreateUserModal} from '../../src/users/components/createUserModal'
 import {UsersTable} from '../../src/users/components/usersTable'
-import {Book} from '../../src/books/model'
-import {UnassignBookFromSchoolModal} from '../../src/schools/components/unassignBookFromSchoolModal'
 import {formatDateSimple} from '../../src/shared/utils'
 import {UserRole} from '../../src/users/model'
 import {getClasses} from '../../src/classes/actions/getClasses'
@@ -42,7 +36,7 @@ const TheClassPage = ({auth}: {auth: Auth}) => {
       filters: {id: classId},
     })
     return theClass
-  }, [])
+  }, [classId])
   const theClass = getClassAction.result
 
   const getLinkedClassAction = usePromise(async () => {
@@ -270,9 +264,16 @@ const TheClassPage = ({auth}: {auth: Auth}) => {
           </Button>
         </div>
         {book ? (
-          <p>the current book is {book?.title}</p>
+          <p style={{fontSize: 16}}>
+            The current book is{' '}
+            <NextLink passHref href={`/books/${book.id}`}>
+              <a>{book.title}</a>
+            </NextLink>
+          </p>
         ) : (
-          <p>No book is currently assigned for this class</p>
+          <p style={{fontSize: 16}}>
+            No book is currently assigned for this class
+          </p>
         )}
         <div
           style={{

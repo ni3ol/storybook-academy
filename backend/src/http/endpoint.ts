@@ -5,7 +5,7 @@ import {User} from '../users/model'
 
 export type Endpoint<BS = undefined, PS = undefined, QS = undefined> = {
   requireAuth?: boolean
-  method: 'get' | 'post' | 'patch' | 'delete'
+  method: 'get' | 'post' | 'patch' | 'delete' | 'put'
   path: string
   validation?: {
     body?: ZodSchema<BS>
@@ -27,7 +27,7 @@ export type Endpoint<BS = undefined, PS = undefined, QS = undefined> = {
 
 export type NewEndpoint<BS = undefined, PS = undefined, QS = undefined> = {
   requireAuth?: boolean
-  method: 'get' | 'post' | 'patch' | 'delete'
+  method: 'get' | 'post' | 'patch' | 'delete' | 'put'
   path: string
   validation?: {
     body?: ZodSchema<BS>
