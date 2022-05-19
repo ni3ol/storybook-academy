@@ -11,6 +11,7 @@ import {Form, PasswordField, TextField} from '../src/shared/components/form'
 import {Navigation} from '../src/shared/components/navigation'
 import {usePromiseLazy} from '../src/shared/hooks'
 import {UserRole} from '../src/users/model'
+import NextLink from 'next/link'
 
 type Data = {
   emailAddress?: string
@@ -144,6 +145,20 @@ export default function SignIn() {
                     required
                     label="Password"
                   />
+                  {!isChildSelected && (
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'right',
+                        marginBottom: '1em',
+                      }}
+                    >
+                      <NextLink passHref href={`/reset-password`}>
+                        Forgot your password?
+                      </NextLink>
+                    </div>
+                  )}
+
                   <Button
                     type="submit"
                     fluid
