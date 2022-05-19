@@ -1,5 +1,6 @@
 import {Knex} from 'knex'
 import {z} from 'zod'
+import {hashPassword} from '../../auth/utils'
 import {db, useOrCreateTransaction} from '../../db/db'
 import {utcNow} from '../../shared/utils'
 import {User} from '../../users/model'
@@ -10,6 +11,7 @@ export const updateClassInputSchema = z.object({
   bookId: classSchema.shape.bookId.optional(),
   linkedClassId: classSchema.shape.linkedClassId.optional(),
   educatorId: classSchema.shape.educatorId.optional(),
+  password: classSchema.shape.password.optional(),
 })
 
 export type UpdateClassInputData = z.infer<typeof updateClassInputSchema>
@@ -34,6 +36,16 @@ export const updateClass = (
         .returning('*')
         .transacting(trx)
     }
+
+    if (data.password) {
+      const passwordHash = await hashPassword(data.password)
+      await db('users')
+        .update({passwordHash, updatedAt: now})
+        .where('classId', '=', id)
+        .returning('*')
+        .transacting(trx)
+    }
+
     const [theClass] = (await query) as Class[]
     return theClass
   })

@@ -1,6 +1,7 @@
 import {Knex} from 'knex'
 import {z} from 'zod'
 import {hashPassword} from '../../auth/utils'
+import {getClasses} from '../../classes/actions/getClasses'
 import {db, useOrCreateTransaction} from '../../db/db'
 import {AuthorizationError, ConflictError} from '../../errors'
 import {getSchools} from '../../schools/actions/getSchools'
@@ -43,9 +44,13 @@ export const createUser = async (
     throw new AuthorizationError()
   }
 
-  const {password, schoolId, firstName, lastName, ...other} =
+  const {password, schoolId, firstName, lastName, classId, ...other} =
     createUserInputSchema.parse(data)
-  const passwordHash = password ? await hashPassword(password) : undefined
+  const [theClass] = await getClasses({filters: classId ? {id: classId} : {}})
+  const classPassword = theClass.password
+  const passwordHash = password
+    ? await hashPassword(password)
+    : await hashPassword(classPassword)
   const id = other.id || getUuid()
   const schools = await getSchools()
   const schoolName = schools

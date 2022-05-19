@@ -19,6 +19,7 @@ export const updateUserInputSchema = z.object({
   readingLevel: userSchema.shape.readingLevel.optional(),
   username: userSchema.shape.username.optional(),
   profilePicture: userSchema.shape.profilePicture.optional(),
+  passwordHash: userSchema.shape.passwordHash.optional(),
 })
 
 export type UpdateUserInputData = z.infer<typeof updateUserInputSchema>
