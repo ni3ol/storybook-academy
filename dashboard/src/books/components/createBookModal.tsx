@@ -121,35 +121,30 @@ export const CreateBookModal = ({
         <Form error={action.error} onSubmit={form.handleSubmit(handleSubmit)}>
           <TextField required name="title" label="Title" form={form} />
           <FileUploadField
-            required
             name="level-1"
             label="Level 1"
             form={form}
             onChange={handleLevel1FileInput}
           />
           <FileUploadField
-            required
             name="level-2"
             label="Level 2"
             form={form}
             onChange={handleLevel2FileInput}
           />
           <FileUploadField
-            required
             name="level-3"
             label="Level 3"
             form={form}
             onChange={handleLevel3FileInput}
           />
           <FileUploadField
-            required
             name="level-4"
             label="Level 4"
             form={form}
             onChange={handleLevel4FileInput}
           />
           <FileUploadField
-            required
             name="level-5"
             label="Level 5"
             form={form}

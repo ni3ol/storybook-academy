@@ -16,7 +16,7 @@ export const createBookInputSchema = z.object({
   level3Name: z.string().optional().nullable(),
   level3Type: z.string().optional().nullable(),
   level4Name: z.string().optional().nullable(),
-  level41Type: z.string().optional().nullable(),
+  level4Type: z.string().optional().nullable(),
   level5Name: z.string().optional().nullable(),
   level5Type: z.string().optional().nullable(),
 })
