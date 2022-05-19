@@ -150,9 +150,12 @@ export const DashboardNavigation = ({
               Report
             </Menu.Item>
           )}
-          {[UserRole.Principal, UserRole.Teacher, UserRole.Admin].includes(
-            role,
-          ) && (
+          {[
+            UserRole.Principal,
+            UserRole.Teacher,
+            UserRole.Admin,
+            UserRole.User,
+          ].includes(role) && (
             <Menu.Item
               name="chat"
               onClick={() => handleClick('chat')}

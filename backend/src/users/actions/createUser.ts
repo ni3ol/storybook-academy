@@ -47,10 +47,13 @@ export const createUser = async (
   const {password, schoolId, firstName, lastName, classId, ...other} =
     createUserInputSchema.parse(data)
   const [theClass] = await getClasses({filters: classId ? {id: classId} : {}})
-  const classPassword = theClass.password
+  const classPassword = theClass ? theClass.password : undefined
+  // eslint-disable-next-line no-nested-ternary
   const passwordHash = password
     ? await hashPassword(password)
-    : await hashPassword(classPassword)
+    : classPassword
+    ? await hashPassword(classPassword)
+    : undefined
   const id = other.id || getUuid()
   const schools = await getSchools()
   const schoolName = schools

@@ -1,0 +1,18 @@
+.messageItem {
+    width: 55%;
+    margin: 8px;
+    padding: 12px 8px;
+    word-break: break-word;
+    border-radius: 4px;
+    color: white;
+}
+
+.myMessage {
+    background-color: rgb(0, 132, 255);
+    margin-left: auto;
+}
+
+.receivedMessage {
+    background-color: #3f4042;
+    margin-right: auto;
+}

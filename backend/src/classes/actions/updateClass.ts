@@ -2,9 +2,11 @@ import {Knex} from 'knex'
 import {z} from 'zod'
 import {hashPassword} from '../../auth/utils'
 import {db, useOrCreateTransaction} from '../../db/db'
-import {utcNow} from '../../shared/utils'
+import {getUuid, utcNow} from '../../shared/utils'
+import {getUsers} from '../../users/actions/getUsers'
 import {User} from '../../users/model'
 import {Class, classSchema} from '../model'
+import {getClasses} from './getClasses'
 
 export const updateClassInputSchema = z.object({
   name: classSchema.shape.name.optional(),
@@ -30,9 +32,29 @@ export const updateClass = (
       .transacting(trx)
 
     if (data.linkedClassId) {
+      const chatRoomId = getUuid()
       await db('classes')
         .update({linkedClassId: id, updatedAt: now})
         .where('id', '=', data.linkedClassId)
+        .returning('*')
+        .transacting(trx)
+
+      const [linkedClass] = await getClasses({filters: {id}})
+      const [linkedClassEducator] = await getUsers({
+        filters: {id: linkedClass.educatorId},
+      })
+      const [theClassEducator] = await getUsers({
+        filters: {id: data.educatorId},
+      })
+
+      await db('chatRooms')
+        .insert({
+          id: chatRoomId,
+          createdAt: now,
+          updatedAt: now,
+          participant1Id: theClassEducator.id,
+          participant2Id: linkedClassEducator.id,
+        })
         .returning('*')
         .transacting(trx)
     }

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable import/first */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import dotenv from 'dotenv'
@@ -109,6 +111,37 @@ app.use((req, res) => {
 })
 
 const port = parseInt(process.env.PORT || '8080', 10)
+
+const server = require('http').createServer()
+const io = require('socket.io')(server, {
+  cors: {
+    origin: '*',
+  },
+})
+
+const NEW_CHAT_MESSAGE_EVENT = 'newChatMessage'
+
+io.on('connection', (socket: any) => {
+  // Join a conversation
+  const roomId = 'test'
+  // const {roomId} = socket.handshake.query
+  socket.join(roomId)
+
+  // Listen for new messages
+  socket.on(NEW_CHAT_MESSAGE_EVENT, (data: any) => {
+    io.in(roomId).emit(NEW_CHAT_MESSAGE_EVENT, data)
+    console.log('ddfsf', data)
+  })
+
+  // Leave the room if the user closes the socket
+  socket.on('disconnect', () => {
+    socket.leave(roomId)
+  })
+})
+
+server.listen('5002', () => {
+  console.log(`Listening on port ${'5002'}`)
+})
 
 app.listen(port, () => {
   console.log(`Server started on port: ${port}`)

@@ -112,7 +112,6 @@ export const CreateUserModal = ({
 
           {role !== UserRole.Admin && role !== UserRole.Principal && (
             <ClassSelectField
-              required
               name="classId"
               label="Class"
               form={form}

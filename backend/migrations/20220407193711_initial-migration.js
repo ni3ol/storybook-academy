@@ -74,6 +74,23 @@ exports.up = async (knex) => {
       "bookId" UUID,
       "password" TEXT NOT NULL
     );
+
+    CREATE TABLE "messages" (
+      "id" UUID PRIMARY KEY,
+      "createdAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+      "updatedAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+      "roomId" TEXT NOT NULL,
+      "body" TEXT NOT NULL,
+      "senderId" UUID NOT NULL
+    );
+
+    CREATE TABLE "chatRooms" (
+      "id" UUID PRIMARY KEY,
+      "createdAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+      "updatedAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+      "participant1Id" UUID NOT NULL,
+      "participant2Id" UUID NOT NULL
+    );
   `)
 }
 
@@ -85,5 +102,7 @@ exports.down = async (knex) => {
     DROP TABLE "schools";
     DROP TABLE "bookAssignments";
     DROP TABLE "classes";
+    DROP TABLE "messages";
+    DROP TABLE "chatRooms";
 `)
 }
