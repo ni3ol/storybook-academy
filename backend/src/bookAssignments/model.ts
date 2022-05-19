@@ -4,7 +4,8 @@ import {entitySchema} from '../shared/utils'
 export const bookAssignmentSchema = entitySchema
   .extend({
     bookId: z.string().uuid(),
-    schoolId: z.string().uuid(),
+    schoolId: z.string().uuid().optional().nullable(),
+    classId: z.string().uuid().optional().nullable(),
   })
   .strict()
 

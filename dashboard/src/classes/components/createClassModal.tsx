@@ -19,9 +19,11 @@ type FormData = {
 }
 
 export const CreateClassModal = ({
+  schoolId,
   onClose,
   onClassCreated,
 }: {
+  schoolId?: string
   onClose: () => any
   onClassCreated?: (thClass: Class) => any
 }) => {
@@ -29,7 +31,10 @@ export const CreateClassModal = ({
   const {auth} = useAuth()
 
   const action = usePromiseLazy(async (data: FormData) => {
-    return createClass({authToken: auth.token!, data})
+    return createClass({
+      authToken: auth.token!,
+      data: {...data, schoolId: schoolId || data.schoolId},
+    })
   }, [])
 
   const handleSubmit = async (data: FormData) => {
@@ -40,7 +45,7 @@ export const CreateClassModal = ({
   }
 
   const userFilters: UserFilters = {
-    schoolId: form.watch('schoolId'),
+    schoolId: form.watch('schoolId') || schoolId,
     role: UserRole.Teacher,
   }
 
@@ -58,12 +63,14 @@ export const CreateClassModal = ({
             form={form}
           />
 
-          <SchoolSelectField
-            required
-            name="schoolId"
-            label="School"
-            form={form}
-          />
+          {!schoolId && (
+            <SchoolSelectField
+              required
+              name="schoolId"
+              label="School"
+              form={form}
+            />
+          )}
 
           <UserSelectField
             required
@@ -81,10 +88,3 @@ export const CreateClassModal = ({
     />
   )
 }
-
-// name: z.string(),
-// educatorId: z.string().uuid(),
-// schoolId: z.string().uuid(),
-// linkedClassId: z.string().uuid(),
-// bookId: z.string().uuid(),
-// password: z.string(),

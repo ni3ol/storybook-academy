@@ -54,6 +54,7 @@ const Classes = ({auth}: {auth: Auth}) => {
           onUpdateClick={() => {}}
           onDeleteClick={() => {}}
           rows={action.result || []}
+          auth={auth}
         />
       </Container>
     </>

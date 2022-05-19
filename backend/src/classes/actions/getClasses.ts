@@ -8,6 +8,7 @@ import {classSchema} from '../model'
 export const classFiltersSchema = z
   .object({
     id: z.string().uuid(),
+    schoolId: z.string().uuid(),
   })
   .strict()
   .partial()
@@ -16,6 +17,7 @@ export type ClassFilters = z.infer<typeof classFiltersSchema>
 
 const filterMapping: FilterMapping<ClassFilters> = {
   id: (query, filters) => query.where('id', '=', filters.id!),
+  schoolId: (query, filters) => query.where('schoolId', '=', filters.schoolId!),
 }
 
 export const getClasses = async (params?: {

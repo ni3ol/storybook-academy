@@ -15,6 +15,8 @@ import {DeleteUserModal} from '../../src/users/components/deleteUserModal'
 import {getSchools} from '../../src/schools/actions/getSchools'
 import {UsersTable} from '../../src/users/components/usersTable'
 import {formatDateSimple} from '../../src/shared/utils'
+import {getClasses} from '../../src/classes/actions/getClasses'
+import Image from 'next/image'
 
 const UserPage = ({auth}: {auth: Auth}) => {
   const router = useRouter()
@@ -29,15 +31,28 @@ const UserPage = ({auth}: {auth: Auth}) => {
     return users
   }, [])
   const user = (getUserAction.result || []).find((user) => user.id === userId)
+
+  const getClassAction = usePromise(async () => {
+    const classes = await getClasses({
+      authToken: auth.authSession.token,
+    })
+    return classes
+  }, [])
+
+  const theClass = (getClassAction.result || []).find(
+    (c) => c.id === user?.classId,
+  )
+
   const educator = (getUserAction.result || []).find(
-    (u) => user?.educatorId === u.id,
+    (u) => u.id === theClass?.educatorId,
   )
 
   const students = (getUserAction.result || []).filter(
-    (u) => u.educatorId === user?.id && user?.role === UserRole.Teacher,
+    (u) =>
+      u.classId === theClass?.id &&
+      user?.role === UserRole.Teacher &&
+      u.role === UserRole.Child,
   )
-
-  console.log(students, educator)
 
   const schoolsAction = usePromise(() => {
     return getSchools({authToken: auth.authSession.token})
@@ -47,6 +62,14 @@ const UserPage = ({auth}: {auth: Auth}) => {
 
   const schoolName =
     schools.find((school) => school.id === user?.schoolId)?.name || ''
+
+  const [image, setImage] = useState()
+
+  usePromise(async () => {
+    if (!user) return
+    const image = await import(`../../public/${user.profilePicture}.svg`)
+    setImage(image)
+  }, [user])
 
   return (
     <>
@@ -84,18 +107,13 @@ const UserPage = ({auth}: {auth: Auth}) => {
             alignItems: 'center',
           }}
         >
-          <div>
-            <NextLink
-              passHref
-              href={
-                auth.user.role === UserRole.Teacher ? '/students' : `/users`
-              }
-            >
-              Back
-            </NextLink>
-            <Header as="h1" style={{marginBottom: 20}}>
+          <div style={{display: 'flex', alignItems: 'center'}}>
+            <Header as="h1" style={{marginBottom: 0, marginRight: 10}}>
               User - {user?.firstName} {user?.lastName}
             </Header>
+            {image && user?.role === UserRole.Child && (
+              <Image src={image} width={50} height={50} />
+            )}
           </div>
         </div>
         <div
@@ -175,20 +193,28 @@ const UserPage = ({auth}: {auth: Auth}) => {
             <Table.Row>
               <Table.Cell width={4}>Name</Table.Cell>
               <Table.Cell>
-                {auth.user?.role === UserRole.Teacher
-                  ? user?.schoolId && schools && schoolName
-                  : user?.schoolId &&
-                    schools && (
-                      <NextLink passHref href={`/schools/${user?.schoolId}`}>
-                        {schoolName}
-                      </NextLink>
-                    )}
+                <NextLink passHref href={`/schools/${user?.schoolId}`}>
+                  {schoolName}
+                </NextLink>
               </Table.Cell>
             </Table.Row>
             <Table.Row>
               <Table.Cell>Role</Table.Cell>
               <Table.Cell>{user?.role}</Table.Cell>
             </Table.Row>
+            {(user?.role === UserRole.Child ||
+              user?.role === UserRole.Teacher) && (
+              <Table.Row>
+                <Table.Cell>Class</Table.Cell>
+                <Table.Cell>
+                  {theClass && (
+                    <NextLink passHref href={`/classes/${theClass.id}`}>
+                      {theClass.name}
+                    </NextLink>
+                  )}
+                </Table.Cell>
+              </Table.Row>
+            )}
             {user?.role === UserRole.Child && (
               <Table.Row>
                 <Table.Cell>Teacher</Table.Cell>

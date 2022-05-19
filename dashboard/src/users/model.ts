@@ -23,6 +23,7 @@ export const userSchema = entitySchema.extend({
   age: z.number().nullable().optional(),
   favouriteColor: z.string().optional().nullable(),
   favouriteAnimal: z.string().optional().nullable(),
+  profilePicture: z.string().optional().nullable(),
 })
 
 export type User = z.infer<typeof userSchema>

@@ -14,22 +14,37 @@ import {updateUser} from '../actions/updateUser'
 import {User} from '../model'
 
 type FormData = {
-  firstName: string
-  lastName: string
-  emailAddress: string
+  age: number
+  nickname: string
+  favouriteAnimal: string
+  favouriteColor: string
 }
 
-// fetch these from the BE?
 export const colors = [
   {label: 'Red', value: 'red'},
   {label: 'Blue', value: 'blue'},
   {label: 'Green', value: 'green'},
+  {label: 'Orange', value: 'orange'},
+  {label: 'Purple', value: 'purple'},
+  {label: 'Yellow', value: 'yellow'},
 ]
 
 export const animals = [
   {label: 'Dog', value: 'dog'},
   {label: 'Cat', value: 'cat'},
-  {label: 'Parrot', value: 'parrot'},
+  {label: 'Chicken', value: 'chicken'},
+  {label: 'Butterfly', value: 'butterfly'},
+  {label: 'Bumblebee', value: 'bee'},
+  {label: 'Elephant', value: 'elephant'},
+  {label: 'Whale', value: 'whale'},
+  {label: 'Octopus', value: 'octopus'},
+  {label: 'Owl', value: 'owl'},
+  {label: 'Lion', value: 'lion'},
+  {label: 'Deer', value: 'deer'},
+  {label: 'Dolphin', value: 'dolphin'},
+  {label: 'Penguin', value: 'penguin'},
+  {label: 'Pig', value: 'pig'},
+  {label: 'Turtle', value: 'turtle'},
 ]
 
 export const CreateChildProfileForm = ({user}: {user: User}) => {
@@ -39,7 +54,11 @@ export const CreateChildProfileForm = ({user}: {user: User}) => {
   const action = usePromiseLazy(async (data: FormData) => {
     return updateUser({
       id: user.id,
-      data: {...data, profileCreated: true},
+      data: {
+        ...data,
+        profileCreated: true,
+        profilePicture: `${data.favouriteColor}-${data.favouriteAnimal}`,
+      },
       authToken: auth.token!,
     })
   }, [])

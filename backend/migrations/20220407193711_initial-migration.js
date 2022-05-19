@@ -17,7 +17,8 @@ exports.up = async (knex) => {
       "favouriteColor" TEXT,
       "favouriteAnimal" TEXT,
       "nickname" TEXT,
-      "profileCreated" BOOLEAN DEFAULT FALSE
+      "profileCreated" BOOLEAN DEFAULT FALSE,
+      "profilePicture" TEXT
     );
 
     CREATE TABLE "authSessions" (
@@ -34,7 +35,16 @@ exports.up = async (knex) => {
       "updatedAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
       "createdByUserId" UUID NOT NULL,
       "title" TEXT NOT NULL,
-      "level" INTEGER NOT NULL
+      "level1Name" TEXT,
+      "level1Type" TEXT,
+      "level2Name" TEXT,
+      "level2Type" TEXT,
+      "level3Name" TEXT,
+      "level3Type" TEXT,
+      "level4Name" TEXT,
+      "level4Type" TEXT,
+      "level5Name" TEXT,
+      "level5Type" TEXT
     );
 
     CREATE TABLE "schools" (
@@ -49,7 +59,8 @@ exports.up = async (knex) => {
       "createdAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
       "updatedAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
       "bookId" UUID NOT NULL,
-      "schoolId" UUID NOT NULL
+      "schoolId" UUID,
+      "classId" UUID
     );
 
     CREATE TABLE "classes" (
@@ -63,6 +74,23 @@ exports.up = async (knex) => {
       "bookId" UUID,
       "password" TEXT NOT NULL
     );
+
+    CREATE TABLE "messages" (
+      "id" UUID PRIMARY KEY,
+      "createdAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+      "updatedAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+      "roomId" TEXT NOT NULL,
+      "body" TEXT NOT NULL,
+      "senderId" UUID NOT NULL
+    );
+
+    CREATE TABLE "chatRooms" (
+      "id" UUID PRIMARY KEY,
+      "createdAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+      "updatedAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+      "participant1Id" UUID NOT NULL,
+      "participant2Id" UUID NOT NULL
+    );
   `)
 }
 
@@ -74,5 +102,7 @@ exports.down = async (knex) => {
     DROP TABLE "schools";
     DROP TABLE "bookAssignments";
     DROP TABLE "classes";
+    DROP TABLE "messages";
+    DROP TABLE "chatRooms";
 `)
 }

@@ -1,5 +1,7 @@
 import {Knex} from 'knex'
 import {z} from 'zod'
+import {hashPassword} from '../../auth/utils'
+import {getClasses} from '../../classes/actions/getClasses'
 import {useOrCreateTransaction} from '../../db/db'
 import {AuthorizationError} from '../../errors'
 import {User, UserRole} from '../model'
@@ -24,10 +26,14 @@ export const assignChildToClass = async (
 
   const parsedData = assignChildToClassInputSchema.parse(data)
 
+  const [theClass] = await getClasses({filters: {id: parsedData.classId}})
+  const classPassword = theClass.password
+  const passwordHash = await hashPassword(classPassword)
+
   const updatedUser = await useOrCreateTransaction(params?.trx, async (trx) => {
     return updateUser(
       parsedData.userId,
-      {classId: parsedData.classId},
+      {classId: parsedData.classId, passwordHash},
       {skipAuth: true, trx},
     )
   })

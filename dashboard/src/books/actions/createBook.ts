@@ -5,7 +5,19 @@ export const createBook = async ({
   data,
   authToken,
 }: {
-  data: {title: string; level: number}
+  data: {
+    title: string
+    level1Name?: string
+    level1Type?: string
+    level2Name?: string
+    level2Type?: string
+    level3Name?: string
+    level3Type?: string
+    level4Name?: string
+    level4Type?: string
+    level5Name?: string
+    level5Type?: string
+  }
   authToken: string
 }) => {
   const response = await makeRequest({

@@ -5,7 +5,7 @@ export const createClass = async ({
   data,
   authToken,
 }: {
-  data: {name: string}
+  data: {name: string; educatorId: string; schoolId: string}
   authToken: string
 }) => {
   const response = await makeRequest({

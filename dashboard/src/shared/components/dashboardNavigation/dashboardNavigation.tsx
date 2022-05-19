@@ -2,9 +2,18 @@ import {useRouter} from 'next/router'
 import {Button, Menu} from 'semantic-ui-react'
 import {useAuth} from '../../../auth/hooks'
 import styles from './dashboardNavigation.module.css'
-import {UserRole} from '../../../users/model'
+import {User, UserRole} from '../../../users/model'
+import {useEffect, useState} from 'react'
+import {usePromise} from '../../hooks'
+import Image from 'next/image'
 
-export const DashboardNavigation = ({role}: {role: UserRole}) => {
+export const DashboardNavigation = ({
+  role,
+  user,
+}: {
+  role: UserRole
+  user?: User
+}) => {
   const router = useRouter()
   const auth = useAuth()
 
@@ -17,6 +26,15 @@ export const DashboardNavigation = ({role}: {role: UserRole}) => {
     router.push(`/${item}`)
   }
 
+  const [image, setImage] = useState()
+
+  usePromise(async () => {
+    if (!user) return
+    const image = await import(`../../../../public/${user.profilePicture}.svg`)
+    setImage(image)
+    console.log('fuf', image)
+  }, [user])
+
   return (
     <Menu secondary style={{width: '100%'}}>
       <div
@@ -26,6 +44,7 @@ export const DashboardNavigation = ({role}: {role: UserRole}) => {
           backgroundColor: '#4D7298',
           padding: '14px 110px',
           width: '100%',
+          alignItems: 'center',
           marginBottom: 30,
         }}
       >
@@ -39,6 +58,16 @@ export const DashboardNavigation = ({role}: {role: UserRole}) => {
           </Menu.Item>
         </div>
         <div style={{display: 'flex'}}>
+          {UserRole.Child === role && (
+            <Menu.Item
+              name="profile"
+              // onClick={() => handleClick('learn-more')}
+              style={{color: 'white'}}
+            >
+              {image && <Image src={image} width={35} height={35} />}
+              <span style={{marginLeft: 5}}>Hello, {user?.nickname}</span>
+            </Menu.Item>
+          )}
           {[UserRole.Principal, UserRole.Teacher, UserRole.Admin].includes(
             role,
           ) && (
@@ -121,9 +150,12 @@ export const DashboardNavigation = ({role}: {role: UserRole}) => {
               Report
             </Menu.Item>
           )}
-          {[UserRole.Principal, UserRole.Teacher, UserRole.Admin].includes(
-            role,
-          ) && (
+          {[
+            UserRole.Principal,
+            UserRole.Teacher,
+            UserRole.Admin,
+            UserRole.User,
+          ].includes(role) && (
             <Menu.Item
               name="chat"
               onClick={() => handleClick('chat')}

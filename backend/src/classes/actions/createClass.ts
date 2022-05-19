@@ -38,6 +38,11 @@ export const createClass = async (
 
   await useOrCreateTransaction(params?.trx, async (trx) => {
     await db('classes').insert(theClass).returning('*').transacting(trx)
+    await db('users')
+      .update({classId: theClass.id, updatedAt: asOf})
+      .where('id', '=', theClass.educatorId)
+      .returning('*')
+      .transacting(trx)
   })
 
   const parsedClass = classSchema.parse(theClass)

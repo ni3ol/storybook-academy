@@ -2,6 +2,7 @@ import {useState} from 'react'
 import {useForm} from 'react-hook-form'
 import {Button} from 'semantic-ui-react'
 import {useAuth} from '../../auth/hooks'
+import {ClassSelectField} from '../../classes/components/classSelectField'
 import {SchoolSelectField} from '../../schools/components/schoolSelectField'
 import {
   EmailField,
@@ -75,9 +76,11 @@ export const readingLevels = [
 export const UpdateUserModal = ({
   onClose,
   onUserUpdated,
+  schoolId,
   user,
 }: {
   user: User
+  schoolId?: string
   onClose: () => any
   onUserUpdated?: (user: User) => any
 }) => {
@@ -104,27 +107,7 @@ export const UpdateUserModal = ({
   const isChildRole = (role || user.role) === UserRole.Child
   const isAdmin = auth.user?.role === UserRole.Admin
 
-  const [selectedSchool, setSelectedSchool] = useState<
-    string | undefined | null
-  >(user?.schoolId)
-
-  const educatorsAction = usePromise(async () => {
-    const result = await getUsers({
-      authToken: auth.authSession?.token!,
-      filters: {role: UserRole.Teacher},
-    })
-
-    return result
-  }, [])
-
-  const educators = educatorsAction.result || []
-
-  const educatorOptions = educators
-    .filter((educator) => educator.schoolId === selectedSchool)
-    .map((educator) => ({
-      label: `${educator.firstName} ${educator.lastName}`,
-      value: educator.id,
-    })) as any[]
+  const schoolIdValue = form.watch('schoolId')
 
   return (
     <Modal
@@ -183,22 +166,19 @@ export const UpdateUserModal = ({
               label="School"
               form={form}
               defaultValue={user.schoolId}
-              setSelectedSchool={(schoolId: string) =>
-                setSelectedSchool(schoolId)
-              }
+            />
+          )}
+          {isAdmin && (
+            <ClassSelectField
+              name="classId"
+              label="Class"
+              form={form}
+              defaultValue={user.classId}
+              filters={{schoolId: schoolIdValue || schoolId}}
             />
           )}
           {isChildRole && (
             <>
-              {isAdmin && (
-                <SelectField
-                  name="educatorId"
-                  label="Educator"
-                  form={form}
-                  defaultValue={user.educatorId}
-                  options={educatorOptions}
-                />
-              )}
               <SelectField
                 name="readingLevel"
                 label="Reading level"

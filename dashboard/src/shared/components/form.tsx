@@ -309,6 +309,7 @@ export const FileUploadField = ({
   form,
   name,
   defaultValue,
+  onChange,
 }: FieldProps) => {
   return (
     <Field label={label} required={required}>
@@ -318,7 +319,14 @@ export const FileUploadField = ({
         rules={{required}}
         defaultValue={defaultValue}
         render={({field}) => {
-          return <Input required={required} type="file" {...field} />
+          return (
+            <Input
+              required={required}
+              type="file"
+              {...field}
+              onChange={onChange}
+            />
+          )
         }}
       />
     </Field>

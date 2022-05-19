@@ -21,6 +21,9 @@ import {Book} from '../../src/books/model'
 import {UnassignBookFromSchoolModal} from '../../src/schools/components/unassignBookFromSchoolModal'
 import {formatDateSimple} from '../../src/shared/utils'
 import {UserRole} from '../../src/users/model'
+import {ClassesTable} from '../../src/classes/components/classesTable'
+import {getClasses} from '../../src/classes/actions/getClasses'
+import {CreateClassModal} from '../../src/classes/components/createClassModal'
 
 const SchoolPage = ({auth}: {auth: Auth}) => {
   const router = useRouter()
@@ -28,6 +31,7 @@ const SchoolPage = ({auth}: {auth: Auth}) => {
   const [showNewUserModal, setShowNewUserModal] = useState(false)
   const [showUpdateModal, setShowUpdateModal] = useState(false)
   const [showAssignBookModal, setShowAssignBookModal] = useState(false)
+  const [isCreateClassModalOpen, setIsCreateClassModalOpen] = useState(false)
   const [bookToUnassign, setBookToUnassign] = useState<Book | undefined>(
     undefined,
   )
@@ -50,6 +54,10 @@ const SchoolPage = ({auth}: {auth: Auth}) => {
     return getBooks({authToken: auth.token, filters: {schoolId}})
   }, [])
   const books = getBooksAction.result || []
+
+  const getClassesAction = usePromise(() => {
+    return getClasses({authToken: auth.token, filters: {schoolId}})
+  }, [])
 
   return (
     <>
@@ -96,12 +104,20 @@ const SchoolPage = ({auth}: {auth: Auth}) => {
         />
       )}
 
+      {isCreateClassModalOpen && (
+        <CreateClassModal
+          onClose={() => setIsCreateClassModalOpen(false)}
+          schoolId={schoolId}
+          onClassCreated={() => {
+            getClassesAction.execute()
+            setIsCreateClassModalOpen(false)
+          }}
+        />
+      )}
+
       <DashboardNavigation role={auth.user.role} />
       <Container>
         <div>
-          <NextLink passHref href={`/schools`}>
-            Back
-          </NextLink>
           <Header as="h1" style={{marginBottom: 20}}>
             School - {school?.name}
           </Header>
@@ -144,6 +160,7 @@ const SchoolPage = ({auth}: {auth: Auth}) => {
             </Table.Row>
           </Table.Body>
         </Table>
+
         <div
           style={{
             display: 'flex',
@@ -152,13 +169,20 @@ const SchoolPage = ({auth}: {auth: Auth}) => {
           }}
         >
           <Header style={{margin: 0}} as="h3">
-            Users
+            Classes
           </Header>
-          <Button basic primary onClick={() => setShowNewUserModal(true)}>
-            New user
+          <Button onClick={() => setIsCreateClassModalOpen(true)} primary>
+            New class
           </Button>
         </div>
-        <UsersTable auth={auth} rows={users} />
+        <ClassesTable
+          auth={auth}
+          onUpdateClick={() => {}}
+          onDeleteClick={() => {}}
+          rows={getClassesAction.result || []}
+          basic
+        />
+
         <div
           style={{
             display: 'flex',
@@ -178,6 +202,21 @@ const SchoolPage = ({auth}: {auth: Auth}) => {
           unassign
           onDeleteClick={(row) => setBookToUnassign(row)}
         />
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <Header style={{margin: 0}} as="h3">
+            Users
+          </Header>
+          <Button basic primary onClick={() => setShowNewUserModal(true)}>
+            New user
+          </Button>
+        </div>
+        <UsersTable auth={auth} rows={users} />
       </Container>
     </>
   )

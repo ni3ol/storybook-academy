@@ -18,6 +18,12 @@ import {unassignBookFromSchoolEndpoint} from '../schools/endpoints/unassignBookF
 import {createClassEndpoint} from '../classes/endpoints/createClassEndpoint'
 import {getClassesEndpoint} from '../classes/endpoints/getClassesEndpoint'
 import {assignChildToClassEndpoint} from '../users/endpoints/assignChildToClassEndpoint'
+import {updateClassEndpoint} from '../classes/endpoints/updateClassEndpoint'
+import {assignBookToClassEndpoint} from '../schools/endpoints/assignBookToClassEndpoint'
+import {generatePreSignedPutUrl} from '../s3/generatePreSignedPutUrl'
+import {generatePreSignedGetUrl} from '../s3/generatePreSignedGetUrl'
+import {getMessagesEndpoint} from '../messages/endpoints/getMessagesEndpoint'
+import {createMessageEndpoint} from '../messages/endpoints/createMessageEndpoint'
 
 export const endpoints: Endpoint<any, any, any>[] = [
   // Users
@@ -42,7 +48,15 @@ export const endpoints: Endpoint<any, any, any>[] = [
   updateSchoolEndpoint,
   assignBookToSchoolEndpoint,
   unassignBookFromSchoolEndpoint,
-  // classes
+  assignBookToClassEndpoint,
+  // Classes
   createClassEndpoint,
   getClassesEndpoint,
+  updateClassEndpoint,
+  // AWS
+  generatePreSignedPutUrl,
+  generatePreSignedGetUrl,
+  // Messages
+  getMessagesEndpoint,
+  createMessageEndpoint,
 ]

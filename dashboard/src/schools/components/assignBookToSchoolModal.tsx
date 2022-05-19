@@ -4,9 +4,11 @@ import {Button} from 'semantic-ui-react'
 import {useAuth} from '../../auth/hooks'
 import {BookSelectField} from '../../books/components/bookSelectField'
 import {Book} from '../../books/model'
+import {ClassSelectField} from '../../classes/components/classSelectField'
 import {Form, TextField} from '../../shared/components/form'
 import {Modal} from '../../shared/components/modal'
 import {usePromiseLazy} from '../../shared/hooks'
+import {assignBookToClass} from '../actions/assignBookToClass'
 import {assignBookToSchool} from '../actions/assignBookToSchool'
 import {SchoolSelectField} from './schoolSelectField'
 
@@ -53,7 +55,13 @@ export const AssignBookToSchoolModal = ({
       body={
         <Form error={action.error} onSubmit={form.handleSubmit(handleSubmit)}>
           {!bookId && (
-            <BookSelectField required name="bookId" label="Book" form={form} />
+            <BookSelectField
+              required
+              name="bookId"
+              label="Book"
+              form={form}
+              schoolId={schoolId}
+            />
           )}
           {!schoolId && (
             <SchoolSelectField

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import {Endpoint} from '../../http/endpoint'
-import {classFiltersSchema, getClasses} from '../actions/getSchools'
+import {classFiltersSchema, getClasses} from '../actions/getClasses'
 import {serializeClass} from '../actions/serializeClass'
 
 export const getClassesEndpoint: Endpoint<any, any, any> = {
