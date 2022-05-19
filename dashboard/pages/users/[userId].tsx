@@ -16,6 +16,7 @@ import {getSchools} from '../../src/schools/actions/getSchools'
 import {UsersTable} from '../../src/users/components/usersTable'
 import {formatDateSimple} from '../../src/shared/utils'
 import {getClasses} from '../../src/classes/actions/getClasses'
+import Image from 'next/image'
 
 const UserPage = ({auth}: {auth: Auth}) => {
   const router = useRouter()
@@ -62,7 +63,13 @@ const UserPage = ({auth}: {auth: Auth}) => {
   const schoolName =
     schools.find((school) => school.id === user?.schoolId)?.name || ''
 
-  console.log(schoolName, user)
+  const [image, setImage] = useState()
+
+  usePromise(async () => {
+    if (!user) return
+    const image = await import(`../../public/${user.profilePicture}.svg`)
+    setImage(image)
+  }, [user])
 
   return (
     <>
@@ -100,10 +107,13 @@ const UserPage = ({auth}: {auth: Auth}) => {
             alignItems: 'center',
           }}
         >
-          <div>
-            <Header as="h1" style={{marginBottom: 20}}>
+          <div style={{display: 'flex', alignItems: 'center'}}>
+            <Header as="h1" style={{marginBottom: 0, marginRight: 10}}>
               User - {user?.firstName} {user?.lastName}
             </Header>
+            {image && user?.role === UserRole.Child && (
+              <Image src={image} width={50} height={50} />
+            )}
           </div>
         </div>
         <div

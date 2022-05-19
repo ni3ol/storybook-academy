@@ -75,14 +75,15 @@ const ChildDashboard = ({auth}: {auth: Auth}) => {
   }, [book])
 
   useEffect(() => {
+    getUserAction.execute()
     setBookUrl(getBookUrlAction.result)
   }, [getBookUrlAction.result])
 
   return (
     <>
-      {query?.showWelcomeModal && (
+      {query?.showWelcomeModal && user && (
         <WelcomeModal
-          user={auth.user}
+          user={user}
           onClose={() =>
             router.push({
               pathname: '/child-dashboard',
@@ -91,7 +92,7 @@ const ChildDashboard = ({auth}: {auth: Auth}) => {
           }
         />
       )}
-      <DashboardNavigation role={auth?.user?.role} />
+      <DashboardNavigation role={auth?.user?.role} user={user} />
       <Container>
         {/* <HTMLFlipBook width={500} height={800}>
           <div className="demoPage">

@@ -25,6 +25,7 @@ export const userSchema = entitySchema
     favouriteColor: z.string().nullable().optional(),
     nickname: z.string().nullable().optional(),
     profileCreated: z.boolean().nullable().optional(),
+    profilePicture: z.string().nullable().optional(),
   })
   .strict()
 
