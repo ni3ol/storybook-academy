@@ -24,6 +24,8 @@ import {generatePreSignedPutUrl} from '../s3/generatePreSignedPutUrl'
 import {generatePreSignedGetUrl} from '../s3/generatePreSignedGetUrl'
 import {getMessagesEndpoint} from '../messages/endpoints/getMessagesEndpoint'
 import {createMessageEndpoint} from '../messages/endpoints/createMessageEndpoint'
+import {createPasswordResetRequestEndpoint} from '../passwordResetRequests/endpoints/createPasswordResetRequestEndpoint'
+import {setNewPasswordEndpoint} from '../auth/endpoints/setNewPasswordEndpoint'
 
 export const endpoints: Endpoint<any, any, any>[] = [
   // Users
@@ -37,6 +39,8 @@ export const endpoints: Endpoint<any, any, any>[] = [
   getAuthSessionsEndpoint,
   // Auth
   signInEndpoint,
+  createPasswordResetRequestEndpoint,
+  setNewPasswordEndpoint,
   // Books
   createBookEndpoint,
   getBooksEndpoint,

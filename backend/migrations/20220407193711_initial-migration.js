@@ -91,6 +91,15 @@ exports.up = async (knex) => {
       "participant1Id" UUID NOT NULL,
       "participant2Id" UUID NOT NULL
     );
+
+    CREATE TABLE "passwordResetRequests" (
+      "id" UUID PRIMARY KEY,
+      "createdAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+      "updatedAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+      "userId" UUID NOT NULL,
+      "emailAddress" TEXT NOT NULL,
+      "token" TEXT NOT NULL
+    );
   `)
 }
 
@@ -104,5 +113,6 @@ exports.down = async (knex) => {
     DROP TABLE "classes";
     DROP TABLE "messages";
     DROP TABLE "chatRooms";
+    DROP TABLE "passwordResetRequests";
 `)
 }

@@ -5,23 +5,31 @@ import {useState} from 'react'
 import {useAuth} from '../src/auth/hooks'
 import {Button} from '../src/shared/components/button'
 import {Container} from '../src/shared/components/container'
-import {EmailField, Form} from '../src/shared/components/form'
+import {Form, PasswordField} from '../src/shared/components/form'
 import {Navigation} from '../src/shared/components/navigation'
 import {usePromiseLazy} from '../src/shared/hooks'
-import {requestPasswordReset} from '../src/auth/actions'
+import {setNewPassword} from '../src/auth/actions'
 
 type Data = {
-  emailAddress: string
+  newPassword: string
+  confirmNewPassword: string
 }
 
-export default function ResetPassword() {
+export default function NewPassword() {
   const form = useForm<Partial<Data>>()
   const router = useRouter()
   const auth = useAuth()
-  const [resetRequested, setResetRequested] = useState(false)
+  const [passwordChanged, setPasswordChanged] = useState(false)
 
   const action = usePromiseLazy(async (data: Data) => {
-    await requestPasswordReset({emailAddress: data.emailAddress})
+    if (data.newPassword !== data.confirmNewPassword) {
+      throw new Error('Passwords do not match')
+    }
+
+    await setNewPassword({
+      newPassword: data.newPassword,
+      passwordResetRequestToken: (router.query.token as string) || 'abc',
+    })
   }, [])
 
   if (auth.isAuthenticated()) {
@@ -31,7 +39,7 @@ export default function ResetPassword() {
   const handleSubmit = async (data: Data) => {
     const {error} = await action.execute(data)
     if (!error) {
-      setResetRequested(true)
+      setPasswordChanged(true)
     }
   }
 
@@ -48,30 +56,33 @@ export default function ResetPassword() {
           }}
         >
           <div style={{width: 400}}>
-            {!resetRequested ? (
+            {!passwordChanged ? (
               <>
                 <h2 style={{textAlign: 'center', margin: 28}}>
-                  Reset password
+                  Set new password
                 </h2>
-                <p>
-                  Enter the email address associated with your account, and
-                  we'll send you a link to reset your password.
-                </p>
+                <p>Enter a new password for your account</p>
                 <Form
                   error={action.error}
                   onSubmit={form.handleSubmit((data) =>
                     handleSubmit(data as Data),
                   )}
                 >
-                  <EmailField
+                  <PasswordField
                     required
-                    label="Email address"
-                    name="emailAddress"
+                    label="New password"
+                    name="newPassword"
+                    form={form}
+                  />
+                  <PasswordField
+                    required
+                    label="Confirm new password"
+                    name="confirmNewPassword"
                     form={form}
                   />
                   <div style={{display: 'flex', justifyContent: 'center'}}>
                     <Button type="submit" block disabled={action.isLoading}>
-                      Send reset password email
+                      Set new password
                     </Button>
                   </div>
                 </Form>
@@ -89,13 +100,13 @@ export default function ResetPassword() {
               </>
             ) : (
               <div style={{textAlign: 'center'}}>
-                <h2>Password reset requested</h2>
+                <h2>New password set</h2>
                 <p>
-                  Please check your email and follow the instructions to reset
-                  your password.
+                  Your new account password has been set. You can now log in
+                  with your new password here:
                 </p>
                 <NextLink passHref href="/sign-in">
-                  Return to sign in
+                  Sign in
                 </NextLink>
               </div>
             )}
