@@ -9,6 +9,7 @@ export const passwordResetRequestFilters = z
   .object({
     id: z.string().uuid(),
     token: z.string(),
+    usable: z.boolean(),
   })
   .strict()
   .partial()
@@ -20,6 +21,8 @@ export type PasswordResetRequestFilters = z.infer<
 const filterMapping: FilterMapping<PasswordResetRequestFilters> = {
   id: (query, filters) => query.where('id', '=', filters.id!),
   token: (query, filters) => query.where('token', '=', filters.token!),
+  usable: (query) =>
+    query.whereNull('usedOn').andWhere('expiresOn', '>', new Date()),
 }
 
 export const getPasswordResetRequests = async (params?: {

@@ -98,7 +98,9 @@ exports.up = async (knex) => {
       "updatedAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
       "userId" UUID NOT NULL,
       "emailAddress" TEXT NOT NULL,
-      "token" TEXT NOT NULL
+      "token" TEXT NOT NULL,
+      "expiresOn" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+      "usedOn" TIMESTAMP WITHOUT TIME ZONE
     );
   `)
 }

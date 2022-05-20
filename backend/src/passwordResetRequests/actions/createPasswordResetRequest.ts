@@ -1,3 +1,4 @@
+import {addDays} from 'date-fns'
 import {Knex} from 'knex'
 import {z} from 'zod'
 import {db, useOrCreateTransaction} from '../../db/db'
@@ -39,6 +40,7 @@ export const createPasswordResetRequest = async (
     updatedAt: asOf,
     userId: user.id,
     token: getUuid(),
+    expiresOn: addDays(new Date(), 3),
   })
 
   await useOrCreateTransaction(params?.trx, async (trx) => {

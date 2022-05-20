@@ -6,6 +6,8 @@ export const passwordResetRequestSchema = entitySchema
     emailAddress: z.string().email(),
     userId: z.string().uuid(),
     token: z.string(),
+    expiresOn: z.date(),
+    usedOn: z.date().optional().nullable(),
   })
   .strict()
 
