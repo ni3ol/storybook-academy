@@ -1,6 +1,8 @@
 import {Knex} from 'knex'
 import {z} from 'zod'
-import {useOrCreateTransaction} from '../../db/db'
+import {createBookSession} from '../../bookSessions/actions/createBookSession'
+import {getClasses} from '../../classes/actions/getClasses'
+import {db, useOrCreateTransaction} from '../../db/db'
 import {InvalidRequestError} from '../../errors'
 import {UserRole} from '../model'
 import {getUsers} from './getUsers'
@@ -25,7 +27,39 @@ export const pairChildren = async (
       throw new InvalidRequestError('Users must both be children')
     }
 
-    await updateUser(data.child1Id, {linkedChildId: data.child2Id}, {trx})
-    await updateUser(data.child2Id, {linkedChildId: data.child1Id}, {trx})
+    if (!child1.classId || !child2.classId) {
+      throw new InvalidRequestError('Missing or misconfigured class id')
+    }
+
+    const [theClass] = await getClasses({filters: {id: child1.classId}})
+
+    await db('bookSessions')
+      .delete()
+      .where('child1Id', data.child1Id)
+      .orWhere('child1Id', data.child2Id)
+      .orWhere('child2Id', data.child1Id)
+      .orWhere('child2Id', data.child2Id)
+      .transacting(trx)
+
+    const bookSession = await createBookSession(
+      {
+        child1Id: data.child1Id,
+        child2Id: data.child2Id,
+        bookId: theClass.bookId,
+        page: 1,
+      },
+      {trx},
+    )
+
+    await updateUser(
+      data.child1Id,
+      {linkedChildId: data.child2Id, bookSessionId: bookSession.id},
+      {trx},
+    )
+    await updateUser(
+      data.child2Id,
+      {linkedChildId: data.child1Id, bookSessionId: bookSession.id},
+      {trx},
+    )
   })
 }

@@ -35,9 +35,10 @@ export const PairChildModal = ({
   }, [])
 
   const handleSubmit = async (data: FormData) => {
-    await action.execute(data)
-    await onChildPaired()
-    return {}
+    const {error} = await action.execute(data)
+    if (!error) {
+      await onChildPaired()
+    }
   }
 
   return (

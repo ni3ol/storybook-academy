@@ -24,7 +24,7 @@ export type UserFilters = z.infer<typeof userFiltersSchema>
 
 const filterMapping: FilterMapping<UserFilters> = {
   id: (query, filters) => query.where('id', '=', filters.id!),
-  notId: (query, filters) => query.whereNot('id', '=', filters.id!),
+  notId: (query, filters) => query.whereNot('id', filters.notId!),
   emailAddress: (query, filters) =>
     query.where('emailAddress', '=', filters.emailAddress!),
   username: (query, filters) => query.where('username', '=', filters.username!),

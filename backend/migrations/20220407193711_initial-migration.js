@@ -19,7 +19,8 @@ exports.up = async (knex) => {
       "nickname" TEXT,
       "profileCreated" BOOLEAN DEFAULT FALSE,
       "profilePicture" TEXT,
-      "linkedChildId" UUID
+      "linkedChildId" UUID,
+      "bookSessionId" UUID
     );
 
     CREATE TABLE "authSessions" (
@@ -104,6 +105,16 @@ exports.up = async (knex) => {
       "expiresOn" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
       "usedOn" TIMESTAMP WITHOUT TIME ZONE
     );
+
+    CREATE TABLE "bookSessions" (
+      "id" UUID PRIMARY KEY,
+      "createdAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+      "updatedAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+      "child1Id" UUID NOT NULL,
+      "child2Id" UUID NOT NULL,
+      "bookId" UUID,
+      "page" INTEGER NOT NULL
+    );
   `)
 }
 
@@ -118,5 +129,6 @@ exports.down = async (knex) => {
     DROP TABLE "messages";
     DROP TABLE "chatRooms";
     DROP TABLE "passwordResetRequests";
+    DROP TABLE "bookSessions";
 `)
 }
