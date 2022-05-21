@@ -24,6 +24,8 @@ import {generatePreSignedPutUrl} from '../s3/generatePreSignedPutUrl'
 import {generatePreSignedGetUrl} from '../s3/generatePreSignedGetUrl'
 import {getMessagesEndpoint} from '../messages/endpoints/getMessagesEndpoint'
 import {createMessageEndpoint} from '../messages/endpoints/createMessageEndpoint'
+import {getChatRoomsEndpoint} from '../chatRooms/endpoints/getChatRoomsEndpoint'
+import {createChatRoomEndpoint} from '../chatRooms/endpoints/createChatRoomEndpoint'
 
 export const endpoints: Endpoint<any, any, any>[] = [
   // Users
@@ -59,4 +61,7 @@ export const endpoints: Endpoint<any, any, any>[] = [
   // Messages
   getMessagesEndpoint,
   createMessageEndpoint,
+  // Chat Rooms
+  getChatRoomsEndpoint,
+  createChatRoomEndpoint,
 ]

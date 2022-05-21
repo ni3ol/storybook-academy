@@ -8,13 +8,14 @@ import {getMessages} from './getMessages'
 const NEW_CHAT_MESSAGE_EVENT = 'newChatMessage' // Name of the event
 const SOCKET_SERVER_URL = 'http://localhost:5002'
 
-const useChat = ({roomId, auth}: {roomId: string; auth: Auth}) => {
+const useChat = ({roomId, auth}: {roomId?: string; auth: Auth}) => {
   const getMessagesAction = usePromise(async () => {
+    if (!roomId) return
     return await getMessages({
       authToken: auth.authSession.token,
-      filters: {roomId: 'test'},
+      filters: {roomId: roomId},
     })
-  }, [])
+  }, [roomId])
 
   const [messages, setMessages] = useState(getMessagesAction.result || [])
   // Sent and received messages
@@ -32,6 +33,7 @@ const useChat = ({roomId, auth}: {roomId: string; auth: Auth}) => {
       const incomingMessage = {
         ...message,
         ownedByCurrentUser: message.senderId === socketRef.current.id,
+        createdAt: new Date(),
       }
       setMessages((messages) => [...messages, incomingMessage])
     })
@@ -49,14 +51,16 @@ const useChat = ({roomId, auth}: {roomId: string; auth: Auth}) => {
     socketRef.current.emit(NEW_CHAT_MESSAGE_EVENT, {
       body: messageBody,
       senderId: socketRef.current.id,
+      currentSenderId: auth.userId,
     })
 
+    if (!roomId) return
     await createMessage({
       authToken: auth.authSession.token!,
       data: {
         body: messageBody,
         senderId: auth.userId,
-        roomId: 'test',
+        roomId: roomId,
       },
     })
   }

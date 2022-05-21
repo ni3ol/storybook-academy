@@ -89,7 +89,8 @@ exports.up = async (knex) => {
       "createdAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
       "updatedAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
       "participant1Id" UUID NOT NULL,
-      "participant2Id" UUID NOT NULL
+      "participant2Id" UUID,
+      "isAdmin" BOOLEAN DEFAULT FALSE
     );
   `)
 }

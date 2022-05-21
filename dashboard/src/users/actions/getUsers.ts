@@ -6,6 +6,7 @@ export type UserFilters = {
   search?: string
   schoolId?: string
   role?: UserRole
+  roles?: UserRole[]
   classId?: string
 }
 

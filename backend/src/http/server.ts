@@ -123,14 +123,12 @@ const NEW_CHAT_MESSAGE_EVENT = 'newChatMessage'
 
 io.on('connection', (socket: any) => {
   // Join a conversation
-  const roomId = 'test'
-  // const {roomId} = socket.handshake.query
+  const {roomId} = socket.handshake.query
   socket.join(roomId)
 
   // Listen for new messages
   socket.on(NEW_CHAT_MESSAGE_EVENT, (data: any) => {
     io.in(roomId).emit(NEW_CHAT_MESSAGE_EVENT, data)
-    console.log('ddfsf', data)
   })
 
   // Leave the room if the user closes the socket

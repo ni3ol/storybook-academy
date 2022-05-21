@@ -1,0 +1,83 @@
+.messagesList {
+    list-style-type: none;
+    padding: 0;
+}
+
+.messageItem {
+    width: 40%;
+    margin: 8px;
+    padding: 12px 8px;
+    word-break: break-word;
+    border-radius: 4px;
+    color: white;
+}
+
+.myMessage {
+    background-color: rgb(0, 132, 255);
+    margin-left: auto;
+}
+
+.receivedMessage {
+    background-color: #e5e5e5;
+    margin-right: auto;
+    color: black; border-radius: 30px;
+}
+
+.send {
+	color: white;
+	background: #4d7298;
+	align-self: flex-end;
+    margin-left: auto;
+}
+
+.send::before {
+		right: -7px;
+    width: 20px;
+    background-color: #4d7298;
+		border-bottom-left-radius: 16px 14px;
+	}
+
+.send::after {
+		right: -26px;
+    width: 26px;
+    background-color: white;
+		border-bottom-left-radius: 10px;
+	}
+
+.receive {
+    background:#E5E5EA;
+    color: black;
+    align-self: flex-start;
+    margin-right: auto;
+}
+
+.receive::before {
+    left: -7px;
+    width: 20px;
+    background-color: #E5E5EA;
+    border-bottom-right-radius: 16px 14px;
+}
+
+.receive::after {
+    left: -26px;
+    width: 26px;
+    background-color: white;
+    border-bottom-right-radius: 10px;
+}
+
+.paragraph {
+    max-width: 255px;
+    word-wrap: break-word;
+    margin-bottom: 12px;
+    line-height: 24px;
+    position: relative;
+        padding: 10px 20px;
+    border-radius: 25px;
+}
+.paragraph::before, .paragraph::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    height: 25px;
+}
+

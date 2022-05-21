@@ -31,6 +31,7 @@ const TheClassPage = ({auth}: {auth: Auth}) => {
     useState(false)
 
   const getClassAction = usePromise(async () => {
+    if (!classId) return
     const [theClass] = await getClasses({
       authToken: auth.authSession.token,
       filters: {id: classId},
@@ -40,9 +41,10 @@ const TheClassPage = ({auth}: {auth: Auth}) => {
   const theClass = getClassAction.result
 
   const getLinkedClassAction = usePromise(async () => {
+    if (!theClass?.linkedClassId) return
     const [linkedClass] = await getClasses({
       authToken: auth.authSession.token,
-      filters: {id: theClass?.linkedClassId!},
+      filters: {id: theClass?.linkedClassId},
     })
     return linkedClass
   }, [theClass])
