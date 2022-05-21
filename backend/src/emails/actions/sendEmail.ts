@@ -27,5 +27,9 @@ export const sendEmail = async ({data}: {data: SendEmailData}) => {
     subject: data.subject,
     html: data.body,
   }
-  await transporter.sendMail(mailOptions)
+  if (process.env.DUMMY_EMAILS) {
+    console.log('Sending dummy email: ', mailOptions)
+  } else {
+    await transporter.sendMail(mailOptions)
+  }
 }
