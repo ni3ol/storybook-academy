@@ -12,6 +12,10 @@ import {Navigation} from '../src/shared/components/navigation'
 import {usePromiseLazy} from '../src/shared/hooks'
 import {UserRole} from '../src/users/model'
 import NextLink from 'next/link'
+import {Grid} from 'semantic-ui-react'
+import Folly from '../public/folly.png'
+import Image from 'next/image'
+import {Header} from '../src/shared/components/header'
 
 type Data = {
   emailAddress?: string
@@ -62,28 +66,24 @@ export default function SignIn() {
     form.reset({emailAddress: '', username: '', password: ''})
   }, [isChildSelected])
 
-  const UserTypeButton = ({
-    role,
-    color,
-    onClick,
-  }: {
-    role: string
-    color: string
-    onClick: any
-  }) => {
+  const UserTypeButton = ({role, onClick}: {role: string; onClick: any}) => {
     const adult = role === 'adult'
     const child = role === 'child'
     return (
       <Button
-        color={color}
         style={{
           width: '50%',
+          backgroundColor: child ? '#FF9C60' : '#A1CDA8',
+          textDecoration:
+            (isChildSelected && child) || (!isChildSelected && !child)
+              ? 'underline'
+              : 'none',
+          color: 'white',
+          borderTopRightRadius: !child ? 10 : 0,
+          borderTopLeftRadius: child ? 10 : 0,
+          borderBottomRightRadius: !child ? 10 : 0,
+          borderBottomLeftRadius: child ? 10 : 0,
           margin: 0,
-          borderRadius: 0,
-          opacity:
-            (child && isChildSelected) || (adult && !isChildSelected)
-              ? '100%'
-              : '70%',
         }}
         onClick={onClick}
       >
@@ -94,85 +94,113 @@ export default function SignIn() {
 
   return auth.isAuthenticated() ? null : (
     <>
-      <Navigation />
-      <Container>
-        <div
-          style={{
-            display: 'flex',
-            minHeight: 'calc(80vh - 70px)',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <div style={{width: 400}}>
-            <h2 style={{textAlign: 'center', margin: 28}}>Sign in</h2>
-            <div style={{width: '90%', margin: 'auto', paddingBottom: 20}}>
-              <UserTypeButton
-                role="child"
-                color="green"
-                onClick={() => setIsChild(true)}
-              />
-              <UserTypeButton
-                role="adult"
-                color="blue"
-                onClick={() => setIsChild(false)}
-              />
-              <div style={{marginTop: 20}}>
-                <Form
-                  error={action.error}
-                  onSubmit={form.handleSubmit((data) =>
-                    handleSubmit(data as Data),
-                  )}
-                >
-                  {isChildSelected ? (
-                    <TextField
-                      name="username"
-                      form={form}
-                      required
-                      label="Child username"
-                    />
-                  ) : (
-                    <TextField
-                      name="emailAddress"
-                      form={form}
-                      required
-                      label="Email address"
-                    />
-                  )}
-                  <PasswordField
-                    name="password"
-                    form={form}
-                    required
-                    label="Password"
-                  />
-                  {!isChildSelected && (
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'right',
-                        marginBottom: '1em',
-                      }}
-                    >
-                      <NextLink passHref href={`/reset-password`}>
-                        Forgot your password?
-                      </NextLink>
-                    </div>
-                  )}
-
-                  <Button
-                    type="submit"
-                    fluid
-                    disabled={action.isLoading}
-                    loading={action.isLoading}
+      {/* <Navigation /> */}
+      {/* <Container> */}
+      <div
+        style={{
+          // display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <Grid columns={2} centered style={{minHeight: 'calc(102vh - 8px)'}}>
+          <Grid.Column
+            style={{
+              backgroundColor: '#4D7298',
+              display: 'flex',
+              justifyContent: 'center',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
+            <Image src={Folly} width={300} height={350} />
+            <Header as="h1" style={{fontSize: 40, color: 'white'}}>
+              Storybook Academy
+            </Header>
+            <p style={{fontSize: 24, color: 'white'}}>
+              Where children learn to read and read to learn
+            </p>
+          </Grid.Column>
+          <Grid.Column
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <div
+              style={{
+                width: 400,
+                boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+                padding: 20,
+                borderRadius: 20,
+              }}
+            >
+              <h2 style={{textAlign: 'center', margin: 28}}>Sign in</h2>
+              <div style={{width: '90%', margin: 'auto', paddingBottom: 20}}>
+                <UserTypeButton role="child" onClick={() => setIsChild(true)} />
+                <UserTypeButton
+                  role="adult"
+                  onClick={() => setIsChild(false)}
+                />
+                <div style={{marginTop: 20}}>
+                  <Form
+                    error={action.error}
+                    onSubmit={form.handleSubmit((data) =>
+                      handleSubmit(data as Data),
+                    )}
                   >
-                    Log in
-                  </Button>
-                </Form>
+                    {isChildSelected ? (
+                      <TextField
+                        name="username"
+                        form={form}
+                        required
+                        label="Child username"
+                      />
+                    ) : (
+                      <TextField
+                        name="emailAddress"
+                        form={form}
+                        required
+                        label="Email address"
+                      />
+                    )}
+                    <PasswordField
+                      name="password"
+                      form={form}
+                      required
+                      label="Password"
+                    />
+                    {!isChildSelected && (
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'right',
+                          marginBottom: '1em',
+                        }}
+                      >
+                        <NextLink passHref href={`/reset-password`}>
+                          Forgot your password?
+                        </NextLink>
+                      </div>
+                    )}
+
+                    <Button
+                      type="submit"
+                      fluid
+                      disabled={action.isLoading}
+                      loading={action.isLoading}
+                    >
+                      Log in
+                    </Button>
+                  </Form>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-      </Container>
+          </Grid.Column>
+        </Grid>
+      </div>
+      {/* </Container> */}
     </>
   )
 }

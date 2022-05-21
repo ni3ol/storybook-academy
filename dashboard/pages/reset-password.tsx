@@ -47,7 +47,14 @@ export default function ResetPassword() {
             alignItems: 'center',
           }}
         >
-          <div style={{width: 400}}>
+          <div
+            style={{
+              width: 400,
+              boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
+              padding: 20,
+              borderRadius: 20,
+            }}
+          >
             {!resetRequested ? (
               <>
                 <h2 style={{textAlign: 'center', margin: 28}}>
