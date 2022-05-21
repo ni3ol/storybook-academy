@@ -3,6 +3,7 @@ import {z} from 'zod'
 import {hashPassword} from '../../auth/utils'
 import {getClasses} from '../../classes/actions/getClasses'
 import {db, useOrCreateTransaction} from '../../db/db'
+import {sendEmail} from '../../emails/actions/sendEmail'
 import {AuthorizationError, ConflictError} from '../../errors'
 import {getSchools} from '../../schools/actions/getSchools'
 import {getUuid, utcNow} from '../../shared/utils'
@@ -106,6 +107,22 @@ export const createUser = async (
         .transacting(trx)
     }
   })
+
+  if (user.emailAddress) {
+    await sendEmail({
+      data: {
+        to: [user.emailAddress],
+        subject: 'Account created',
+        body: `
+        Hello,
+
+        Your Storybook-Academy account has been created.
+
+        Thanks,
+        `,
+      },
+    })
+  }
 
   const parsedUser = userSchema.parse(user)
   return parsedUser

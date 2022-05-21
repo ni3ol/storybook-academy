@@ -92,6 +92,17 @@ exports.up = async (knex) => {
       "participant2Id" UUID,
       "isAdmin" BOOLEAN DEFAULT FALSE
     );
+
+    CREATE TABLE "passwordResetRequests" (
+      "id" UUID PRIMARY KEY,
+      "createdAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+      "updatedAt" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+      "userId" UUID NOT NULL,
+      "emailAddress" TEXT NOT NULL,
+      "token" TEXT NOT NULL,
+      "expiresOn" TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+      "usedOn" TIMESTAMP WITHOUT TIME ZONE
+    );
   `)
 }
 
@@ -105,5 +116,6 @@ exports.down = async (knex) => {
     DROP TABLE "classes";
     DROP TABLE "messages";
     DROP TABLE "chatRooms";
+    DROP TABLE "passwordResetRequests";
 `)
 }
