@@ -26,6 +26,7 @@ export const userSchema = entitySchema
     nickname: z.string().nullable().optional(),
     profileCreated: z.boolean().nullable().optional(),
     profilePicture: z.string().nullable().optional(),
+    linkedChildId: z.string().uuid().optional().nullable(),
   })
   .strict()
 

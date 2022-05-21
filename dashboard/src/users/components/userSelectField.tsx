@@ -24,7 +24,7 @@ export const UserSelectField = <O,>({
   const usersAction = usePromise(() => {
     return getUsers({
       authToken: auth.auth.authSession!.token,
-      filters: filters,
+      filters,
     })
   }, [])
 

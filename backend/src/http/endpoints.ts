@@ -26,6 +26,7 @@ import {getMessagesEndpoint} from '../messages/endpoints/getMessagesEndpoint'
 import {createMessageEndpoint} from '../messages/endpoints/createMessageEndpoint'
 import {createPasswordResetRequestEndpoint} from '../passwordResetRequests/endpoints/createPasswordResetRequestEndpoint'
 import {setNewPasswordEndpoint} from '../auth/endpoints/setNewPasswordEndpoint'
+import {pairChildrenEndpoint} from '../users/endpoints/pairChildrenEndpoint'
 
 export const endpoints: Endpoint<any, any, any>[] = [
   // Users
@@ -35,6 +36,7 @@ export const endpoints: Endpoint<any, any, any>[] = [
   updateUserEndpoint,
   deleteUserEndpoint,
   assignChildToClassEndpoint,
+  pairChildrenEndpoint,
   // Auth sessions
   getAuthSessionsEndpoint,
   // Auth

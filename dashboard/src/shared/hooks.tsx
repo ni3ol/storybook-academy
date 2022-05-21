@@ -45,7 +45,7 @@ export const usePromiseLazy = <F, P>(
 }
 
 export const usePromise = <F, P>(
-  f: (...args: P[]) => Promise<F>,
+  f: (...args: P[]) => Promise<F> | undefined,
   deps: any[],
 ) => {
   const {execute, result, setResult, isLoading, error} = usePromiseLazy(f, deps)

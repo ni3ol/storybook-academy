@@ -3,6 +3,7 @@ import {User, UserRole, userSchema} from '../model'
 
 export type UserFilters = {
   id?: string
+  notId?: string
   search?: string
   schoolId?: string
   role?: UserRole

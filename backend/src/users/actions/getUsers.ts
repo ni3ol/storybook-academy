@@ -7,6 +7,7 @@ import {User, userSchema} from '../model'
 export const userFiltersSchema = z
   .object({
     id: z.string().uuid(),
+    notId: z.string().uuid(),
     emailAddress: z.string(),
     username: z.string(),
     schoolId: z.string().uuid(),
@@ -22,6 +23,7 @@ export type UserFilters = z.infer<typeof userFiltersSchema>
 
 const filterMapping: FilterMapping<UserFilters> = {
   id: (query, filters) => query.where('id', '=', filters.id!),
+  notId: (query, filters) => query.whereNot('id', '=', filters.id!),
   emailAddress: (query, filters) =>
     query.where('emailAddress', '=', filters.emailAddress!),
   username: (query, filters) => query.where('username', '=', filters.username!),

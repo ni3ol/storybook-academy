@@ -2,6 +2,7 @@ import router, {useRouter} from 'next/router'
 import {useState} from 'react'
 import NextLink from 'next/link'
 import {Dropdown, Table} from 'semantic-ui-react'
+import Link from 'next/link'
 import {RequireAuth} from '../../src/auth/components/requireAuth'
 import {Auth} from '../../src/auth/hooks'
 import {getBooks} from '../../src/books/actions/getBooks'
@@ -14,12 +15,14 @@ import {usePromise} from '../../src/shared/hooks'
 import {getUsers} from '../../src/users/actions/getUsers'
 import {UsersTable} from '../../src/users/components/usersTable'
 import {formatDateSimple} from '../../src/shared/utils'
-import {UserRole} from '../../src/users/model'
+import {User, UserRole} from '../../src/users/model'
 import {getClasses} from '../../src/classes/actions/getClasses'
 import {AssignChildToClassModal} from '../../src/classes/components/assignChildToClassModal'
 import {UpdateClassModal} from '../../src/classes/components/updateClassModal'
 import {AssignBookToClassModal} from '../../src/schools/components/assignBookToClassModal'
 import {AssignLinkedClassToClassModal} from '../../src/classes/components/assignLinkedClassToClassModal'
+import {DataTable} from '../../src/shared/components/dataTable'
+import {PairChildModal} from '../../src/users/components/pairChildModal'
 
 const TheClassPage = ({auth}: {auth: Auth}) => {
   const router = useRouter()
@@ -29,6 +32,7 @@ const TheClassPage = ({auth}: {auth: Auth}) => {
   const [showAssignBookModal, setShowAssignBookModal] = useState(false)
   const [showAssignLinkedClassModal, setShowAssignLinkedClassModal] =
     useState(false)
+  const [childToPair, setChildToPair] = useState<User | undefined>()
 
   const getClassAction = usePromise(async () => {
     const [theClass] = await getClasses({
@@ -48,16 +52,26 @@ const TheClassPage = ({auth}: {auth: Auth}) => {
   }, [theClass])
   const linkedClass = getLinkedClassAction.result
 
-  const getUsersAction = usePromise(() => {
-    return getUsers({authToken: auth.token})
-  }, [])
-  const users = getUsersAction.result || []
+  const getLinkedClassUsersAction = usePromise(async () => {
+    if (theClass?.linkedClassId) {
+      return getUsers({
+        authToken: auth.token,
+        filters: {classId: theClass?.linkedClassId},
+      })
+    }
+  }, [theClass?.linkedClassId])
+  const linkedClassUsers = getLinkedClassUsersAction.result || []
 
-  const educator = users.find((user) => user.id === theClass?.educatorId)
-  const linkedEducator = users.find(
+  const getClassUsersAction = usePromise(() => {
+    return getUsers({authToken: auth.token, filters: {classId}})
+  }, [classId])
+  const classUsers = getClassUsersAction.result || []
+
+  const educator = classUsers.find((user) => user.id === theClass?.educatorId)
+  const linkedEducator = classUsers.find(
     (user) => user.id === linkedClass?.educatorId,
   )
-  const students = users.filter(
+  const students = classUsers.filter(
     (user) => user.classId === theClass?.id && user.role === UserRole.Child,
   )
 
@@ -71,7 +85,7 @@ const TheClassPage = ({auth}: {auth: Auth}) => {
   const [book] = getBooksAction.result || []
 
   const getSchoolsAction = usePromise(async () => {
-    return await getSchools({
+    return getSchools({
       authToken: auth.authSession.token,
     })
   }, [])
@@ -92,7 +106,7 @@ const TheClassPage = ({auth}: {auth: Auth}) => {
           schoolId={theClass.schoolId}
           onChildAssigned={() => {
             getClassAction.execute()
-            getUsersAction.execute()
+            getClassUsersAction.execute()
             setShowAssignChildModal(false)
           }}
         />
@@ -130,6 +144,19 @@ const TheClassPage = ({auth}: {auth: Auth}) => {
             getClassAction.execute()
             getBooksAction.execute()
             getLinkedClassAction.execute()
+          }}
+        />
+      )}
+      {childToPair && theClass?.linkedClassId && (
+        <PairChildModal
+          childId={childToPair.id}
+          linkedClassId={theClass.linkedClassId}
+          onClose={() => {
+            setChildToPair(undefined)
+          }}
+          onChildPaired={() => {
+            setChildToPair(undefined)
+            getClassUsersAction.execute()
           }}
         />
       )}
@@ -187,7 +214,7 @@ const TheClassPage = ({auth}: {auth: Auth}) => {
               <Table.Cell>Teacher</Table.Cell>
               <Table.Cell>
                 <NextLink passHref href={`/users/${educator?.id}`}>
-                  {educator?.firstName + ' ' + educator?.lastName}
+                  {`${educator?.firstName} ${educator?.lastName}`}
                 </NextLink>
               </Table.Cell>
             </Table.Row>
@@ -233,9 +260,7 @@ const TheClassPage = ({auth}: {auth: Auth}) => {
                           passHref
                           href={`/users/${linkedEducator?.id}`}
                         >
-                          {linkedEducator?.firstName +
-                            ' ' +
-                            linkedEducator?.lastName}
+                          {`${linkedEducator?.firstName} ${linkedEducator?.lastName}`}
                         </NextLink>
                       </Table.Cell>
                     </Table.Row>
@@ -290,7 +315,62 @@ const TheClassPage = ({auth}: {auth: Auth}) => {
             Add child to class
           </Button>
         </div>
-        <UsersTable auth={auth} rows={students} />
+        <DataTable
+          rows={students}
+          headers={[
+            {
+              key: 'name',
+              title: 'Name',
+              resolve: (user) => {
+                return (
+                  <NextLink passHref href={`/users/${user.id}`}>
+                    <a>
+                      {user.firstName} {user.lastName}
+                    </a>
+                  </NextLink>
+                )
+              },
+            },
+            {
+              key: 'username',
+              title: 'Username',
+              resolve: (user: User) => user.username,
+            },
+            {
+              key: 'readingLevel',
+              title: 'Reading level',
+              resolve: (user: User) => user.readingLevel,
+            },
+            {
+              key: 'pairedChild',
+              title: 'Paired child',
+              resolve: (user: User) => {
+                const linkedChild = linkedClassUsers.find(
+                  (u) => u.id === user.linkedChildId,
+                )
+                return (
+                  <div>
+                    {user.linkedChildId ? (
+                      <Link passHref href={`/users/${linkedChild?.id}`}>
+                        <a>
+                          {linkedChild?.firstName} {linkedChild?.lastName} (
+                          {linkedChild?.username})
+                        </a>
+                      </Link>
+                    ) : (
+                      <span>None</span>
+                    )}{' '}
+                    {theClass?.linkedClassId && (
+                      <Button onClick={() => setChildToPair(user)}>
+                        Pair child
+                      </Button>
+                    )}
+                  </div>
+                )
+              },
+            },
+          ]}
+        />
       </Container>
     </>
   )

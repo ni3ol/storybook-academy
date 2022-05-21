@@ -18,7 +18,8 @@ exports.up = async (knex) => {
       "favouriteAnimal" TEXT,
       "nickname" TEXT,
       "profileCreated" BOOLEAN DEFAULT FALSE,
-      "profilePicture" TEXT
+      "profilePicture" TEXT,
+      "linkedChildId" UUID
     );
 
     CREATE TABLE "authSessions" (
