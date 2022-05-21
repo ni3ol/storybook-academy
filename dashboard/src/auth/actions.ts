@@ -41,3 +41,32 @@ export const signUp = async ({
   })
   return {user, authSession}
 }
+
+export const requestPasswordReset = async ({
+  emailAddress,
+}: {
+  emailAddress: string
+}) => {
+  await makeRequest({
+    method: 'post',
+    path: '/passwordResetRequests',
+    data: {emailAddress},
+  })
+}
+
+export const setNewPassword = async ({
+  newPassword,
+  passwordResetRequestToken,
+}: {
+  newPassword: string
+  passwordResetRequestToken: string
+}) => {
+  await makeRequest({
+    method: 'post',
+    path: '/setNewPassword',
+    data: {
+      newPassword,
+      passwordResetRequestToken,
+    },
+  })
+}
