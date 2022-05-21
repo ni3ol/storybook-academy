@@ -2,7 +2,7 @@ import {Knex} from 'knex'
 import {z} from 'zod'
 import {db, useOrCreateTransaction} from '../../db/db'
 import {applyFilters, FilterMapping} from '../../shared/actionUtils'
-import {User, userSchema} from '../model'
+import {User, UserRole, userSchema} from '../model'
 
 export const userFiltersSchema = z
   .object({
@@ -13,6 +13,7 @@ export const userFiltersSchema = z
     schoolId: z.string().uuid(),
     search: z.string().optional(),
     role: z.string().optional(),
+    roles: z.array(z.nativeEnum(UserRole)).optional(),
     educatorId: z.string().optional(),
     classId: z.string().optional(),
   })
@@ -29,6 +30,7 @@ const filterMapping: FilterMapping<UserFilters> = {
   username: (query, filters) => query.where('username', '=', filters.username!),
   schoolId: (query, filters) => query.where('schoolId', '=', filters.schoolId!),
   role: (query, filters) => query.where('role', '=', filters.role!),
+  roles: (query, filters) => query.whereIn('role', filters.roles!),
   educatorId: (query, filters) =>
     query.where('educatorId', '=', filters.educatorId!),
   classId: (query, filters) => query.where('classId', '=', filters.classId!),

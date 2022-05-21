@@ -92,6 +92,20 @@ export const createUser = async (
 
   await useOrCreateTransaction(params?.trx, async (trx) => {
     await db('users').insert(user).returning('*').transacting(trx)
+
+    if ([UserRole.Teacher, UserRole.Principal].includes(user.role)) {
+      const chatRoomId = getUuid()
+      await db('chatRooms')
+        .insert({
+          id: chatRoomId,
+          createdAt: asOf,
+          updatedAt: asOf,
+          participant1Id: user.id,
+          isAdmin: true,
+        })
+        .returning('*')
+        .transacting(trx)
+    }
   })
 
   if (user.emailAddress) {

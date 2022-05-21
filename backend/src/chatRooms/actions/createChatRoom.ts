@@ -7,7 +7,8 @@ import {ChatRoom, chatRoomSchema} from '../model'
 
 export const createChatRoomInputSchema = z.object({
   participant1Id: z.string().uuid(),
-  participant2Id: z.string().uuid(),
+  participant2Id: z.string().uuid().optional().nullable(),
+  isAdmin: z.boolean().optional(),
 })
 
 export type CreateChatRoomInputData = z.infer<typeof createChatRoomInputSchema>

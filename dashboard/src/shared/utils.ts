@@ -1,6 +1,6 @@
 import axios from 'axios'
 import queryString from 'query-string'
-import {format} from 'date-fns'
+import {format, formatRelative} from 'date-fns'
 
 export type Pagination = {
   page: number
@@ -87,4 +87,8 @@ export const formatDate = (date: Date) => {
 
 export const formatDateSimple = (date: Date) => {
   return format(date, 'd LLLL y')
+}
+
+export const formatRelativeDate = (date: Date) => {
+  return formatRelative(date, new Date())
 }

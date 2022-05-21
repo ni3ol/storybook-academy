@@ -54,6 +54,7 @@ export const updateClass = (
           updatedAt: now,
           participant1Id: theClassEducator.id,
           participant2Id: linkedClassEducator.id,
+          isAdmin: false,
         })
         .returning('*')
         .transacting(trx)

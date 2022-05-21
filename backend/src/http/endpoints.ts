@@ -24,6 +24,8 @@ import {generatePreSignedPutUrl} from '../s3/generatePreSignedPutUrl'
 import {generatePreSignedGetUrl} from '../s3/generatePreSignedGetUrl'
 import {getMessagesEndpoint} from '../messages/endpoints/getMessagesEndpoint'
 import {createMessageEndpoint} from '../messages/endpoints/createMessageEndpoint'
+import {getChatRoomsEndpoint} from '../chatRooms/endpoints/getChatRoomsEndpoint'
+import {createChatRoomEndpoint} from '../chatRooms/endpoints/createChatRoomEndpoint'
 import {createPasswordResetRequestEndpoint} from '../passwordResetRequests/endpoints/createPasswordResetRequestEndpoint'
 import {setNewPasswordEndpoint} from '../auth/endpoints/setNewPasswordEndpoint'
 import {pairChildrenEndpoint} from '../users/endpoints/pairChildrenEndpoint'
@@ -65,4 +67,7 @@ export const endpoints: Endpoint<any, any, any>[] = [
   // Messages
   getMessagesEndpoint,
   createMessageEndpoint,
+  // Chat Rooms
+  getChatRoomsEndpoint,
+  createChatRoomEndpoint,
 ]
