@@ -21,7 +21,7 @@ const filterMapping: FilterMapping<BookSessionFilters> = {
   classId: (query, filters) => query.where('classId', '=', filters.classId!),
   childId: (query, filters) =>
     query
-      .where('child1id', '=', filters.childId!)
+      .where('child1Id', filters.childId!)
       .orWhere('child2Id', filters.childId!),
 }
 
