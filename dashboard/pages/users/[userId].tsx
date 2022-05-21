@@ -1,5 +1,9 @@
 import {useRouter} from 'next/router'
-import {Dropdown, Table} from 'semantic-ui-react'
+import {Button, Dropdown, Table} from 'semantic-ui-react'
+import NextLink from 'next/link'
+import {useState} from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
 import {RequireAuth} from '../../src/auth/components/requireAuth'
 import {Auth} from '../../src/auth/hooks'
 import {Container} from '../../src/shared/components/container'
@@ -8,21 +12,20 @@ import {Header} from '../../src/shared/components/header'
 import {usePromise} from '../../src/shared/hooks'
 import {getUsers} from '../../src/users/actions/getUsers'
 import {UserRole} from '../../src/users/model'
-import NextLink from 'next/link'
-import {useState} from 'react'
 import {UpdateUserModal} from '../../src/users/components/updateUserModal'
 import {DeleteUserModal} from '../../src/users/components/deleteUserModal'
 import {getSchools} from '../../src/schools/actions/getSchools'
 import {UsersTable} from '../../src/users/components/usersTable'
 import {formatDateSimple} from '../../src/shared/utils'
 import {getClasses} from '../../src/classes/actions/getClasses'
-import Image from 'next/image'
+import {PairChildModal} from '../../src/users/components/pairChildModal'
 
 const UserPage = ({auth}: {auth: Auth}) => {
   const router = useRouter()
   const {userId} = router.query as {userId: string}
   const [isUserUpdateModalOpen, setIsUserUpdateModalOpen] = useState(false)
   const [isUserDeleteModalOpen, setIsUserDeleteModalOpen] = useState(false)
+  const [showPairChildModal, setShowPairChildModal] = useState(false)
 
   const getUserAction = usePromise(async () => {
     const users = await getUsers({
@@ -31,6 +34,17 @@ const UserPage = ({auth}: {auth: Auth}) => {
     return users
   }, [])
   const user = (getUserAction.result || []).find((user) => user.id === userId)
+
+  const linkedUserAction = usePromise(async () => {
+    if (user && user.linkedChildId) {
+      const [linkedChild] = await getUsers({
+        authToken: auth.authSession.token,
+        filters: {id: user.linkedChildId},
+      })
+      return linkedChild
+    }
+  }, [user])
+  const linkedChild = linkedUserAction.result
 
   const getClassAction = usePromise(async () => {
     const classes = await getClasses({
@@ -98,6 +112,22 @@ const UserPage = ({auth}: {auth: Auth}) => {
           }}
         />
       )}
+      {showPairChildModal &&
+        user &&
+        user.role === UserRole.Child &&
+        theClass?.linkedClassId && (
+          <PairChildModal
+            childId={user.id}
+            linkedClassId={theClass.linkedClassId}
+            onClose={() => {
+              setShowPairChildModal(false)
+            }}
+            onChildPaired={() => {
+              setShowPairChildModal(false)
+              getUserAction.execute()
+            }}
+          />
+        )}
       <DashboardNavigation role={auth.user.role} />
       <Container>
         <div
@@ -221,10 +251,10 @@ const UserPage = ({auth}: {auth: Auth}) => {
                 <Table.Cell>
                   {educator &&
                     (auth.user.role === UserRole.Teacher ? (
-                      educator.firstName + ' ' + educator.lastName
+                      `${educator.firstName} ${educator.lastName}`
                     ) : (
                       <NextLink passHref href={`/users/${educator?.id}`}>
-                        {educator.firstName + ' ' + educator.lastName}
+                        {`${educator.firstName} ${educator.lastName}`}
                       </NextLink>
                     ))}
                 </Table.Cell>
@@ -253,6 +283,21 @@ const UserPage = ({auth}: {auth: Auth}) => {
             </div>
             <Table definition>
               <Table.Body>
+                {linkedChild && (
+                  <Table.Row>
+                    <Table.Cell>Linked child</Table.Cell>
+                    <Table.Cell>
+                      <Link passHref href={`/users/${linkedChild.id}`}>
+                        <a>
+                          {linkedChild?.firstName} {linkedChild?.lastName}
+                        </a>
+                      </Link>{' '}
+                      <Button onClick={() => setShowPairChildModal(true)}>
+                        Pair child
+                      </Button>
+                    </Table.Cell>
+                  </Table.Row>
+                )}
                 <Table.Row>
                   <Table.Cell width={4}>Profile created</Table.Cell>
                   <Table.Cell>{user?.profileCreated ? 'Yes' : 'No'}</Table.Cell>

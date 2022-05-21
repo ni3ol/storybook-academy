@@ -19,7 +19,7 @@ export const AssignLinkedClassToClassModal = ({
   onClose,
   classId,
   schoolId,
-  onLinkedClassAssigned: onLinkedClassAssigned,
+  onLinkedClassAssigned,
 }: {
   onClose: () => any
   classId: string
@@ -34,7 +34,7 @@ export const AssignLinkedClassToClassModal = ({
       const result = updateClass({
         id: classId,
         data: {
-          linkedClassId: data.linkedClassId!,
+          linkedClassId: data.linkedClassId,
         },
         authToken: auth.authSession!.token,
       })

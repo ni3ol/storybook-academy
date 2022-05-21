@@ -1,11 +1,11 @@
 import {useRouter} from 'next/router'
 import {Button, Menu} from 'semantic-ui-react'
+import {useEffect, useState} from 'react'
+import Image from 'next/image'
 import {useAuth} from '../../../auth/hooks'
 import styles from './dashboardNavigation.module.css'
 import {User, UserRole} from '../../../users/model'
-import {useEffect, useState} from 'react'
 import {usePromise} from '../../hooks'
-import Image from 'next/image'
 
 export const DashboardNavigation = ({
   role,
@@ -32,7 +32,6 @@ export const DashboardNavigation = ({
     if (!user) return
     const image = await import(`../../../../public/${user.profilePicture}.svg`)
     setImage(image)
-    console.log('fuf', image)
   }, [user])
 
   return (

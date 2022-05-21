@@ -28,6 +28,7 @@ import {getChatRoomsEndpoint} from '../chatRooms/endpoints/getChatRoomsEndpoint'
 import {createChatRoomEndpoint} from '../chatRooms/endpoints/createChatRoomEndpoint'
 import {createPasswordResetRequestEndpoint} from '../passwordResetRequests/endpoints/createPasswordResetRequestEndpoint'
 import {setNewPasswordEndpoint} from '../auth/endpoints/setNewPasswordEndpoint'
+import {pairChildrenEndpoint} from '../users/endpoints/pairChildrenEndpoint'
 
 export const endpoints: Endpoint<any, any, any>[] = [
   // Users
@@ -37,6 +38,7 @@ export const endpoints: Endpoint<any, any, any>[] = [
   updateUserEndpoint,
   deleteUserEndpoint,
   assignChildToClassEndpoint,
+  pairChildrenEndpoint,
   // Auth sessions
   getAuthSessionsEndpoint,
   // Auth
