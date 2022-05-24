@@ -29,6 +29,8 @@ import {createChatRoomEndpoint} from '../chatRooms/endpoints/createChatRoomEndpo
 import {createPasswordResetRequestEndpoint} from '../passwordResetRequests/endpoints/createPasswordResetRequestEndpoint'
 import {setNewPasswordEndpoint} from '../auth/endpoints/setNewPasswordEndpoint'
 import {pairChildrenEndpoint} from '../users/endpoints/pairChildrenEndpoint'
+import {getBookSessionsEndpoint} from '../bookSessions/endpoints/getBookSessionsEndpoint'
+import {updateBookSessionEndpoint} from '../bookSessions/endpoints/updateBookSessionEndpoint'
 
 export const endpoints: Endpoint<any, any, any>[] = [
   // Users
@@ -50,6 +52,9 @@ export const endpoints: Endpoint<any, any, any>[] = [
   getBooksEndpoint,
   updateBookEndpoint,
   deleteBookEndpoint,
+  // bookSessions
+  getBookSessionsEndpoint,
+  updateBookSessionEndpoint,
   // Schools
   createSchoolEndpoint,
   getSchoolsEndpoint,

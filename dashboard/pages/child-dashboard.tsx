@@ -6,19 +6,20 @@ import {RequireAuth} from '../src/auth/components/requireAuth'
 import {Auth} from '../src/auth/hooks'
 import {DashboardNavigation} from '../src/shared/components/dashboardNavigation/dashboardNavigation'
 // import HTMLFlipBook from 'react-pageflip'
-
 import {WelcomeModal} from '../src/users/components/welcomeModal'
 import {Header} from '../src/shared/components/header'
-import {usePromise} from '../src/shared/hooks'
+import {usePromise, usePromiseLazy} from '../src/shared/hooks'
 import {downloadImageFromS3} from '../src/books/actions/downloadImageFromS3'
 import {getClasses} from '../src/classes/actions/getClasses'
 import {getUsers} from '../src/users/actions/getUsers'
 import {getBooks} from '../src/books/actions/getBooks'
+import {getBookSessions} from '../src/bookSessions/actions/getBookSessions'
+import {updateBookSession} from '../src/bookSessions/actions/updateBookSession'
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`
 
 const ChildDashboard = ({auth}: {auth: Auth}) => {
   const [numPages, setNumPages] = useState<number | null>(null)
-  const [pageNumber, setPageNumber] = useState(1)
+  const [localPageNumber, setPageNumber] = useState(1)
   const {query} = useRouter()
   const onDocumentLoadSuccess = ({numPages}: {numPages: number}) => {
     setNumPages(numPages)
@@ -79,6 +80,45 @@ const ChildDashboard = ({auth}: {auth: Auth}) => {
     setBookUrl(getBookUrlAction.result)
   }, [getBookUrlAction.result])
 
+  const bookSessionAction = usePromise(async () => {
+    if (user) {
+      const [bookSession] = await getBookSessions({
+        filters: {childId: user.id},
+        authToken: auth.authSession.token!,
+      })
+      return bookSession
+    }
+  }, [user])
+  const bookSession = bookSessionAction.result
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      bookSessionAction.execute()
+    }, 2000)
+    return () => clearInterval(interval)
+  }, [user])
+
+  const updateBookSessionAction = usePromiseLazy(
+    async ({id, data}: {id: string; data: {page: number}}) => {
+      const updatedBookSession = await updateBookSession({
+        id,
+        data,
+        authToken: auth.authSession.token!,
+      })
+      bookSessionAction.setResult(updatedBookSession)
+    },
+    [],
+  )
+
+  const handlePageChange = async (page: number) => {
+    if (bookSession) {
+      await updateBookSessionAction.execute({id: bookSession.id, data: {page}})
+    }
+    setPageNumber(page)
+  }
+
+  const pageNumber = bookSession?.page || localPageNumber
+
   return (
     <>
       {query?.showWelcomeModal && user && (
@@ -94,72 +134,6 @@ const ChildDashboard = ({auth}: {auth: Auth}) => {
       )}
       <DashboardNavigation user={auth?.user} />
       <Container>
-        {/* <HTMLFlipBook width={500} height={800}>
-          <div className="demoPage">
-            <Document
-              file={
-                'https://cdn.shopify.com/s/files/1/2081/8163/files/002-GINGER-THE-GIRAFFE-Free-Childrens-Book-By-Monkey-Pen.pdf?v=1589846892'
-              }
-              onLoadSuccess={onDocumentLoadSuccess}
-            >
-              <Page
-                renderAnnotationLayer={false}
-                pageNumber={pageNumber}
-                width={500}
-                height={800}
-              />
-            </Document>
-          </div>
-          <div className="demoPage">
-            <Document
-              file={
-                'https://cdn.shopify.com/s/files/1/2081/8163/files/002-GINGER-THE-GIRAFFE-Free-Childrens-Book-By-Monkey-Pen.pdf?v=1589846892'
-              }
-              onLoadSuccess={onDocumentLoadSuccess}
-            >
-              <Page
-                renderAnnotationLayer={false}
-                pageNumber={pageNumber + 1}
-                width={500}
-                height={800}
-              />
-            </Document>
-          </div>
-          <div className="demoPage">
-            {' '}
-            <Document
-              file={
-                'https://cdn.shopify.com/s/files/1/2081/8163/files/002-GINGER-THE-GIRAFFE-Free-Childrens-Book-By-Monkey-Pen.pdf?v=1589846892'
-              }
-              onLoadSuccess={onDocumentLoadSuccess}
-            >
-              <Page
-                renderAnnotationLayer={false}
-                pageNumber={pageNumber + 2}
-                width={500}
-                height={800}
-              />
-            </Document>
-          </div>
-          <div className="demoPage">
-            {' '}
-            <Document
-
-              file={
-                'https://cdn.shopify.com/s/files/1/2081/8163/files/002-GINGER-THE-GIRAFFE-Free-Childrens-Book-By-Monkey-Pen.pdf?v=1589846892'
-              }
-              onLoadSuccess={onDocumentLoadSuccess}
-            >
-              <Page
-                renderAnnotationLayer={false}
-                pageNumber={pageNumber + 3}
-                width={500}
-                height={800}
-              />
-            </Document>
-          </div>
-        </HTMLFlipBook> */}
-
         <Header>The book of the day is:</Header>
         <div>
           <Document file={bookUrl} onLoadSuccess={onDocumentLoadSuccess}>
@@ -169,18 +143,18 @@ const ChildDashboard = ({auth}: {auth: Auth}) => {
               width={500}
               height={800}
             />
-            <Button onClick={() => setPageNumber(1)}>Reset</Button>
+            <Button onClick={() => handlePageChange(1)}>Reset</Button>
 
             <Button
               onClick={() =>
-                setPageNumber(pageNumber === 1 ? 1 : pageNumber - 1)
+                handlePageChange(pageNumber === 1 ? 1 : pageNumber - 1)
               }
             >
               Back
             </Button>
             <Button
               onClick={() =>
-                setPageNumber(
+                handlePageChange(
                   pageNumber === numPages ? numPages : pageNumber + 1,
                 )
               }
