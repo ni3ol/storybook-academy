@@ -27,7 +27,9 @@ const UserPage = ({auth}: {auth: Auth}) => {
   const [showPairChildModal, setShowPairChildModal] = useState(false)
 
   const getUserAction = usePromise(async () => {
-    const [user] = await getUsers({
+    const {
+      entities: [user],
+    } = await getUsers({
       authToken: auth.authSession.token,
       filters: {id: userId},
     })
@@ -38,7 +40,9 @@ const UserPage = ({auth}: {auth: Auth}) => {
   const linkedUserAction = usePromise(async () => {
     if (!user?.linkedChildId) return Promise.resolve(undefined)
 
-    const [linkedChild] = await getUsers({
+    const {
+      entities: [linkedChild],
+    } = await getUsers({
       authToken: auth.authSession.token,
       filters: {id: user?.linkedChildId},
     })
@@ -58,7 +62,9 @@ const UserPage = ({auth}: {auth: Auth}) => {
   const theClass = getClassAction.result
 
   const getEducatorAction = usePromise(async () => {
-    const [educator] = await getUsers({
+    const {
+      entities: [educator],
+    } = await getUsers({
       authToken: auth.authSession.token,
       filters: {id: theClass?.educatorId},
     })

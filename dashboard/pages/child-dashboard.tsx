@@ -28,7 +28,9 @@ const ChildDashboard = ({auth}: {auth: Auth}) => {
   }
 
   const getUserAction = usePromise(async () => {
-    const [user] = await getUsers({
+    const {
+      entities: [user],
+    } = await getUsers({
       authToken: auth.token,
       filters: {id: auth.userId},
     })

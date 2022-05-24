@@ -64,12 +64,12 @@ const TheClassPage = ({auth}: {auth: Auth}) => {
     })
   }, [theClass?.linkedClassId])
 
-  const linkedClassUsers = getLinkedClassUsersAction.result || []
+  const linkedClassUsers = getLinkedClassUsersAction.result?.entities || []
 
   const getClassUsersAction = usePromise(() => {
     return getUsers({authToken: auth.token, filters: {classId}})
   }, [theClass, classId])
-  const classUsers = getClassUsersAction.result || []
+  const classUsers = getClassUsersAction.result?.entities || []
 
   const educator = classUsers.find((user) => user.id === theClass?.educatorId)
 

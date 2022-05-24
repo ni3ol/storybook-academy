@@ -28,7 +28,7 @@ export const UserSelectField = <O,>({
     })
   }, [])
 
-  const users = usersAction.result || []
+  const users = usersAction.result?.entities || []
 
   const finalOptions = (options ||
     users.map((user) => ({

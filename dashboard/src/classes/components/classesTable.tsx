@@ -31,7 +31,7 @@ export const ClassesTable = ({
   const getUsersAction = usePromise(() => {
     return getUsers({authToken: auth.token})
   }, [])
-  const users = getUsersAction.result || []
+  const users = getUsersAction.result?.entities || []
 
   const getBooksAction = usePromise(() => {
     return getBooks({authToken: auth.token})

@@ -39,7 +39,9 @@ export const useAuth = () => {
           authToken: token,
           filters: {token},
         })
-        const [user] = await getUsers({
+        const {
+          entities: [user],
+        } = await getUsers({
           authToken: token,
           filters: {id: userId},
         })
