@@ -1,9 +1,10 @@
 import axios from 'axios'
-import {parseISO} from 'date-fns'
+import {Knex} from 'knex'
 import {updateBookSession} from './updateBookSession'
 
 export const assignWherebyMeetingToBookSession = async (
   bookSessionId: string,
+  params?: {trx?: Knex.Transaction},
 ) => {
   const API_KEY =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmFwcGVhci5pbiIsImF1ZCI6Imh0dHBzOi8vYXBpLmFwcGVhci5pbi92MSIsImV4cCI6OTAwNzE5OTI1NDc0MDk5MSwiaWF0IjoxNjUzMzkwMTE1LCJvcmdhbml6YXRpb25JZCI6MTYxMDczLCJqdGkiOiJhNDlmNWQzNS01Mjc1LTQwZTEtOWI2Yi1jZGIzMzgzNjQyZDYifQ.inPJcdiQSp31DmwJQcPNk3It5XP5537fklpuMGNRdjw'
@@ -24,14 +25,16 @@ export const assignWherebyMeetingToBookSession = async (
 
   const result = response.data.results[0]
 
-  const updatedBookSession = await updateBookSession(bookSessionId, {
-    whereByData: {
-      meetingUrl: result.roomUrl,
-      endDate: result.endDate,
+  const updatedBookSession = await updateBookSession(
+    bookSessionId,
+    {
+      whereByData: {
+        meetingUrl: result.roomUrl,
+        endDate: result.endDate,
+      },
     },
-  })
-
-  console.log(updatedBookSession)
+    {trx: params?.trx},
+  )
 
   return updatedBookSession
 }
