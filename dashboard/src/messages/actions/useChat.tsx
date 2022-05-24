@@ -6,14 +6,14 @@ import {createMessage} from './createMessage'
 import {getMessages} from './getMessages'
 
 const NEW_CHAT_MESSAGE_EVENT = 'newChatMessage' // Name of the event
-const SOCKET_SERVER_URL = 'http://localhost:5002'
+const SOCKET_SERVER_URL = 'http://localhost:5001'
 
 const useChat = ({roomId, auth}: {roomId?: string; auth: Auth}) => {
   const getMessagesAction = usePromise(async () => {
     if (!roomId) return
-    return await getMessages({
+    return getMessages({
       authToken: auth.authSession.token,
-      filters: {roomId: roomId},
+      filters: {roomId},
     })
   }, [roomId])
 
@@ -60,7 +60,7 @@ const useChat = ({roomId, auth}: {roomId?: string; auth: Auth}) => {
       data: {
         body: messageBody,
         senderId: auth.userId,
-        roomId: roomId,
+        roomId,
       },
     })
   }

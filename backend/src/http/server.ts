@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
 /* eslint-disable @typescript-eslint/no-var-requires */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable import/first */
@@ -11,6 +12,8 @@ import express, {ErrorRequestHandler} from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import {ZodError} from 'zod'
+import http from 'http'
+import {Server} from 'socket.io'
 import {
   AuthenticationError,
   AuthorizationError,
@@ -23,6 +26,7 @@ import {getUsers} from '../users/actions/getUsers'
 import {endpoints} from './endpoints'
 
 const app = express()
+const server = http.createServer(app)
 
 app.use(cors())
 app.use(bodyParser.json())
@@ -112,18 +116,13 @@ app.use((req, res) => {
 
 const port = parseInt(process.env.PORT || '8080', 10)
 
-const server = require('http').createServer()
-const io = require('socket.io')(server, {
-  cors: {
-    origin: '*',
-  },
-})
+const io = new Server(server, {cors: {origin: '*'}})
 
 const NEW_CHAT_MESSAGE_EVENT = 'newChatMessage'
 
-io.on('connection', (socket: any) => {
+io.on('connection', (socket) => {
   // Join a conversation
-  const {roomId} = socket.handshake.query
+  const {roomId} = socket.handshake.query as {roomId: string}
   socket.join(roomId)
 
   // Listen for new messages
@@ -137,10 +136,6 @@ io.on('connection', (socket: any) => {
   })
 })
 
-server.listen('5002', () => {
-  console.log(`Listening on port ${'5002'}`)
-})
-
-app.listen(port, () => {
-  console.log(`Server started on port: ${port}`)
+server.listen(port, () => {
+  console.log(`Server listening on port ${port}`)
 })
