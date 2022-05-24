@@ -1,10 +1,12 @@
 import {z} from 'zod'
 import {createAuthSession} from '../../authSessions/actions/createAuthSession'
 import {authSessionSchema} from '../../authSessions/model'
+import {assignWherebyMeetingToBookSession} from '../../bookSessions/actions/assignWherebyMeeting'
+import {getBookSessions} from '../../bookSessions/actions/getBookSessions'
 import {AuthenticationError} from '../../errors'
 import {createCreateAction} from '../../shared/actionUtils'
 import {getUsers} from '../../users/actions/getUsers'
-import {userSchema} from '../../users/model'
+import {UserRole, userSchema} from '../../users/model'
 import {checkPassword} from '../utils'
 
 export const signInInputSchema = z.object({
@@ -42,6 +44,13 @@ export const [signIn] = createCreateAction(
       !(await checkPassword(data.password, user.passwordHash))
     ) {
       throw new AuthenticationError('Invalid password.')
+    }
+
+    if (user.role === UserRole.Child) {
+      const [bookSession] = await getBookSessions({filters: {childId: user.id}})
+      if (bookSession) {
+        await assignWherebyMeetingToBookSession(bookSession.id)
+      }
     }
 
     const authSession = await createAuthSession(

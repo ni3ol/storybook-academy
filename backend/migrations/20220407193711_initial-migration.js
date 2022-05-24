@@ -113,7 +113,8 @@ exports.up = async (knex) => {
       "child1Id" UUID NOT NULL,
       "child2Id" UUID NOT NULL,
       "bookId" UUID,
-      "page" INTEGER NOT NULL
+      "page" INTEGER NOT NULL,
+      "whereByData" JSONB
     );
   `)
 }

@@ -3,11 +3,14 @@ import {z} from 'zod'
 import {db, useOrCreateTransaction} from '../../db/db'
 import {utcNow} from '../../shared/utils'
 import {User} from '../../users/model'
-import {BookSession} from '../model'
+import {BookSession, bookSessionSchema} from '../model'
 
-export const updateBookSessionSchema = z.object({
-  page: z.number(),
-})
+export const updateBookSessionSchema = z
+  .object({
+    page: bookSessionSchema.shape.page,
+    whereByData: bookSessionSchema.shape.whereByData,
+  })
+  .partial()
 
 export type UpdateBookSessionData = z.infer<typeof updateBookSessionSchema>
 

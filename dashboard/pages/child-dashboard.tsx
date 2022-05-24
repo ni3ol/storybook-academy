@@ -21,6 +21,7 @@ const ChildDashboard = ({auth}: {auth: Auth}) => {
   const [numPages, setNumPages] = useState<number | null>(null)
   const [localPageNumber, setPageNumber] = useState(1)
   const [sessionPageNumber, setSessionPageNumber] = useState(1)
+  const [whereByUrl, setWhereByUrl] = useState<string | undefined>()
   const {query} = useRouter()
   const onDocumentLoadSuccess = ({numPages}: {numPages: number}) => {
     setNumPages(numPages)
@@ -120,18 +121,38 @@ const ChildDashboard = ({auth}: {auth: Auth}) => {
     }
   }
 
-  const height = 700
+  const height = 820
+  const width = 600
 
   const BookPreview = useMemo(() => {
     return (
       <Page
         renderAnnotationLayer={false}
         pageNumber={pageNumber}
-        width={500}
+        width={width}
         height={height}
       />
     )
   }, [pageNumber])
+
+  useEffect(() => {
+    if (bookSession?.whereByData?.meetingUrl) {
+      setWhereByUrl(bookSession.whereByData.meetingUrl)
+    }
+  }, [bookSession])
+
+  const WhereBy = useMemo(() => {
+    return (
+      <>
+        {whereByUrl && (
+          <iframe
+            src={whereByUrl}
+            allow="camera; microphone; fullscreen; speaker; display-capture"
+          />
+        )}
+      </>
+    )
+  }, [whereByUrl])
 
   return (
     <>
@@ -148,9 +169,9 @@ const ChildDashboard = ({auth}: {auth: Auth}) => {
       )}
       <DashboardNavigation user={auth?.user} />
       <Container>
-        <div style={{height, display: 'flex', justifyContent: 'center'}}>
+        <div style={{display: 'flex', justifyContent: 'center'}}>
           <div>
-            <div>
+            <div style={{height, width}}>
               <Document file={bookUrl} onLoadSuccess={onDocumentLoadSuccess}>
                 {BookPreview}
                 <Button
@@ -183,6 +204,7 @@ const ChildDashboard = ({auth}: {auth: Auth}) => {
               Page {pageNumber} of {numPages}
             </p>
           </div>
+          {WhereBy}
         </div>
       </Container>
     </>

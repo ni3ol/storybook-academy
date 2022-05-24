@@ -1,5 +1,6 @@
 import {Knex} from 'knex'
 import {z} from 'zod'
+import axios from 'axios'
 import {createBookSession} from '../../bookSessions/actions/createBookSession'
 import {getClasses} from '../../classes/actions/getClasses'
 import {db, useOrCreateTransaction} from '../../db/db'

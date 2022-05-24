@@ -7,6 +7,10 @@ export const bookSessionSchema = entitySchema
     child2Id: z.string().uuid(),
     bookId: z.string().uuid().optional().nullable(),
     page: z.number().default(1),
+    whereByData: z
+      .object({meetingUrl: z.string().url(), endDate: z.string().optional()})
+      .optional()
+      .nullable(),
   })
   .strict()
 
