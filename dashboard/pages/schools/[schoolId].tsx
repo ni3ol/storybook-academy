@@ -115,7 +115,7 @@ const SchoolPage = ({auth}: {auth: Auth}) => {
         />
       )}
 
-      <DashboardNavigation role={auth.user.role} />
+      <DashboardNavigation user={auth.user} />
       <Container>
         <div>
           <Header as="h1" style={{marginBottom: 20}}>
@@ -147,10 +147,6 @@ const SchoolPage = ({auth}: {auth: Auth}) => {
             <Table.Row>
               <Table.Cell>Name</Table.Cell>
               <Table.Cell>{school?.name}</Table.Cell>
-            </Table.Row>
-            <Table.Row>
-              <Table.Cell>ID (internal use only)</Table.Cell>
-              <Table.Cell>{schoolId}</Table.Cell>
             </Table.Row>
             <Table.Row>
               <Table.Cell>Created at</Table.Cell>

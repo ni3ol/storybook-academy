@@ -41,7 +41,12 @@ export const createUser = async (
 
   const asOf = utcNow()
 
-  if (params?.skipAuth !== true && params?.as?.user?.role !== UserRole.Admin) {
+  if (
+    params?.skipAuth !== true &&
+    [UserRole.Child, UserRole.Administrator, undefined].includes(
+      params?.as?.user?.role,
+    )
+  ) {
     throw new AuthorizationError()
   }
 
@@ -56,11 +61,10 @@ export const createUser = async (
     ? await hashPassword(classPassword)
     : undefined
   const id = other.id || getUuid()
-  const schools = await getSchools()
-  const schoolName = schools
-    .find((s) => s.id === schoolId)
-    ?.name?.slice(0, 3)
-    .toLowerCase()
+  const school = schoolId
+    ? (await getSchools({filters: {id: schoolId}}))[0]
+    : undefined
+  const schoolName = school?.name?.slice(0, 3).toLowerCase()
 
   let username = `${firstName.slice(0, 3).toLowerCase()}${lastName
     .slice(0, 3)
@@ -86,14 +90,15 @@ export const createUser = async (
     schoolId,
     firstName,
     lastName,
-    role: data.role || UserRole.User,
+    role: data.role || UserRole.Educator,
     username,
+    classId,
   }
 
   await useOrCreateTransaction(params?.trx, async (trx) => {
     await db('users').insert(user).returning('*').transacting(trx)
 
-    if ([UserRole.Teacher, UserRole.Principal].includes(user.role)) {
+    if ([UserRole.Educator, UserRole.Administrator].includes(user.role)) {
       const chatRoomId = getUuid()
       await db('chatRooms')
         .insert({

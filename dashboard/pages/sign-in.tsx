@@ -45,7 +45,7 @@ export default function SignIn() {
         ? auth.auth.user?.profileCreated
           ? '/child-dashboard'
           : '/child-profile-building'
-        : '/dashboard'
+        : '/books'
     router.push(path)
   }
 
@@ -56,7 +56,7 @@ export default function SignIn() {
       const path =
         result.user.role === UserRole.Child
           ? '/child-profile-building'
-          : '/dashboard'
+          : '/books'
       router.push(path)
     }
   }

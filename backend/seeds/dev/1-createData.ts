@@ -19,16 +19,6 @@ export async function seed(): Promise<void> {
 
   await createUser(
     {
-      emailAddress: 'user@app.com',
-      firstName: 'Normal',
-      lastName: 'User',
-      password: '123',
-      schoolId: bishops.id,
-    },
-    {skipAuth: true},
-  )
-  await createUser(
-    {
       emailAddress: 'admin@app.com',
       firstName: 'Michele',
       lastName: 'Lemonius',
@@ -39,32 +29,32 @@ export async function seed(): Promise<void> {
   )
   await createUser(
     {
-      emailAddress: 'principal@app.com',
+      emailAddress: 'administrator@app.com',
       firstName: 'George',
-      lastName: 'Principal',
+      lastName: 'Administrator',
       password: '123',
-      role: UserRole.Principal,
+      role: UserRole.Administrator,
     },
     {skipAuth: true},
   )
-  const bishopsTeacher = await createUser(
+  const bishopsEducator = await createUser(
     {
-      emailAddress: 'teacher@app.com',
+      emailAddress: 'bisheducator@app.com',
       firstName: 'Nicol',
-      lastName: 'Teacher',
+      lastName: 'Educator',
       password: '123',
-      role: UserRole.Teacher,
+      role: UserRole.Educator,
       schoolId: bishops.id,
     },
     {skipAuth: true},
   )
-  const herschelTeacher = await createUser(
+  const herschelEducator = await createUser(
     {
-      emailAddress: 'teacher2@app.com',
+      emailAddress: 'hersheducator@app.com',
       firstName: 'Jason',
-      lastName: 'Teacher',
+      lastName: 'Educator',
       password: '123',
-      role: UserRole.Teacher,
+      role: UserRole.Educator,
       schoolId: herschel.id,
     },
     {skipAuth: true},
@@ -74,7 +64,7 @@ export async function seed(): Promise<void> {
       name: '4a',
       schoolId: bishops.id,
       password: '123',
-      educatorId: bishopsTeacher.id,
+      educatorId: bishopsEducator.id,
     },
     {skipAuth: true},
   )
@@ -83,7 +73,7 @@ export async function seed(): Promise<void> {
       name: '6b',
       schoolId: herschel.id,
       password: '123',
-      educatorId: herschelTeacher.id,
+      educatorId: herschelEducator.id,
     },
     {skipAuth: true},
   )

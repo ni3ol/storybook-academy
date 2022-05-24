@@ -15,15 +15,23 @@ export const ClassSelectField = <O,>({
   options,
   defaultValue,
   filters,
+  classId,
 }: FieldProps & {
   options?: {label: string; value: O}[]
   filters?: ClassFilters
 }) => {
   const auth = useAuth()
 
-  const action = usePromise(() => {
+  const action = usePromise(async () => {
+    // if (!filters?.schoolId) return Promise.resolve(undefined)
+    if (classId) {
+      const classes = await getClasses({
+        authToken: auth.auth.authSession!.token,
+      })
+      return classes.filter((theClass) => theClass.id !== classId)
+    }
     return getClasses({authToken: auth.auth.authSession!.token, filters})
-  }, [])
+  }, [filters])
 
   const classes = action.result || []
 

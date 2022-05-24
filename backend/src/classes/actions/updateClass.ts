@@ -60,6 +60,28 @@ export const updateClass = (
         .transacting(trx)
     }
 
+    if (data.educatorId) {
+      await db('users')
+        .update({classId: id, updatedAt: now})
+        .where('id', '=', data.educatorId)
+        .returning('*')
+        .transacting(trx)
+    }
+
+    if (data.bookId) {
+      const [updatingClass] = await getClasses({filters: {id}})
+      if (updatingClass?.linkedClassId) {
+        const [linkedClass] = await getClasses({
+          filters: {id: updatingClass.linkedClassId},
+        })
+        await db('classes')
+          .update({bookId: data.bookId, updatedAt: now})
+          .where('id', '=', linkedClass.id)
+          .returning('*')
+          .transacting(trx)
+      }
+    }
+
     if (data.password) {
       const passwordHash = await hashPassword(data.password)
       await db('users')

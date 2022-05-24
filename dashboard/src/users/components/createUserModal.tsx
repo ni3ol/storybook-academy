@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
-import {useEffect, useState} from 'react'
+import {useEffect} from 'react'
 import {useForm} from 'react-hook-form'
 import {Button} from 'semantic-ui-react'
-import {useAuth} from '../../auth/hooks'
+import {Auth} from '../../auth/hooks'
 import {ClassSelectField} from '../../classes/components/classSelectField'
 import {SchoolSelectField} from '../../schools/components/schoolSelectField'
 import {
@@ -16,44 +16,45 @@ import {
 import {Modal} from '../../shared/components/modal'
 import {usePromiseLazy} from '../../shared/hooks'
 import {createUser} from '../actions/createUser'
-import {getUsers} from '../actions/getUsers'
 import {User, UserRole} from '../model'
 import {animals, colors} from './createChildProfileForm'
-import {readingLevels, roles} from './updateUserModal'
+import {adminRole, readingLevels, roles} from './updateUserModal'
 
 type FormData = {
   firstName: string
   lastName: string
   emailAddress: string
   role: UserRole
-  // username: string
   age: number
   favouriteColor: string
   favouriteAnimal: string
   schoolId?: string
+  classId?: string
 }
 
 export const CreateUserModal = ({
   onClose,
   schoolId,
   onUserCreated,
-  educatorId,
+  classId,
+  auth,
 }: {
   onClose: () => any
   schoolId?: string
   onUserCreated?: (user: User) => any
-  educatorId?: string
+  classId?: string
+  auth: Auth
 }) => {
   const form = useForm<FormData>()
-  const {auth} = useAuth()
 
   const action = usePromiseLazy(async (data: FormData) => {
     return createUser({
-      authToken: auth.authSession!.token,
+      authToken: auth.token,
       data: {
         ...data,
         schoolId: schoolId || data.schoolId,
         role: data.role || UserRole.Child,
+        classId: classId || data.classId,
       },
     })
   }, [])
@@ -69,6 +70,7 @@ export const CreateUserModal = ({
   const isChildRole = role === UserRole.Child
 
   const schoolIdValue = form.watch('schoolId')
+  const isEducator = auth.user?.role === UserRole.Educator
 
   useEffect(() => {
     form.reset()
@@ -82,18 +84,22 @@ export const CreateUserModal = ({
       header="New user"
       body={
         <Form error={action.error} onSubmit={form.handleSubmit(handleSubmit)}>
-          {!educatorId && (
+          {!isEducator && (
             <SelectField
               required
               name="role"
               label="Role"
-              options={roles}
+              options={
+                auth.user?.role === UserRole.Admin
+                  ? [...roles, adminRole]
+                  : roles
+              }
               form={form}
             />
           )}
           <TextField required name="firstName" label="First name" form={form} />
           <TextField required name="lastName" label="Last name" form={form} />
-          {!isChildRole && !educatorId && (
+          {!isChildRole && !isEducator && (
             <EmailField
               required
               name="emailAddress"
@@ -110,7 +116,7 @@ export const CreateUserModal = ({
             />
           )}
 
-          {role !== UserRole.Admin && role !== UserRole.Principal && (
+          {role === UserRole.Child && (
             <ClassSelectField
               name="classId"
               label="Class"
@@ -120,9 +126,19 @@ export const CreateUserModal = ({
           )}
 
           {isChildRole ||
-            (educatorId && (
+            (auth.user.role === UserRole.Educator && (
+              <SelectField
+                name="readingLevel"
+                label="Reading level"
+                form={form}
+                options={readingLevels}
+              />
+            ))}
+
+          {isChildRole ||
+            (isEducator && (
               <>
-                {!educatorId && (
+                {!isEducator && (
                   <TextField
                     required
                     name="username"
@@ -131,15 +147,7 @@ export const CreateUserModal = ({
                   />
                 )}
 
-                <SelectField
-                  required
-                  name="readingLevel"
-                  label="Reading level"
-                  form={form}
-                  options={readingLevels}
-                />
-
-                {!educatorId && (
+                {!isEducator && (
                   <>
                     <NumberField name="age" label="Age" form={form} />
 
@@ -160,7 +168,7 @@ export const CreateUserModal = ({
                 )}
               </>
             ))}
-          {!educatorId && role !== UserRole.Child && (
+          {!isEducator && role !== UserRole.Child && (
             <PasswordField
               required
               name="password"

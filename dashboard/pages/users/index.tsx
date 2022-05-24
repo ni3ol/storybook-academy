@@ -1,4 +1,6 @@
 import {useState} from 'react'
+import {Input} from 'semantic-ui-react'
+import router from 'next/router'
 import {RequireAuth} from '../../src/auth/components/requireAuth'
 import {DashboardNavigation} from '../../src/shared/components/dashboardNavigation/dashboardNavigation'
 import {UsersTable} from '../../src/users/components/usersTable'
@@ -9,9 +11,7 @@ import {CreateUserModal} from '../../src/users/components/createUserModal'
 import {Container} from '../../src/shared/components/container'
 import {Button} from '../../src/shared/components/button'
 import {Header} from '../../src/shared/components/header'
-import {Input} from 'semantic-ui-react'
 import {UserRole} from '../../src/users/model'
-import router from 'next/router'
 
 const Users = ({auth}: {auth: Auth}) => {
   const [isCreateUserModalOpen, setIsCreateUserModalOpen] = useState(false)
@@ -33,7 +33,7 @@ const Users = ({auth}: {auth: Auth}) => {
           }}
         />
       )}
-      <DashboardNavigation role={auth.user.role} />
+      <DashboardNavigation user={auth.user} />
       <Container>
         <div
           style={{
@@ -47,7 +47,7 @@ const Users = ({auth}: {auth: Auth}) => {
             <Input
               icon="search"
               iconPosition="left"
-              placeholder="Search email"
+              placeholder="Search name"
               style={{marginRight: 10}}
               onChange={(e) => setSearch(e.target.value)}
             />

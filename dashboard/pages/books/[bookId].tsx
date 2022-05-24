@@ -45,9 +45,9 @@ const BookPage = ({auth}: {auth: Auth}) => {
         <UpdateBookModal
           book={bookToUpdate}
           onClose={() => setBookToUpdate(undefined)}
-          onBookUpdated={() => {
+          onBookUpdated={async () => {
             setBookToUpdate(undefined)
-            getBookAction.execute()
+            await getBookAction.execute()
           }}
         />
       )}
@@ -57,10 +57,10 @@ const BookPage = ({auth}: {auth: Auth}) => {
           onClose={() => {
             setBookToDelete(undefined)
           }}
-          onBookDeleted={() => {
+          onBookDeleted={async () => {
             setBookToDelete(undefined)
-            getBookAction.execute()
-            router.push('/books')
+            await getBookAction.execute()
+            await router.push('/books')
           }}
         />
       )}
@@ -71,7 +71,7 @@ const BookPage = ({auth}: {auth: Auth}) => {
           onClose={() => setBookToPreview(undefined)}
         />
       )}
-      <DashboardNavigation role={auth.user.role} />
+      <DashboardNavigation user={auth.user} />
       <Container>
         <div>
           <Header as="h1" style={{marginBottom: 20}}>
@@ -88,16 +88,18 @@ const BookPage = ({auth}: {auth: Auth}) => {
           <Header style={{margin: 0}} as="h3">
             Reading levels
           </Header>
-          <Dropdown text="Actions" floating basic>
-            <Dropdown.Menu>
-              <Dropdown.Item onClick={() => setBookToUpdate(book)}>
-                Edit
-              </Dropdown.Item>
-              <Dropdown.Item onClick={() => setBookToDelete(book)}>
-                Delete
-              </Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
+          {auth.user.role === UserRole.Admin && (
+            <Dropdown text="Actions" floating basic>
+              <Dropdown.Menu>
+                <Dropdown.Item onClick={() => setBookToUpdate(book)}>
+                  Edit
+                </Dropdown.Item>
+                <Dropdown.Item onClick={() => setBookToDelete(book)}>
+                  Delete
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          )}
         </div>
         <Table>
           <Table.Body>
@@ -193,40 +195,6 @@ const BookPage = ({auth}: {auth: Auth}) => {
             </Table.Row>
           </Table.Body>
         </Table>
-        {/*    <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          <Header style={{margin: 0}} as="h3">
-            Users
-          </Header>
-          <Button basic primary onClick={() => setShowNewUserModal(true)}>
-            New user
-          </Button>
-        </div>
-        <UsersTable auth={auth} rows={users} />
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          <Header style={{margin: 0}} as="h3">
-            Books
-          </Header>
-          <Button basic primary onClick={() => setShowAssignBookModal(true)}>
-            Assign new book
-          </Button>
-        </div>
-        <LibraryTable
-          rows={books}
-          unassign
-          onDeleteClick={(row) => setBookToUnassign(row)}
-        /> */}
       </Container>
     </>
   )

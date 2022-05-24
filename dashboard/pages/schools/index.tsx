@@ -1,4 +1,5 @@
 import {useState} from 'react'
+import router from 'next/router'
 import {RequireAuth} from '../../src/auth/components/requireAuth'
 import {DashboardNavigation} from '../../src/shared/components/dashboardNavigation/dashboardNavigation'
 import {Auth} from '../../src/auth/hooks'
@@ -11,7 +12,6 @@ import {getSchools} from '../../src/schools/actions/getSchools'
 import {SchoolsTable} from '../../src/schools/components/schoolsTable'
 import {CreateSchoolModal} from '../../src/schools/components/createSchoolModal'
 import {UserRole} from '../../src/users/model'
-import router from 'next/router'
 
 const Schools = ({auth}: {auth: Auth}) => {
   const [isCreateSchoolModalOpen, setIsCreateUserModalOpen] = useState(false)
@@ -33,7 +33,7 @@ const Schools = ({auth}: {auth: Auth}) => {
           }}
         />
       )}
-      <DashboardNavigation role={auth.user.role} />
+      <DashboardNavigation user={auth.user} />
       <Container>
         <div
           style={{

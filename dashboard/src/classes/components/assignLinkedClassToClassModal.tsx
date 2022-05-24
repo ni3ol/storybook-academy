@@ -18,12 +18,10 @@ type FormData = {
 export const AssignLinkedClassToClassModal = ({
   onClose,
   classId,
-  schoolId,
   onLinkedClassAssigned,
 }: {
   onClose: () => any
   classId: string
-  schoolId: string
   onLinkedClassAssigned?: () => any
 }) => {
   const form = useForm<FormData>()
@@ -62,7 +60,7 @@ export const AssignLinkedClassToClassModal = ({
             name="linkedClassId"
             label="Class"
             form={form}
-            pairing
+            classId={classId}
           />
 
           <Button primary type="submit" fluid loading={action.isLoading}>

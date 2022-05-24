@@ -46,7 +46,7 @@ export const CreateClassModal = ({
 
   const userFilters: UserFilters = {
     schoolId: form.watch('schoolId') || schoolId,
-    role: UserRole.Teacher,
+    role: UserRole.Educator,
   }
 
   return (

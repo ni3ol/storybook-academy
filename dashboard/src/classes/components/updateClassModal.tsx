@@ -2,14 +2,12 @@
 import {useForm} from 'react-hook-form'
 import {Button} from 'semantic-ui-react'
 import {useAuth} from '../../auth/hooks'
-import {SchoolSelectField} from '../../schools/components/schoolSelectField'
 import {Form, TextField} from '../../shared/components/form'
 import {Modal} from '../../shared/components/modal'
 import {usePromiseLazy} from '../../shared/hooks'
 import {UserFilters} from '../../users/actions/getUsers'
 import {UserSelectField} from '../../users/components/userSelectField'
 import {UserRole} from '../../users/model'
-import {createClass} from '../actions/createClass'
 import {updateClass} from '../actions/updateClass'
 import {Class} from '../model'
 
@@ -36,15 +34,15 @@ export const UpdateClassModal = ({
   }, [])
 
   const handleSubmit = async (data: FormData) => {
-    const {result: theClass} = await action.execute(data)
-    if (theClass && onClassUpdated) {
-      await onClassUpdated(theClass)
+    const {result} = await action.execute(data)
+    if (result && onClassUpdated) {
+      await onClassUpdated(result)
     }
   }
 
   const userFilters: UserFilters = {
-    schoolId: form.watch('schoolId'),
-    role: UserRole.Teacher,
+    schoolId: theClass.schoolId,
+    role: UserRole.Educator,
   }
 
   return (
@@ -66,14 +64,6 @@ export const UpdateClassModal = ({
             label="Password for children"
             form={form}
             defaultValue={theClass.password}
-          />
-
-          <SchoolSelectField
-            required
-            name="schoolId"
-            label="School"
-            form={form}
-            defaultValue={theClass.schoolId}
           />
 
           <UserSelectField

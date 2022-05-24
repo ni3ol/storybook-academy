@@ -25,7 +25,7 @@ export default function ResetPassword() {
   }, [])
 
   if (auth.isAuthenticated()) {
-    router.push('/dashboard')
+    router.push('/books')
   }
 
   const handleSubmit = async (data: Data) => {

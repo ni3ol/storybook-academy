@@ -1,5 +1,8 @@
 import router from 'next/router'
 import {useForm} from 'react-hook-form'
+import {Grid, Menu, Segment, TextArea} from 'semantic-ui-react'
+import {useEffect, useState} from 'react'
+import clsx from 'clsx'
 import {Auth} from '../../src/auth/hooks'
 import {usePromise, usePromiseLazy} from '../../src/shared/hooks'
 import {Container} from '../../src/shared/components/container'
@@ -8,11 +11,8 @@ import {Button} from '../../src/shared/components/button'
 import {DashboardNavigation} from '../../src/shared/components/dashboardNavigation/dashboardNavigation'
 import {RequireAuth} from '../../src/auth/components/requireAuth'
 import {UserRole} from '../../src/users/model'
-import {Grid, Menu, Segment, TextArea} from 'semantic-ui-react'
-import {useEffect, useState} from 'react'
 import {Header} from '../../src/shared/components/header'
 import useChat from '../../src/messages/actions/useChat'
-import clsx from 'clsx'
 import {getChatRooms} from '../../src/chatRooms/actions/getChatRooms'
 import {ChatRoom} from '../../src/chatRooms/model'
 import {getUsers} from '../../src/users/actions/getUsers'
@@ -28,7 +28,7 @@ const ChatPage = ({auth}: {auth: Auth}) => {
   const [newMessage, setNewMessage] = useState('')
 
   const form = useForm<FormData>()
-  const action = usePromiseLazy(async (data: FormData) => {}, [])
+  const action = usePromiseLazy(async () => {}, [])
 
   useEffect(() => {
     router.replace('/chat', undefined, {shallow: true})
@@ -51,6 +51,23 @@ const ChatPage = ({auth}: {auth: Auth}) => {
       )
     : []
 
+  const handleSubmit = async () => {
+    if (newMessage === '') return
+    await sendMessage(newMessage)
+    setNewMessage('')
+  }
+
+  const handleNewMessageChange = (event: any) => {
+    setNewMessage(event.target.value)
+  }
+
+  const otherUserId = (room: ChatRoom) => {
+    if (room.isAdmin) return room.participant1Id
+    return auth.userId === room.participant1Id
+      ? room.participant2Id
+      : room.participant1Id
+  }
+
   const getUsersAction = usePromise(async () => {
     const users = await getUsers({
       authToken: auth.authSession.token,
@@ -67,33 +84,20 @@ const ChatPage = ({auth}: {auth: Auth}) => {
   }, [])
   const schools = getSchoolsAction.result
 
-  const handleSubmit = async () => {
-    if (newMessage === '') return
-    sendMessage(newMessage)
-    setNewMessage('')
-  }
-
-  const handleNewMessageChange = (event: any) => {
-    setNewMessage(event.target.value)
-  }
-
-  const otherUserId = (room: ChatRoom) => {
-    if (room.isAdmin) return room.participant1Id
-    return auth.userId === room.participant1Id
-      ? room.participant2Id
-      : room.participant1Id
-  }
-
   const getChatRoomLabel = (room: ChatRoom) => {
-    if (!users) return
+    if (!users) return ''
     if (room.isAdmin && room.participant1Id === auth.userId) return 'Admin'
-    const user = users?.find((user) => user.id === otherUserId(room))
-    const school = schools?.find((school) => school.id === user?.schoolId)
-    return `${user?.firstName} ${user?.lastName} (${school?.name})`
+    const user = users?.find((u) => u.id === otherUserId(room))
+    const schoolName = schools?.find(
+      (school) => school.id === user?.schoolId,
+    )?.name
+    const schoolNameFormatted = schoolName ? `(${schoolName})` : ''
+    if (!user) return ''
+    return `${user?.firstName} ${user?.lastName}  ${schoolNameFormatted}`
   }
 
   const getUserName = (senderId: string) => {
-    const user = users?.find((user) => user.id === senderId)
+    const user = users?.find((u) => u.id === senderId)
     return user?.role === UserRole.Admin
       ? `${user?.firstName} (admin)`
       : user?.firstName
@@ -101,7 +105,7 @@ const ChatPage = ({auth}: {auth: Auth}) => {
 
   return (
     <>
-      <DashboardNavigation role={auth.user.role} />
+      <DashboardNavigation user={auth.user} />
       <Container>
         <div
           style={{
@@ -111,7 +115,7 @@ const ChatPage = ({auth}: {auth: Auth}) => {
             alignItems: 'center',
           }}
         >
-          <Header as={'h1'} style={{paddingBottom: 20}}>
+          <Header as="h1" style={{paddingBottom: 20}}>
             My chat conversations
           </Header>
           <Grid style={{width: '100%', height: 'calc(70vh - 70px)'}}>
@@ -144,7 +148,7 @@ const ChatPage = ({auth}: {auth: Auth}) => {
             <Grid.Column stretched width={12}>
               {activeChatRoomId ? (
                 <div>
-                  <Header as="h4"></Header>
+                  <Header as="h4" />
                   <Segment
                     style={{
                       display: 'flex',
@@ -155,13 +159,12 @@ const ChatPage = ({auth}: {auth: Auth}) => {
                     }}
                   >
                     <ol className={styles.messagesList}>
-                      {messages.map((message: any, i) => {
+                      {messages.map((message: any) => {
                         const currentUser =
                           message.ownedByCurrentUser ||
                           message.senderId === auth.userId
-                        console.log('mes', message)
                         return (
-                          <li key={i} style={{display: 'block'}}>
+                          <li style={{display: 'block'}}>
                             <div
                               style={{
                                 display: 'flex',
@@ -214,7 +217,7 @@ const ChatPage = ({auth}: {auth: Auth}) => {
                           type="submit"
                           fluid
                           loading={action.isLoading}
-                          icon={'send'}
+                          icon="send"
                           style={{width: 100, backgroundColor: '#4d7298'}}
                         />
                       </div>

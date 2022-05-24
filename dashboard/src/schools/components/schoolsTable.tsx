@@ -4,8 +4,6 @@ import {School} from '../model'
 
 export const SchoolsTable = ({
   rows,
-  onUpdateClick,
-  onDeleteClick,
 }: {
   rows: School[]
   onUpdateClick: (school: School) => any

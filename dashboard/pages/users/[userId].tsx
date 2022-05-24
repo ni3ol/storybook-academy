@@ -3,7 +3,6 @@ import {Button, Dropdown, Table} from 'semantic-ui-react'
 import NextLink from 'next/link'
 import {useState} from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
 import {RequireAuth} from '../../src/auth/components/requireAuth'
 import {Auth} from '../../src/auth/hooks'
 import {Container} from '../../src/shared/components/container'
@@ -28,61 +27,76 @@ const UserPage = ({auth}: {auth: Auth}) => {
   const [showPairChildModal, setShowPairChildModal] = useState(false)
 
   const getUserAction = usePromise(async () => {
-    const users = await getUsers({
+    const [user] = await getUsers({
       authToken: auth.authSession.token,
+      filters: {id: userId},
     })
-    return users
+    return user
   }, [])
-  const user = (getUserAction.result || []).find((user) => user.id === userId)
+  const user = getUserAction.result
 
   const linkedUserAction = usePromise(async () => {
-    if (user && user.linkedChildId) {
-      const [linkedChild] = await getUsers({
-        authToken: auth.authSession.token,
-        filters: {id: user.linkedChildId},
-      })
-      return linkedChild
-    }
+    if (!user?.linkedChildId) return Promise.resolve(undefined)
+
+    const [linkedChild] = await getUsers({
+      authToken: auth.authSession.token,
+      filters: {id: user?.linkedChildId},
+    })
+    return linkedChild
   }, [user])
   const linkedChild = linkedUserAction.result
 
   const getClassAction = usePromise(async () => {
-    const classes = await getClasses({
+    if (!user?.classId) return Promise.resolve(undefined)
+    const [theClass] = await getClasses({
       authToken: auth.authSession.token,
+      filters: {id: user?.classId},
     })
-    return classes
+    return theClass
+  }, [user])
+
+  const theClass = getClassAction.result
+
+  const getEducatorAction = usePromise(async () => {
+    const [educator] = await getUsers({
+      authToken: auth.authSession.token,
+      filters: {id: theClass?.educatorId},
+    })
+    return educator
   }, [])
+  const educator = getEducatorAction.result
 
-  const theClass = (getClassAction.result || []).find(
-    (c) => c.id === user?.classId,
-  )
-
-  const educator = (getUserAction.result || []).find(
-    (u) => u.id === theClass?.educatorId,
-  )
-
-  const students = (getUserAction.result || []).filter(
-    (u) =>
-      u.classId === theClass?.id &&
-      user?.role === UserRole.Teacher &&
-      u.role === UserRole.Child,
-  )
-
-  const schoolsAction = usePromise(() => {
-    return getSchools({authToken: auth.authSession.token})
+  const getStudentsAction = usePromise(async () => {
+    if (user?.role !== UserRole.Educator) await Promise.resolve([])
+    const students = await getUsers({
+      authToken: auth.authSession.token,
+      filters: {classId: theClass?.id, role: UserRole.Child},
+    })
+    return students
   }, [])
+  const students = getStudentsAction.result
 
-  const schools = schoolsAction.result || []
+  const schoolsAction = usePromise(async () => {
+    if (!user?.schoolId) return Promise.resolve(undefined)
 
-  const schoolName =
-    schools.find((school) => school.id === user?.schoolId)?.name || ''
+    const [school] = await getSchools({
+      authToken: auth.authSession.token,
+      filters: {id: user?.schoolId},
+    })
+    return school
+  }, [user])
+
+  const school = schoolsAction.result
+  const schoolName = school?.name || ''
 
   const [image, setImage] = useState()
 
   usePromise(async () => {
-    if (!user) return
-    const image = await import(`../../public/${user.profilePicture}.svg`)
-    setImage(image)
+    if (!user?.profilePicture) return
+    const importedImage = await import(
+      `../../public/${user.profilePicture}.svg`
+    )
+    if (importedImage) setImage(importedImage)
   }, [user])
 
   return (
@@ -91,9 +105,9 @@ const UserPage = ({auth}: {auth: Auth}) => {
         <UpdateUserModal
           user={user}
           onClose={() => setIsUserUpdateModalOpen(false)}
-          onUserUpdated={() => {
+          onUserUpdated={async () => {
             setIsUserUpdateModalOpen(false)
-            getUserAction.execute()
+            await getUserAction.execute()
           }}
         />
       )}
@@ -103,11 +117,11 @@ const UserPage = ({auth}: {auth: Auth}) => {
           onClose={() => {
             setIsUserDeleteModalOpen(false)
           }}
-          onUserDeleted={() => {
+          onUserDeleted={async () => {
             setIsUserDeleteModalOpen(false)
-            getUserAction.execute()
-            router.push(
-              auth.user.role === UserRole.Teacher ? '/students' : '/users',
+            await getUserAction.execute()
+            await router.push(
+              auth.user.role === UserRole.Educator ? '/students' : '/users',
             )
           }}
         />
@@ -122,13 +136,13 @@ const UserPage = ({auth}: {auth: Auth}) => {
             onClose={() => {
               setShowPairChildModal(false)
             }}
-            onChildPaired={() => {
+            onChildPaired={async () => {
               setShowPairChildModal(false)
-              getUserAction.execute()
+              await getUserAction.execute()
             }}
           />
         )}
-      <DashboardNavigation role={auth.user.role} />
+      <DashboardNavigation user={auth.user} />
       <Container>
         <div
           style={{
@@ -187,18 +201,6 @@ const UserPage = ({auth}: {auth: Auth}) => {
                 <Table.Cell>{user?.username}</Table.Cell>
               </Table.Row>
             )}
-            {/* {user?.role === UserRole.Child && (
-              <Table.Row>
-                <Table.Cell>Password</Table.Cell>
-                <Table.Cell>TODO - teacher set</Table.Cell>
-              </Table.Row>
-            )} */}
-            {auth.user?.role === UserRole.Admin && (
-              <Table.Row>
-                <Table.Cell>ID (internal use only)</Table.Cell>
-                <Table.Cell>{userId}</Table.Cell>
-              </Table.Row>
-            )}
             <Table.Row>
               <Table.Cell>Created at</Table.Cell>
               <Table.Cell>
@@ -223,9 +225,14 @@ const UserPage = ({auth}: {auth: Auth}) => {
             <Table.Row>
               <Table.Cell width={4}>Name</Table.Cell>
               <Table.Cell>
-                <NextLink passHref href={`/schools/${user?.schoolId}`}>
-                  {schoolName}
-                </NextLink>
+                {user?.schoolId && auth.user.role !== UserRole.Educator && (
+                  <NextLink passHref href={`/schools/${user?.schoolId}`}>
+                    {schoolName}
+                  </NextLink>
+                )}
+                {user?.schoolId &&
+                  auth.user.role === UserRole.Educator &&
+                  schoolName}
               </Table.Cell>
             </Table.Row>
             <Table.Row>
@@ -233,28 +240,31 @@ const UserPage = ({auth}: {auth: Auth}) => {
               <Table.Cell>{user?.role}</Table.Cell>
             </Table.Row>
             {(user?.role === UserRole.Child ||
-              user?.role === UserRole.Teacher) && (
+              user?.role === UserRole.Educator) && (
               <Table.Row>
                 <Table.Cell>Class</Table.Cell>
                 <Table.Cell>
-                  {theClass && (
+                  {theClass && auth.user.role === UserRole.Admin && (
                     <NextLink passHref href={`/classes/${theClass.id}`}>
                       {theClass.name}
                     </NextLink>
                   )}
+                  {theClass &&
+                    auth.user.role !== UserRole.Admin &&
+                    theClass.name}
                 </Table.Cell>
               </Table.Row>
             )}
             {user?.role === UserRole.Child && (
               <Table.Row>
-                <Table.Cell>Teacher</Table.Cell>
+                <Table.Cell>Educator</Table.Cell>
                 <Table.Cell>
                   {educator &&
-                    (auth.user.role === UserRole.Teacher ? (
+                    (auth.user.role === UserRole.Educator ? (
                       `${educator.firstName} ${educator.lastName}`
                     ) : (
                       <NextLink passHref href={`/users/${educator?.id}`}>
-                        {`${educator.firstName} ${educator.lastName}`}
+                        <a>{`${educator.firstName} ${educator.lastName}`}</a>
                       </NextLink>
                     ))}
                 </Table.Cell>
@@ -287,11 +297,11 @@ const UserPage = ({auth}: {auth: Auth}) => {
                   <Table.Row>
                     <Table.Cell>Linked child</Table.Cell>
                     <Table.Cell>
-                      <Link passHref href={`/users/${linkedChild.id}`}>
+                      <NextLink passHref href={`/users/${linkedChild.id}`}>
                         <a>
                           {linkedChild?.firstName} {linkedChild?.lastName}
                         </a>
-                      </Link>{' '}
+                      </NextLink>
                       <Button onClick={() => setShowPairChildModal(true)}>
                         Pair child
                       </Button>
@@ -323,7 +333,7 @@ const UserPage = ({auth}: {auth: Auth}) => {
           </>
         )}
 
-        {user?.role === UserRole.Teacher && (
+        {user?.role === UserRole.Educator && (
           <>
             <div
               style={{
@@ -333,10 +343,10 @@ const UserPage = ({auth}: {auth: Auth}) => {
               }}
             >
               <Header style={{margin: 0}} as="h3">
-                Class
+                Students in {theClass?.name}
               </Header>
             </div>
-            <UsersTable rows={students} auth={auth} />
+            <UsersTable rows={students || []} auth={auth} />
           </>
         )}
       </Container>

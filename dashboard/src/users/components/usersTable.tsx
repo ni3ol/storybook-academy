@@ -1,14 +1,13 @@
-import {Button} from 'semantic-ui-react'
+import NextLink from 'next/link'
 import {DataTable} from '../../shared/components/dataTable'
 import {User, UserRole} from '../model'
-import NextLink from 'next/link'
 import {usePromise} from '../../shared/hooks'
 import {getSchools} from '../../schools/actions/getSchools'
 import {Auth} from '../../auth/hooks'
 
 export const UsersTable = ({rows, auth}: {rows: User[]; auth: Auth}) => {
   const schoolsAction = usePromise(() => {
-    return getSchools({authToken: auth.authSession!.token})
+    return getSchools({authToken: auth.authSession.token})
   }, [])
 
   const schools = schoolsAction.result || []
@@ -30,13 +29,21 @@ export const UsersTable = ({rows, auth}: {rows: User[]; auth: Auth}) => {
             )
           },
         },
-        ...(auth.user.role !== UserRole.Teacher
+        ...(auth.user.role !== UserRole.Educator
           ? [
               {
                 key: 'school',
                 title: 'School',
-                resolve: (user: User) =>
-                  schools.find((school) => school.id === user.schoolId)?.name,
+                resolve: (user: User) => {
+                  const school = schools.find((s) => s.id === user.schoolId)
+                  return (
+                    school && (
+                      <NextLink passHref href={`/schools/${school?.id}`}>
+                        {school?.name}
+                      </NextLink>
+                    )
+                  )
+                },
               },
               {
                 key: 'role',
@@ -46,12 +53,8 @@ export const UsersTable = ({rows, auth}: {rows: User[]; auth: Auth}) => {
               },
             ]
           : []),
-        // {
-        //   key: 'email',
-        //   title: 'Email',
-        //   resolve: (user) => user.emailAddress,
-        // },
-        ...(auth.user.role === UserRole.Teacher
+
+        ...(auth.user.role === UserRole.Educator
           ? [
               {
                 key: 'username',

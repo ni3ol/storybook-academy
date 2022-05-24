@@ -92,7 +92,7 @@ const ChildDashboard = ({auth}: {auth: Auth}) => {
           }
         />
       )}
-      <DashboardNavigation role={auth?.user?.role} user={user} />
+      <DashboardNavigation user={auth?.user} />
       <Container>
         {/* <HTMLFlipBook width={500} height={800}>
           <div className="demoPage">

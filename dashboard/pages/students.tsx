@@ -1,4 +1,5 @@
 import {useState} from 'react'
+import {Input} from 'semantic-ui-react'
 import {RequireAuth} from '../src/auth/components/requireAuth'
 import {DashboardNavigation} from '../src/shared/components/dashboardNavigation/dashboardNavigation'
 import {UsersTable} from '../src/users/components/usersTable'
@@ -9,49 +10,67 @@ import {CreateUserModal} from '../src/users/components/createUserModal'
 import {Container} from '../src/shared/components/container'
 import {Button} from '../src/shared/components/button'
 import {Header} from '../src/shared/components/header'
-import {Input} from 'semantic-ui-react'
 import {UpdateClassPasswordModal} from '../src/users/components/updateClassPasswordModal'
+import {UserRole} from '../src/users/model'
+import {getClasses} from '../src/classes/actions/getClasses'
 
 const Students = ({auth}: {auth: Auth}) => {
   const [isCreateUserModalOpen, setIsCreateUserModalOpen] = useState(false)
   const [isUpdateClassPasswordModalOpen, setIsUpdateClassPasswordModalOpen] =
     useState(false)
-  const [classPassword, setClassPassword] = useState('flower')
   const [search, setSearch] = useState('')
   const debouncedSearch = useDebounce(search, 500)
 
   const action = usePromise(() => {
+    if (!auth.user.classId) return Promise.resolve(undefined)
     return getUsers({
-      authToken: auth.authSession!.token,
-      filters: {educatorId: auth.user.id, search: debouncedSearch},
+      authToken: auth.authSession.token,
+      filters: {
+        classId: auth.user.classId,
+        role: UserRole.Child,
+        search,
+      },
     })
   }, [debouncedSearch])
 
+  const getClassAction = usePromise(async () => {
+    if (!auth.user.classId) return Promise.resolve(undefined)
+    const [theClass] = await getClasses({
+      authToken: auth.authSession.token,
+      filters: {id: auth.user.classId},
+    })
+    return theClass
+  }, [auth.user])
+
+  const theClass = getClassAction.result
+
   return (
     <>
-      {isCreateUserModalOpen && (
+      {isCreateUserModalOpen && auth.user.schoolId && auth.user.classId && (
         <CreateUserModal
+          auth={auth}
           schoolId={auth.user.schoolId}
-          educatorId={auth.user.id}
+          classId={auth.user.classId}
           onClose={() => setIsCreateUserModalOpen(false)}
-          onUserCreated={() => {
+          onUserCreated={async () => {
             setIsCreateUserModalOpen(false)
-            action.execute()
+            await action.execute()
           }}
         />
       )}
-      {isUpdateClassPasswordModalOpen && (
+      {isUpdateClassPasswordModalOpen && theClass?.password && theClass.id && (
         <UpdateClassPasswordModal
-          educatorId={auth.user.id}
-          password={classPassword}
+          auth={auth}
+          classId={theClass.id}
+          password={theClass?.password}
           onClose={() => setIsUpdateClassPasswordModalOpen(false)}
-          onClassPasswordUpdated={(password) => {
+          onClassPasswordUpdated={async () => {
             setIsUpdateClassPasswordModalOpen(false)
-            setClassPassword(password)
+            await getClassAction.execute()
           }}
         />
       )}
-      <DashboardNavigation role={auth.user.role} />
+      <DashboardNavigation user={auth.user} />
       <Container>
         <div
           style={{
@@ -63,18 +82,18 @@ const Students = ({auth}: {auth: Auth}) => {
           <div>
             <Header as="h1">Students</Header>
             <p>
-              Password for student's login: <strong>{classPassword}</strong>{' '}
-              (Missing Backend)
+              Password for student&apos;s login:{' '}
+              <strong>{theClass?.password}</strong>{' '}
             </p>
           </div>
-          <div style={{display: 'grid', gridGap: 10}}>
-            {/* <Input
+          <div>
+            <Input
               icon="search"
               iconPosition="left"
-              placeholder="Search email"
+              placeholder="Search name"
               style={{marginRight: 10}}
               onChange={(e) => setSearch(e.target.value)}
-            /> */}
+            />
             <Button onClick={() => setIsCreateUserModalOpen(true)} primary>
               Add new student
             </Button>

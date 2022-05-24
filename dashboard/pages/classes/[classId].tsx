@@ -25,7 +25,6 @@ import {DataTable} from '../../src/shared/components/dataTable'
 import {PairChildModal} from '../../src/users/components/pairChildModal'
 
 const TheClassPage = ({auth}: {auth: Auth}) => {
-  const router = useRouter()
   const {classId} = router.query as {classId: string}
   const [showAssignChildModal, setShowAssignChildModal] = useState(false)
   const [showUpdateModal, setShowUpdateModal] = useState(false)
@@ -35,42 +34,46 @@ const TheClassPage = ({auth}: {auth: Auth}) => {
   const [childToPair, setChildToPair] = useState<User | undefined>()
 
   const getClassAction = usePromise(async () => {
-    if (!classId) return
+    if (!classId) return Promise.resolve(undefined)
     const [theClass] = await getClasses({
       authToken: auth.authSession.token,
       filters: {id: classId},
     })
     return theClass
   }, [classId])
+
   const theClass = getClassAction.result
 
   const getLinkedClassAction = usePromise(async () => {
-    if (!theClass?.linkedClassId) return
+    if (!theClass?.linkedClassId) return Promise.resolve(undefined)
     const [linkedClass] = await getClasses({
       authToken: auth.authSession.token,
-      filters: {id: theClass?.linkedClassId},
+      filters: {id: theClass.linkedClassId},
     })
     return linkedClass
   }, [theClass])
+
   const linkedClass = getLinkedClassAction.result
 
   const getLinkedClassUsersAction = usePromise(async () => {
-    if (theClass?.linkedClassId) {
-      return getUsers({
-        authToken: auth.token,
-        filters: {classId: theClass?.linkedClassId},
-      })
-    }
+    if (!theClass?.linkedClassId) return Promise.resolve(undefined)
+
+    return getUsers({
+      authToken: auth.token,
+      filters: {classId: theClass?.linkedClassId},
+    })
   }, [theClass?.linkedClassId])
+
   const linkedClassUsers = getLinkedClassUsersAction.result || []
 
   const getClassUsersAction = usePromise(() => {
     return getUsers({authToken: auth.token, filters: {classId}})
-  }, [classId])
+  }, [theClass, classId])
   const classUsers = getClassUsersAction.result || []
 
   const educator = classUsers.find((user) => user.id === theClass?.educatorId)
-  const linkedEducator = classUsers.find(
+
+  const linkedEducator = linkedClassUsers.find(
     (user) => user.id === linkedClass?.educatorId,
   )
   const students = classUsers.filter(
@@ -87,17 +90,22 @@ const TheClassPage = ({auth}: {auth: Auth}) => {
   const [book] = getBooksAction.result || []
 
   const getSchoolsAction = usePromise(async () => {
-    return getSchools({
+    const [school] = await getSchools({
       authToken: auth.authSession.token,
+      filters: {id: theClass?.schoolId},
     })
+    return school
   }, [])
-  const school = getSchoolsAction.result?.find(
-    (school) => school.id === theClass?.schoolId,
-  )
+  const school = getSchoolsAction.result
 
-  const linkedSchool = getSchoolsAction.result?.find(
-    (school) => school.id === linkedClass?.schoolId,
-  )
+  const getLinkedSchoolsAction = usePromise(async () => {
+    const [linkedSchool] = await getSchools({
+      authToken: auth.authSession.token,
+      filters: {id: linkedClass?.schoolId},
+    })
+    return linkedSchool
+  }, [])
+  const linkedSchool = getLinkedSchoolsAction.result
 
   return (
     <>
@@ -123,10 +131,10 @@ const TheClassPage = ({auth}: {auth: Auth}) => {
           }}
         />
       )}
-      {showAssignBookModal && (
+      {showAssignBookModal && theClass && (
         <AssignBookToClassModal
-          schoolId={theClass?.schoolId}
-          classId={theClass?.id!}
+          schoolId={theClass.schoolId}
+          classId={theClass.id}
           onClose={() => setShowAssignBookModal(false)}
           onBookAssigned={() => {
             setShowAssignBookModal(false)
@@ -136,10 +144,10 @@ const TheClassPage = ({auth}: {auth: Auth}) => {
         />
       )}
 
-      {showAssignLinkedClassModal && (
+      {showAssignLinkedClassModal && theClass && (
         <AssignLinkedClassToClassModal
-          schoolId={theClass?.schoolId!}
-          classId={theClass?.id!}
+          schoolId={theClass.schoolId}
+          classId={theClass.id}
           onClose={() => setShowAssignLinkedClassModal(false)}
           onLinkedClassAssigned={() => {
             setShowAssignLinkedClassModal(false)
@@ -163,7 +171,7 @@ const TheClassPage = ({auth}: {auth: Auth}) => {
         />
       )}
 
-      <DashboardNavigation role={auth.user.role} />
+      <DashboardNavigation user={auth.user} />
       <Container>
         <div>
           <Header as="h1" style={{marginBottom: 20}}>
@@ -212,14 +220,16 @@ const TheClassPage = ({auth}: {auth: Auth}) => {
                 )}
               </Table.Cell>
             </Table.Row>
-            <Table.Row>
-              <Table.Cell>Teacher</Table.Cell>
-              <Table.Cell>
-                <NextLink passHref href={`/users/${educator?.id}`}>
-                  {`${educator?.firstName} ${educator?.lastName}`}
-                </NextLink>
-              </Table.Cell>
-            </Table.Row>
+            {educator && (
+              <Table.Row>
+                <Table.Cell>Educator</Table.Cell>
+                <Table.Cell>
+                  <NextLink passHref href={`/users/${educator?.id}`}>
+                    {`${educator?.firstName} ${educator?.lastName}`}
+                  </NextLink>
+                </Table.Cell>
+              </Table.Row>
+            )}
             <Table.Row>
               <Table.Cell>Class password</Table.Cell>
               <Table.Cell>{theClass?.password}</Table.Cell>
@@ -255,17 +265,19 @@ const TheClassPage = ({auth}: {auth: Auth}) => {
                         )}
                       </Table.Cell>
                     </Table.Row>
-                    <Table.Row>
-                      <Table.Cell>Teacher</Table.Cell>
-                      <Table.Cell>
-                        <NextLink
-                          passHref
-                          href={`/users/${linkedEducator?.id}`}
-                        >
-                          {`${linkedEducator?.firstName} ${linkedEducator?.lastName}`}
-                        </NextLink>
-                      </Table.Cell>
-                    </Table.Row>
+                    {linkedEducator && (
+                      <Table.Row>
+                        <Table.Cell>Educator</Table.Cell>
+                        <Table.Cell>
+                          <NextLink
+                            passHref
+                            href={`/users/${linkedEducator?.id}`}
+                          >
+                            {`${linkedEducator?.firstName} ${linkedEducator?.lastName}`}
+                          </NextLink>
+                        </Table.Cell>
+                      </Table.Row>
+                    )}
                   </Table>
                 ) : (
                   <Button onClick={() => setShowAssignLinkedClassModal(true)}>
@@ -352,7 +364,7 @@ const TheClassPage = ({auth}: {auth: Auth}) => {
                 )
                 return (
                   <div>
-                    {user.linkedChildId ? (
+                    {user.linkedChildId && linkedChild ? (
                       <Link passHref href={`/users/${linkedChild?.id}`}>
                         <a>
                           {linkedChild?.firstName} {linkedChild?.lastName} (
@@ -361,15 +373,20 @@ const TheClassPage = ({auth}: {auth: Auth}) => {
                       </Link>
                     ) : (
                       <span>None</span>
-                    )}{' '}
-                    {theClass?.linkedClassId && (
-                      <Button onClick={() => setChildToPair(user)}>
-                        Pair child
-                      </Button>
                     )}
                   </div>
                 )
               },
+            },
+            {
+              key: 'actions',
+              title: 'Actions',
+              resolve: (user: User) =>
+                theClass?.linkedClassId && (
+                  <Button onClick={() => setChildToPair(user)}>
+                    Pair child
+                  </Button>
+                ),
             },
           ]}
         />

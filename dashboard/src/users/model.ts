@@ -4,8 +4,8 @@ import {entitySchema} from '../shared/entity'
 export enum UserRole {
   User = 'user',
   Admin = 'admin',
-  Teacher = 'teacher',
-  Principal = 'principal',
+  Educator = 'educator',
+  Administrator = 'administrator',
   Child = 'child',
 }
 

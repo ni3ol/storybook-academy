@@ -36,7 +36,7 @@ const Classes = ({auth}: {auth: Auth}) => {
           }}
         />
       )}
-      <DashboardNavigation role={auth.user.role} />
+      <DashboardNavigation user={auth.user} />
       <Container>
         <div
           style={{

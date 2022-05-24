@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/aria-role */
 import {useState} from 'react'
+import {Header} from 'semantic-ui-react'
 import {RequireAuth} from '../../src/auth/components/requireAuth'
 import {DashboardNavigation} from '../../src/shared/components/dashboardNavigation/dashboardNavigation'
 import {LibraryTable} from '../../src/books/components/libraryTable'
@@ -13,13 +14,15 @@ import {Book} from '../../src/books/model'
 import {UpdateBookModal} from '../../src/books/components/updateBookModal'
 import {DeleteBookModal} from '../../src/books/components/deleteBookModal'
 import {UserRole} from '../../src/users/model'
-import {Header} from 'semantic-ui-react'
+import {AssignBookToClassModal} from '../../src/schools/components/assignBookToClassModal'
+import {getClasses} from '../../src/classes/actions/getClasses'
 
 const Books = ({auth}: {auth: Auth}) => {
   const [isCreateBookModalOpen, setIsCreateBookModalOpen] = useState(false)
   const [bookToUpdate, setBookToUpdate] = useState<Book | undefined>()
   const [bookToDelete, setBookToDelete] = useState<Book | undefined>()
   const isAdmin = auth.user.role === UserRole.Admin
+  const [showAssignBookModal, setShowAssignBookModal] = useState(false)
 
   const action = usePromise(() => {
     return getBooks({
@@ -30,16 +33,36 @@ const Books = ({auth}: {auth: Auth}) => {
     })
   }, [])
 
-  const currentReading = (action.result || [])[0]
+  const booksAssignedToSchool = action.result || []
+
+  const getClassAction = usePromise(async () => {
+    if (!auth.user.classId) return Promise.resolve(undefined)
+    const [theClass] = await getClasses({
+      authToken: auth.authSession.token,
+      filters: {id: auth.user.classId},
+    })
+    return theClass
+  }, [auth.user])
+
+  const theClass = getClassAction.result
+
+  const getBooksAction = usePromise(() => {
+    if (!theClass?.bookId) return Promise.resolve([])
+    return getBooks({
+      authToken: auth.token,
+      filters: {id: theClass?.bookId},
+    })
+  }, [theClass?.bookId])
+  const [book] = getBooksAction.result || []
 
   return (
     <>
       {isCreateBookModalOpen && isAdmin && (
         <CreateBookModal
           onClose={() => setIsCreateBookModalOpen(false)}
-          onBookCreated={() => {
+          onBookCreated={async () => {
             setIsCreateBookModalOpen(false)
-            action.execute()
+            await action.execute()
           }}
         />
       )}
@@ -47,9 +70,9 @@ const Books = ({auth}: {auth: Auth}) => {
         <UpdateBookModal
           book={bookToUpdate}
           onClose={() => setBookToUpdate(undefined)}
-          onBookUpdated={() => {
+          onBookUpdated={async () => {
             setBookToUpdate(undefined)
-            action.execute()
+            await action.execute()
           }}
         />
       )}
@@ -59,13 +82,25 @@ const Books = ({auth}: {auth: Auth}) => {
           onClose={() => {
             setBookToDelete(undefined)
           }}
-          onBookDeleted={() => {
+          onBookDeleted={async () => {
             setBookToDelete(undefined)
-            action.execute()
+            await action.execute()
           }}
         />
       )}
-      <DashboardNavigation role={auth.user.role} />
+      {showAssignBookModal && auth.user.schoolId && auth.user.classId && (
+        <AssignBookToClassModal
+          schoolId={auth.user.schoolId}
+          classId={auth.user.classId}
+          onClose={() => setShowAssignBookModal(false)}
+          onBookAssigned={async () => {
+            setShowAssignBookModal(false)
+            await getClassAction.execute()
+            await getBooksAction.execute()
+          }}
+        />
+      )}
+      <DashboardNavigation user={auth.user} />
       <Container>
         <div
           style={{
@@ -74,13 +109,23 @@ const Books = ({auth}: {auth: Auth}) => {
             alignItems: 'center',
           }}
         >
-          <div style={{display: 'flex', flexDirection: 'column'}}>
-            <Header as="h1">Library</Header>
-            {auth.user.role === UserRole.Teacher && (
-              <p>
-                Currently assigned reading: {currentReading?.title} (Backend
-                needed)
-              </p>
+          <div
+            style={{display: 'flex', flexDirection: 'column', width: '100%'}}
+          >
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                width: '100%',
+              }}
+            >
+              <Header as="h1">Library</Header>
+              <Button onClick={() => setShowAssignBookModal(true)}>
+                Assign new book for students
+              </Button>
+            </div>
+            {auth.user.role === UserRole.Educator && (
+              <p>The book currently assigned is: {book?.title}</p>
             )}
           </div>
           {isAdmin && (
@@ -91,9 +136,9 @@ const Books = ({auth}: {auth: Auth}) => {
         </div>
         <LibraryTable
           auth={auth}
-          onUpdateClick={(book) => setBookToUpdate(book)}
-          onDeleteClick={(book) => setBookToDelete(book)}
-          rows={action.result || []}
+          onUpdateClick={(b) => setBookToUpdate(b)}
+          onDeleteClick={(b) => setBookToDelete(b)}
+          rows={booksAssignedToSchool}
         />
       </Container>
     </>

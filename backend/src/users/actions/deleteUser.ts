@@ -10,7 +10,7 @@ export const deleteUser = async (
   if (
     params?.skipAuth !== true &&
     (params?.as?.user?.role === UserRole.Child ||
-      params?.as?.user?.role === UserRole.Principal)
+      params?.as?.user?.role === UserRole.Administrator)
   ) {
     throw new AuthorizationError()
   }

@@ -2,10 +2,9 @@ import {z} from 'zod'
 import {entitySchema} from '../shared/utils'
 
 export enum UserRole {
-  User = 'user',
   Admin = 'admin',
-  Teacher = 'teacher',
-  Principal = 'principal',
+  Educator = 'educator',
+  Administrator = 'administrator',
   Child = 'child',
 }
 

@@ -31,10 +31,17 @@ export const updateUser = (
   data: UpdateUserInputData,
   params?: {trx?: Knex.Transaction; as?: {user?: User}; skipAuth?: boolean},
 ) => {
+  const updatedUser = {
+    ...data,
+    classId: data.schoolId ? null : data.classId,
+    linkedChildId: data.schoolId ? null : data.linkedChildId,
+    bookSessionId: data.schoolId ? null : data.bookSessionId,
+  }
+
   return useOrCreateTransaction(params?.trx, async (trx) => {
     const now = utcNow()
     const query = db('users')
-      .update({...data, updatedAt: now})
+      .update({...updatedUser, updatedAt: now})
       .where('id', '=', id)
       .returning('*')
       .transacting(trx)

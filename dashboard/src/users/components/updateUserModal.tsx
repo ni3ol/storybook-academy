@@ -37,18 +37,19 @@ export const roles = [
     value: UserRole.Child,
   },
   {
-    label: 'Teacher',
-    value: UserRole.Teacher,
+    label: 'Educator',
+    value: UserRole.Educator,
   },
   {
-    label: 'Principal',
-    value: UserRole.Principal,
-  },
-  {
-    label: 'Admin',
-    value: UserRole.Admin,
+    label: 'Administrator',
+    value: UserRole.Administrator,
   },
 ]
+
+export const adminRole = {
+  label: 'Admin',
+  value: UserRole.Admin,
+}
 
 export const readingLevels = [
   {
@@ -92,8 +93,11 @@ export const UpdateUserModal = ({
   }, [])
 
   const handleSubmit = async (data: FormData) => {
-    const isChildProfileCreated =
-      data.age && data.favouriteAnimal && data.favouriteColor ? true : false
+    const isChildProfileCreated = !!(
+      data.age &&
+      data.favouriteAnimal &&
+      data.favouriteColor
+    )
     const {result: updatedUser} = await action.execute({
       ...data,
       profileCreated: isChildProfileCreated,
@@ -168,7 +172,7 @@ export const UpdateUserModal = ({
               defaultValue={user.schoolId}
             />
           )}
-          {isAdmin && (
+          {isAdmin && isChildRole && (
             <ClassSelectField
               name="classId"
               label="Class"

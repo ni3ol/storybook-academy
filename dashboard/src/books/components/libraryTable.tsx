@@ -1,9 +1,9 @@
 import {Button} from 'semantic-ui-react'
+import NextLink from 'next/link'
 import {Auth} from '../../auth/hooks'
 import {DataTable} from '../../shared/components/dataTable'
 import {UserRole} from '../../users/model'
 import {Book} from '../model'
-import NextLink from 'next/link'
 
 export const LibraryTable = ({
   rows,
@@ -28,28 +28,27 @@ export const LibraryTable = ({
           </NextLink>
         ),
       },
-
-      {
-        key: 'actions',
-        title: 'Actions',
-        resolve: (row: Book) =>
-          auth?.user.role === UserRole.Admin ? (
-            <>
-              {onUpdateClick && (
-                <Button onClick={() => onUpdateClick(row)} primary>
-                  Edit
-                </Button>
-              )}
-              {onDeleteClick && (
-                <Button onClick={() => onDeleteClick(row)}>Delete</Button>
-              )}
-            </>
-          ) : (
-            auth?.user.role === UserRole.Teacher && (
-              <Button onClick={() => {}}>Assign as current reading</Button>
-            )
-          ),
-      },
+      ...(auth?.user.role !== UserRole.Educator
+        ? [
+            {
+              key: 'actions',
+              title: 'Actions',
+              resolve: (row: Book) =>
+                auth?.user.role === UserRole.Admin && (
+                  <>
+                    {onUpdateClick && (
+                      <Button onClick={() => onUpdateClick(row)} primary>
+                        Edit
+                      </Button>
+                    )}
+                    {onDeleteClick && (
+                      <Button onClick={() => onDeleteClick(row)}>Delete</Button>
+                    )}
+                  </>
+                ),
+            },
+          ]
+        : []),
     ]}
   />
 )

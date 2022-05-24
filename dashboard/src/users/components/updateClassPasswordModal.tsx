@@ -1,21 +1,10 @@
-import {useState} from 'react'
 import {useForm} from 'react-hook-form'
 import {Button} from 'semantic-ui-react'
-import {useAuth} from '../../auth/hooks'
-import {SchoolSelectField} from '../../schools/components/schoolSelectField'
-import {
-  EmailField,
-  Form,
-  NumberField,
-  SelectField,
-  TextField,
-} from '../../shared/components/form'
+import {Auth} from '../../auth/hooks'
+import {updateClass} from '../../classes/actions/updateClass'
+import {Form, TextField} from '../../shared/components/form'
 import {Modal} from '../../shared/components/modal'
-import {usePromise, usePromiseLazy} from '../../shared/hooks'
-import {getUsers} from '../actions/getUsers'
-import {updateUser} from '../actions/updateUser'
-import {User, UserRole} from '../model'
-import {animals, colors} from './createChildProfileForm'
+import {usePromiseLazy} from '../../shared/hooks'
 
 type FormData = {
   password: string
@@ -24,24 +13,27 @@ type FormData = {
 export const UpdateClassPasswordModal = ({
   onClose,
   onClassPasswordUpdated,
-  educatorId,
   password,
+  classId,
+  auth,
 }: {
-  educatorId: string
+  classId: string
   password: string
   onClose: () => any
-  onClassPasswordUpdated: (password: string) => any
+  onClassPasswordUpdated: () => any
+  auth: Auth
 }) => {
   const form = useForm<FormData>()
-  const {auth} = useAuth()
 
   const action = usePromiseLazy(async (data: FormData) => {
-    return {}
+    return updateClass({id: classId, authToken: auth.token, data})
   }, [])
 
   const handleSubmit = async (data: FormData) => {
-    onClassPasswordUpdated(data.password)
-    return {}
+    const {result} = await action.execute(data)
+    if (result && onClassPasswordUpdated) {
+      await onClassPasswordUpdated()
+    }
   }
 
   return (

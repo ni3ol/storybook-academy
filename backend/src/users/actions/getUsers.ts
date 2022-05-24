@@ -36,7 +36,13 @@ const filterMapping: FilterMapping<UserFilters> = {
   classId: (query, filters) => query.where('classId', '=', filters.classId!),
   // problem when putting a camelcased column name in LOWER() -> complains that firstName !== firstname
   search: (query, filters) =>
-    query.whereRaw(`LOWER(role) like '%${filters.search!.toLowerCase()}%'`),
+    query
+      .whereRaw(
+        `LOWER(users."firstName") like '%${filters.search!.toLowerCase()}%'`,
+      )
+      .orWhereRaw(
+        `LOWER(users."lastName") like '%${filters.search!.toLowerCase()}%'`,
+      ),
 }
 
 export const getUsers = async (params?: {

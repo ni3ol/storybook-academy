@@ -35,14 +35,14 @@ export default function SignUp() {
   }, [])
 
   if (auth.isAuthenticated()) {
-    router.push('/dashboard')
+    router.push('/books')
   }
 
   const handleSubmit = async (data: Data) => {
     const {result} = await action.execute(data)
     if (result) {
       auth.authenticate({user: result.user, authSession: result.authSession})
-      router.push('/dashboard')
+      router.push('/books')
     }
   }
 

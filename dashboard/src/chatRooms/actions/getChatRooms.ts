@@ -18,7 +18,6 @@ export const getChatRooms = async ({
     path: '/chatRooms',
     queryParams: filters,
   })
-  console.log('fdfd', data)
 
   const chatRooms: ChatRoom[] = data.entities.map((dto: any) =>
     chatRoomSchema.parse(dto),

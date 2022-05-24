@@ -17,11 +17,10 @@ export const unassignBookToSchool = async (
   params?: {trx?: Knex.Transaction; as?: {user?: User}; skipAuth?: boolean},
 ) => {
   return useOrCreateTransaction(params?.trx, async (trx) => {
-    const rows = await db('bookAssignments')
+    await db('bookAssignments')
       .where('bookId', data.bookId)
       .andWhere('schoolId', data.schoolId)
       .del()
       .transacting(trx)
-    console.log('HAS', rows, data)
   })
 }
