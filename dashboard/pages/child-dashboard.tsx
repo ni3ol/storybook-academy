@@ -1,6 +1,6 @@
 import {Button, Container} from 'semantic-ui-react'
 import {Document, Page, pdfjs} from 'react-pdf'
-import {useEffect, useState} from 'react'
+import {useEffect, useMemo, useState} from 'react'
 import router, {useRouter} from 'next/router'
 import {RequireAuth} from '../src/auth/components/requireAuth'
 import {Auth} from '../src/auth/hooks'
@@ -20,11 +20,11 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/$
 const ChildDashboard = ({auth}: {auth: Auth}) => {
   const [numPages, setNumPages] = useState<number | null>(null)
   const [localPageNumber, setPageNumber] = useState(1)
+  const [sessionPageNumber, setSessionPageNumber] = useState(1)
   const {query} = useRouter()
   const onDocumentLoadSuccess = ({numPages}: {numPages: number}) => {
     setNumPages(numPages)
   }
-  const [bookUrl, setBookUrl] = useState<string | undefined>()
 
   const getUserAction = usePromise(async () => {
     const [user] = await getUsers({
@@ -54,12 +54,14 @@ const ChildDashboard = ({auth}: {auth: Auth}) => {
   }
 
   const getBookAction = usePromise(async () => {
-    const [book] = await getBooks({
-      authToken: auth.token,
-      filters: theClass?.bookId ? {id: theClass?.bookId} : {},
-    })
-    return book
-  }, [])
+    if (theClass?.bookId) {
+      const [book] = await getBooks({
+        authToken: auth.token,
+        filters: {id: theClass.bookId},
+      })
+      return book
+    }
+  }, [theClass])
   const book = getBookAction.result
 
   const readingLevelKey = user?.readingLevel
@@ -75,10 +77,7 @@ const ChildDashboard = ({auth}: {auth: Auth}) => {
     return url
   }, [book])
 
-  useEffect(() => {
-    getUserAction.execute()
-    setBookUrl(getBookUrlAction.result)
-  }, [getBookUrlAction.result])
+  const bookUrl = getBookUrlAction.result
 
   const bookSessionAction = usePromise(async () => {
     if (user) {
@@ -86,10 +85,13 @@ const ChildDashboard = ({auth}: {auth: Auth}) => {
         filters: {childId: user.id},
         authToken: auth.authSession.token!,
       })
+      setSessionPageNumber(bookSession.page)
       return bookSession
     }
   }, [user])
   const bookSession = bookSessionAction.result
+
+  const pageNumber = sessionPageNumber || localPageNumber
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -111,13 +113,25 @@ const ChildDashboard = ({auth}: {auth: Auth}) => {
   )
 
   const handlePageChange = async (page: number) => {
+    setPageNumber(page)
     if (bookSession) {
+      setSessionPageNumber(page)
       await updateBookSessionAction.execute({id: bookSession.id, data: {page}})
     }
-    setPageNumber(page)
   }
 
-  const pageNumber = bookSession?.page || localPageNumber
+  const height = 700
+
+  const BookPreview = useMemo(() => {
+    return (
+      <Page
+        renderAnnotationLayer={false}
+        pageNumber={pageNumber}
+        width={500}
+        height={height}
+      />
+    )
+  }, [pageNumber])
 
   return (
     <>
@@ -134,37 +148,41 @@ const ChildDashboard = ({auth}: {auth: Auth}) => {
       )}
       <DashboardNavigation user={auth?.user} />
       <Container>
-        <Header>The book of the day is:</Header>
-        <div>
-          <Document file={bookUrl} onLoadSuccess={onDocumentLoadSuccess}>
-            <Page
-              renderAnnotationLayer={false}
-              pageNumber={pageNumber}
-              width={500}
-              height={800}
-            />
-            <Button onClick={() => handlePageChange(1)}>Reset</Button>
-
-            <Button
-              onClick={() =>
-                handlePageChange(pageNumber === 1 ? 1 : pageNumber - 1)
-              }
-            >
-              Back
-            </Button>
-            <Button
-              onClick={() =>
-                handlePageChange(
-                  pageNumber === numPages ? numPages : pageNumber + 1,
-                )
-              }
-            >
-              Next
-            </Button>
-          </Document>
-          <p>
-            Page {pageNumber} of {numPages}
-          </p>
+        <div style={{height, display: 'flex', justifyContent: 'center'}}>
+          <div>
+            <div>
+              <Document file={bookUrl} onLoadSuccess={onDocumentLoadSuccess}>
+                {BookPreview}
+                <Button
+                  disabled={updateBookSessionAction.isLoading}
+                  onClick={() => handlePageChange(1)}
+                >
+                  Reset
+                </Button>
+                <Button
+                  disabled={updateBookSessionAction.isLoading}
+                  onClick={() =>
+                    handlePageChange(pageNumber === 1 ? 1 : pageNumber - 1)
+                  }
+                >
+                  Back
+                </Button>
+                <Button
+                  disabled={updateBookSessionAction.isLoading}
+                  onClick={() =>
+                    handlePageChange(
+                      pageNumber === numPages ? numPages : pageNumber + 1,
+                    )
+                  }
+                >
+                  Next
+                </Button>
+              </Document>
+            </div>
+            <p>
+              Page {pageNumber} of {numPages}
+            </p>
+          </div>
         </div>
       </Container>
     </>
