@@ -70,7 +70,7 @@ export const DashboardNavigation = ({user}: {user: User}) => {
               Library
             </Menu.Item>
           )}
-          {[UserRole.Administrator, UserRole.Admin].includes(role) && (
+          {[UserRole.Admin].includes(role) && (
             <Menu.Item
               name="users"
               active={router.pathname === '/users'}
@@ -96,10 +96,10 @@ export const DashboardNavigation = ({user}: {user: User}) => {
               onClick={() => handleClick('schools')}
               style={{color: 'white'}}
             >
-              Schools
+              {role === UserRole.Administrator ? 'School' : 'Schools'}
             </Menu.Item>
           )}
-          {[UserRole.Administrator, UserRole.Admin].includes(role) && (
+          {[UserRole.Admin].includes(role) && (
             <Menu.Item
               name="classes"
               active={router.pathname === '/classes'}

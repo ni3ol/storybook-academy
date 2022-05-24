@@ -154,6 +154,56 @@ const SchoolPage = ({auth}: {auth: Auth}) => {
                 {school?.createdAt && formatDateSimple(school?.createdAt)}
               </Table.Cell>
             </Table.Row>
+            {auth.user.role === UserRole.Administrator && (
+              <>
+                <Table.Row>
+                  <Table.Cell>Subscribe</Table.Cell>
+                  <Table.Cell>
+                    <form
+                      action="https://www.paypal.com/cgi-bin/webscr"
+                      method="post"
+                      target="_blank"
+                    >
+                      <input type="hidden" name="cmd" value="_s-xclick" />
+                      <input
+                        type="hidden"
+                        name="hosted_button_id"
+                        value="LQHVKZ25VHPXC"
+                      />
+                      <input
+                        type="image"
+                        src="https://www.paypalobjects.com/en_US/i/btn/btn_subscribeCC_LG.gif"
+                        border="0"
+                        name="submit"
+                        alt="PayPal - The safer, easier way to pay online!"
+                      />
+                      <img
+                        alt=""
+                        border="0"
+                        src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif"
+                        width="1"
+                        height="1"
+                      />
+                    </form>
+                  </Table.Cell>
+                </Table.Row>
+                <Table.Row>
+                  <Table.Cell>Unsubscribe</Table.Cell>
+                  <Table.Cell>
+                    <a
+                      target="_blank"
+                      href="https://www.paypal.com/cgi-bin/webscr?cmd=_subscr-find&alias=KYGRJRX9VFPUA"
+                      rel="noreferrer"
+                    >
+                      <img
+                        src="https://www.paypalobjects.com/en_US/i/btn/btn_unsubscribe_LG.gif"
+                        border="0"
+                      />
+                    </a>
+                  </Table.Cell>
+                </Table.Row>
+              </>
+            )}
           </Table.Body>
         </Table>
 
@@ -222,7 +272,7 @@ export default function SchoolPageWrapper() {
   return (
     <RequireAuth
       render={({auth}) => {
-        if (auth.user.role !== UserRole.Admin) {
+        if (auth.user.role === UserRole.Educator) {
           router.push('/students')
           return
         }

@@ -399,7 +399,7 @@ export default function ClassPageWrapper() {
   return (
     <RequireAuth
       render={({auth}) => {
-        if (auth.user.role !== UserRole.Admin) {
+        if (auth.user.role === UserRole.Educator) {
           router.push('/students')
           return
         }

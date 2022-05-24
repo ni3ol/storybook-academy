@@ -27,8 +27,8 @@ const Schools = ({auth}: {auth: Auth}) => {
       {isCreateSchoolModalOpen && (
         <CreateSchoolModal
           onClose={() => setIsCreateUserModalOpen(false)}
-          onSchoolCreated={() => {
-            action.execute()
+          onSchoolCreated={async () => {
+            await action.execute()
             setIsCreateUserModalOpen(false)
           }}
         />
@@ -61,8 +61,12 @@ export default function SchoolsPage() {
   return (
     <RequireAuth
       render={({auth}) => {
-        if (auth.user.role !== UserRole.Admin) {
+        if (auth.user.role === UserRole.Educator) {
           router.push('/students')
+          return
+        }
+        if (auth.user.role === UserRole.Administrator) {
+          router.push(`/schools/${auth.user.schoolId}`)
           return
         }
 
