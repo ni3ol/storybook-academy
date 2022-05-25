@@ -70,7 +70,7 @@ export const CreateUserModal = ({
   const isChildRole = role === UserRole.Child
 
   const schoolIdValue = form.watch('schoolId')
-  const isEducator = auth.user?.role === UserRole.Educator
+  const isEducator = auth?.user?.role === UserRole.Educator
 
   useEffect(() => {
     form.reset()
@@ -90,7 +90,7 @@ export const CreateUserModal = ({
               name="role"
               label="Role"
               options={
-                auth.user?.role === UserRole.Admin
+                auth?.user?.role === UserRole.Admin
                   ? [...roles, adminRole]
                   : roles
               }
@@ -126,7 +126,7 @@ export const CreateUserModal = ({
           )}
 
           {isChildRole ||
-            (auth.user.role === UserRole.Educator && (
+            (auth?.user.role === UserRole.Educator && (
               <SelectField
                 name="readingLevel"
                 label="Reading level"

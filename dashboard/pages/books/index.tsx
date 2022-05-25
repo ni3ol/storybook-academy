@@ -116,13 +116,15 @@ const Books = ({auth}: {auth: Auth}) => {
               style={{
                 display: 'flex',
                 justifyContent: 'space-between',
-                width: '100%',
+                // width: '100%',
               }}
             >
               <Header as="h1">Library</Header>
-              <Button onClick={() => setShowAssignBookModal(true)}>
-                Assign new book for students
-              </Button>
+              {auth.user.role === UserRole.Educator && (
+                <Button onClick={() => setShowAssignBookModal(true)}>
+                  Assign new book for students
+                </Button>
+              )}
             </div>
             {auth.user.role === UserRole.Educator && (
               <p>The book currently assigned is: {book?.title}</p>
