@@ -95,7 +95,7 @@ const TheClassPage = ({auth}: {auth: Auth}) => {
       filters: {id: theClass?.schoolId},
     })
     return school
-  }, [])
+  }, [theClass])
   const school = getSchoolsAction.result
 
   const getLinkedSchoolsAction = usePromise(async () => {
@@ -104,7 +104,7 @@ const TheClassPage = ({auth}: {auth: Auth}) => {
       filters: {id: linkedClass?.schoolId},
     })
     return linkedSchool
-  }, [])
+  }, [linkedClass])
   const linkedSchool = getLinkedSchoolsAction.result
 
   return (
