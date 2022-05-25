@@ -1,10 +1,10 @@
 import Link from 'next/link'
+import {Grid} from 'semantic-ui-react'
+import Image from 'next/image'
 import {Button} from '../src/shared/components/button'
 import {Container} from '../src/shared/components/container'
 import {Navigation} from '../src/shared/components/navigation'
 import Folly from '../public/folly.png'
-import {Grid} from 'semantic-ui-react'
-import Image from 'next/image'
 import {Header} from '../src/shared/components/header'
 
 export default function Home() {

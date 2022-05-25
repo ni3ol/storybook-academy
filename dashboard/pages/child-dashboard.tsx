@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-shadow */
+/* eslint-disable react/jsx-no-useless-fragment */
 import {Button, Container} from 'semantic-ui-react'
 import {Document, Page, pdfjs} from 'react-pdf'
 import {useEffect, useMemo, useState} from 'react'
@@ -22,13 +24,16 @@ const ChildDashboard = ({auth}: {auth: Auth}) => {
   const [localPageNumber, setPageNumber] = useState(1)
   const [sessionPageNumber, setSessionPageNumber] = useState(1)
   const [whereByUrl, setWhereByUrl] = useState<string | undefined>()
+  const [callStarted, setCall] = useState(false)
   const {query} = useRouter()
   const onDocumentLoadSuccess = ({numPages}: {numPages: number}) => {
     setNumPages(numPages)
   }
 
   const getUserAction = usePromise(async () => {
-    const [user] = await getUsers({
+    const {
+      entities: [user],
+    } = await getUsers({
       authToken: auth.token,
       filters: {id: auth.userId},
     })
@@ -92,7 +97,9 @@ const ChildDashboard = ({auth}: {auth: Auth}) => {
   }, [user])
   const bookSession = bookSessionAction.result
 
-  const pageNumber = sessionPageNumber || localPageNumber
+  const pageNumber = callStarted
+    ? sessionPageNumber || localPageNumber
+    : localPageNumber
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -115,7 +122,7 @@ const ChildDashboard = ({auth}: {auth: Auth}) => {
 
   const handlePageChange = async (page: number) => {
     setPageNumber(page)
-    if (bookSession) {
+    if (callStarted && bookSession) {
       setSessionPageNumber(page)
       await updateBookSessionAction.execute({id: bookSession.id, data: {page}})
     }
@@ -144,15 +151,17 @@ const ChildDashboard = ({auth}: {auth: Auth}) => {
   const WhereBy = useMemo(() => {
     return (
       <>
-        {whereByUrl && (
+        {callStarted && whereByUrl && user?.nickname && user.profilePicture && (
           <iframe
-            src={whereByUrl}
+            title="Whereby"
+            src={`${whereByUrl}?displayName=${user?.nickname}&leaveButton=off&avatarUrl=${user.profilePicture}.svg}`}
             allow="camera; microphone; fullscreen; speaker; display-capture"
+            height={height - 100}
           />
         )}
       </>
     )
-  }, [whereByUrl])
+  }, [callStarted, whereByUrl, user])
 
   return (
     <>
@@ -204,7 +213,23 @@ const ChildDashboard = ({auth}: {auth: Auth}) => {
               Page {pageNumber} of {numPages}
             </p>
           </div>
-          {WhereBy}
+          <div style={{display: 'flex', flexDirection: 'column'}}>
+            {callStarted === false && (
+              <div>
+                <Button fluid color="green" onClick={() => setCall(true)}>
+                  Join call with your buddy
+                </Button>
+              </div>
+            )}
+            <div>{WhereBy}</div>
+            {callStarted === true && (
+              <div>
+                <Button fluid color="orange" onClick={() => setCall(false)}>
+                  End call
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
       </Container>
     </>

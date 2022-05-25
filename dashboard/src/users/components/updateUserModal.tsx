@@ -1,4 +1,3 @@
-import {useState} from 'react'
 import {useForm} from 'react-hook-form'
 import {Button} from 'semantic-ui-react'
 import {useAuth} from '../../auth/hooks'
@@ -12,8 +11,7 @@ import {
   TextField,
 } from '../../shared/components/form'
 import {Modal} from '../../shared/components/modal'
-import {usePromise, usePromiseLazy} from '../../shared/hooks'
-import {getUsers} from '../actions/getUsers'
+import {usePromiseLazy} from '../../shared/hooks'
 import {updateUser} from '../actions/updateUser'
 import {User, UserRole} from '../model'
 import {animals, colors} from './createChildProfileForm'

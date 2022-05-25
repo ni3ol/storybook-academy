@@ -48,7 +48,7 @@ const SchoolPage = ({auth}: {auth: Auth}) => {
   const getUsersAction = usePromise(() => {
     return getUsers({authToken: auth.token, filters: {schoolId}})
   }, [])
-  const users = getUsersAction.result || []
+  const users = getUsersAction.result?.entities || []
 
   const getBooksAction = usePromise(() => {
     return getBooks({authToken: auth.token, filters: {schoolId}})

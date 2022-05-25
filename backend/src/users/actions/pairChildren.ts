@@ -8,6 +8,7 @@ import {InvalidRequestError} from '../../errors'
 import {UserRole} from '../model'
 import {getUsers} from './getUsers'
 import {updateUser} from './updateUser'
+import {assignWherebyMeetingToBookSession} from '../../bookSessions/actions/assignWherebyMeeting'
 
 export const pairChildrenSchema = z.object({
   child1Id: z.string().uuid(),
@@ -51,6 +52,8 @@ export const pairChildren = async (
       },
       {trx},
     )
+
+    await assignWherebyMeetingToBookSession(bookSession.id)
 
     await updateUser(
       data.child1Id,

@@ -22,7 +22,6 @@ export const DashboardNavigation = ({user}: {user: User}) => {
   }
 
   const [image, setImage] = useState()
-
   usePromise(async () => {
     if (!user) return
     const image = await import(`../../../../public/${user.profilePicture}.svg`)

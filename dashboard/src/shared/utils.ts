@@ -3,8 +3,8 @@ import queryString from 'query-string'
 import {format, formatRelative} from 'date-fns'
 
 export type Pagination = {
-  page: number
-  pageSize: number
+  page?: number
+  pageSize?: number
 }
 
 export class ValidationError extends Error {

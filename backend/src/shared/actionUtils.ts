@@ -5,6 +5,11 @@ import {AuthorizationError} from '../errors'
 import {User} from '../users/model'
 import {getUuid, utcNow, WithOptional} from './utils'
 
+export type Pagination = {
+  page?: number
+  pageSize?: number
+}
+
 export type CreateEntityData<E extends {id?: string}> = Omit<
   WithOptional<E, 'id'>,
   'createdAt' | 'updatedAt'
@@ -243,4 +248,13 @@ export const applyFilters = <F>(
     : query
 
   return filteredQuery
+}
+
+export const applyPagination = (
+  query: Knex.QueryBuilder,
+  pagination?: Pagination,
+) => {
+  const page = pagination?.page || 1
+  const pageSize = pagination?.pageSize || 10
+  return query.limit(pageSize).offset((page - 1) * pageSize)
 }
