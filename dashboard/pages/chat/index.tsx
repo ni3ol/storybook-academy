@@ -74,7 +74,7 @@ const ChatPage = ({auth}: {auth: Auth}) => {
     })
     return users
   }, [])
-  const users = getUsersAction.result
+  const users = getUsersAction.result?.entities
 
   const getSchoolsAction = usePromise(async () => {
     const schools = await getSchools({

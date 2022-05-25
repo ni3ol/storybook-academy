@@ -105,7 +105,7 @@ const Students = ({auth}: {auth: Auth}) => {
             </Button>
           </div>
         </div>
-        <UsersTable auth={auth} rows={action.result || []} />
+        <UsersTable auth={auth} rows={action.result?.entities || []} />
       </Container>
     </>
   )

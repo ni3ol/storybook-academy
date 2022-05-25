@@ -1,7 +1,12 @@
 import {Knex} from 'knex'
 import {z} from 'zod'
 import {db, useOrCreateTransaction} from '../../db/db'
-import {applyFilters, FilterMapping} from '../../shared/actionUtils'
+import {
+  applyFilters,
+  applyPagination,
+  FilterMapping,
+  Pagination,
+} from '../../shared/actionUtils'
 import {User, UserRole, userSchema} from '../model'
 
 export const userFiltersSchema = z
@@ -47,6 +52,7 @@ const filterMapping: FilterMapping<UserFilters> = {
 
 export const getUsers = async (params?: {
   filters?: UserFilters
+  pagination?: Pagination
   trx?: Knex.Transaction
   as?: {user?: User}
   skipAuth?: boolean
@@ -58,8 +64,24 @@ export const getUsers = async (params?: {
       .orderBy('createdAt', 'desc')
       .transacting(trx)
     const filteredQuery = applyFilters(query, filterMapping, params?.filters)
-    const rows: any[] = await filteredQuery
+    const paginatedQuery = applyPagination(filteredQuery, params?.pagination)
+    const rows: any[] = await paginatedQuery
     const users = rows.map((row) => userSchema.parse(row))
     return users
+  })
+}
+
+export const countUsers = async (params?: {
+  filters?: UserFilters
+  trx?: Knex.Transaction
+  as?: {user?: User}
+  skipAuth?: boolean
+}) => {
+  return useOrCreateTransaction(params?.trx, async (trx) => {
+    const query = db.count('*').from('users').transacting(trx)
+    const filteredQuery = applyFilters(query, filterMapping, params?.filters)
+    const rows: any[] = await filteredQuery
+    const {count} = rows[0]
+    return count
   })
 }

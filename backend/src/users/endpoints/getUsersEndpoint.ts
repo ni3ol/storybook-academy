@@ -1,5 +1,5 @@
-import {Endpoint} from '../../http/endpoint'
-import {getUsers, userFiltersSchema} from '../actions/getUsers'
+import {Endpoint, paginationSchema} from '../../http/endpoint'
+import {countUsers, getUsers, userFiltersSchema} from '../actions/getUsers'
 import {serializeUser} from '../actions/serializeUser'
 
 export const getUsersEndpoint: Endpoint<any, any, any> = {
@@ -7,13 +7,24 @@ export const getUsersEndpoint: Endpoint<any, any, any> = {
   path: '/users',
   requireAuth: true,
   validation: {
-    queryParams: userFiltersSchema,
+    queryParams: userFiltersSchema.merge(paginationSchema),
   },
-  handler: async ({queryParams, user: authedUser}) => {
-    const users = await getUsers({filters: queryParams, as: {user: authedUser}})
+  handler: async ({
+    queryParams: {page, pageSize, ...filters},
+    user: authedUser,
+  }) => {
+    const users = await getUsers({
+      filters,
+      pagination: {page, pageSize},
+      as: {user: authedUser},
+    })
+    const count = await countUsers({
+      filters,
+      as: {user: authedUser},
+    })
     const serializedUsers = await Promise.all(
       users.map((user) => serializeUser(user, {as: {user: authedUser}})),
     )
-    return {entities: serializedUsers}
+    return {entities: serializedUsers, count}
   },
 }
