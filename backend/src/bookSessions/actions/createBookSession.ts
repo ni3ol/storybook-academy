@@ -3,7 +3,8 @@ import {z} from 'zod'
 import {db, useOrCreateTransaction} from '../../db/db'
 import {getUuid, utcNow} from '../../shared/utils'
 import {User} from '../../users/model'
-import {BookSession, bookSessionSchema} from '../model'
+import {BookSession} from '../model'
+import {assignWherebyMeetingToBookSession} from './assignWherebyMeeting'
 
 export const createBookSessionSchema = z.object({
   child1Id: z.string().uuid(),
@@ -33,6 +34,10 @@ export const createBookSession = async (
     await db('bookSessions').insert(bookSession).returning('*').transacting(trx)
   })
 
-  const parsedClass = bookSessionSchema.parse(bookSession)
-  return parsedClass
+  const updatedBookSession = await assignWherebyMeetingToBookSession(
+    bookSession.id,
+    {trx: params?.trx},
+  )
+
+  return updatedBookSession
 }
