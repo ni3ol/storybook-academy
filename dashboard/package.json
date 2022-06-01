@@ -37,6 +37,7 @@
     "recoil": "^0.7.0",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^2.1.2",
+    "sharp": "^0.30.6",
     "socket.io-client": "^4.5.1",
     "zod": "^3.14.4"
   },
